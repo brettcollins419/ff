@@ -34,11 +34,11 @@ for position in positions:
 data.loc[:,'FLEX'] = data[['TE', 'RB', 'WR']].sum(axis = 1)
     
 positionLimit = {'QB':1
-                 , 'TE':1
-                 , 'RB':2
+                 , 'TE':2
+                 , 'RB':3
                  , 'DEF':1
-                 , 'WR':3
-                 , 'FLEX':1
+                 , 'WR':4
+#                 , 'FLEX':4
                  }
 
 statusExclude = ['IR', 'SUSP', 'O', 'Q']
@@ -49,7 +49,7 @@ dataInput = data[data['Injury Status'].map(lambda s: s not in statusExclude)]
 
 
 dataInputDict = (
-        dataInput.set_index('Id')
+        data.set_index('Id')
         [['Salary', 'FPPG'] + positions].to_dict('index')
         )
 
@@ -63,7 +63,7 @@ budget = 200
 prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
 
 # Define player Variables
-playerVars = pulp.LpVariable.dicts('ID', list(dataInput['Id']), cat = 'Binary')
+playerVars = pulp.LpVariable.dicts('ID', dataInput['Id'], 0, 1, cat = 'Integer')
 
 # Add objective of maximizing FPPG
 prob += pulp.lpSum(
@@ -74,7 +74,7 @@ prob += pulp.lpSum(
 # Salary Cap Constraint
 prob += pulp.lpSum(
         [(playerVars[i] * dataInputDict[i]['Salary']) 
-        for i in list(dataInput['Id'])]
+        for i in dataInput['Id']]
         ) <= budget
 
 
@@ -82,14 +82,29 @@ prob += pulp.lpSum(
 for position in positions:
     prob += pulp.lpSum(
             [(playerVars[i] * dataInputDict[i][position]) 
-            for i in list(dataInput['Id'])]
-            ) == positionLimit[position]
+            for i in dataInput['Id']]
+            ) <= positionLimit[position]
 
+
+# Team Size Limit
+prob += pulp.lpSum([playerVars[i] for i in list(dataInput['Id'])]) == 9
 
 #%% SOLVE LP
 ## ############################################################################
     
-    
 prob.writeLP('teamOptimization.lp')
 prob.solve()
     
+print("Status:", pulp.LpStatus[prob.status])
+
+
+
+#%% FINAL TEAM
+
+finalTeam = dataInput[[p.varValue == 1 for p in prob.variables()]]
+
+
+finalTeam[['First Name', 'Last Name', 'Position', 'FPPG', 'Salary']].sort_values('Position')
+
+finalTeam[['FPPG', 'Salary']].sum()
+
