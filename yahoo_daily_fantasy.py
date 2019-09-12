@@ -25,8 +25,9 @@ os.chdir('C:\\Users\\u00bec7\\Desktop\\personal\\ff\\data')
 data = pd.read_csv('Yahoo_DF_player_export_w2.csv')
 
 
+positions = ['QB', 'TE', 'RB', 'DEF', 'WR']
 
-for position in ['QB', 'TE', 'RB', 'DEF', 'WR']:
+for position in positions:
     data.loc[:,position] = (data['Position'] == position) * 1
     
 
@@ -47,15 +48,48 @@ statusExclude = ['IR', 'SUSP', 'O', 'Q']
 dataInput = data[data['Injury Status'].map(lambda s: s not in statusExclude)]
 
 
-dataInputDict = dataInput.set_index('Id').to_dict('index')
+dataInputDict = (
+        dataInput.set_index('Id')
+        [['Salary', 'FPPG'] + positions].to_dict('index')
+        )
 
+
+#%% LP SETUP
+## ############################################################################
 
 # Setup LP Problem
+budget = 200
 
 prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
 
 # Define player Variables
 playerVars = pulp.LpVariable.dicts('ID', list(dataInput['Id']), cat = 'Binary')
 
+# Add objective of maximizing FPPG
+prob += pulp.lpSum(
+        [playerVars[i]*dataInputDict[i]['FPPG'] 
+        for i in dataInput['Id']]
+        )
+
+# Salary Cap Constraint
+prob += pulp.lpSum(
+        [(playerVars[i] * dataInputDict[i]['Salary']) 
+        for i in list(dataInput['Id'])]
+        ) <= budget
 
 
+# Position Limits
+for position in positions:
+    prob += pulp.lpSum(
+            [(playerVars[i] * dataInputDict[i][position]) 
+            for i in list(dataInput['Id'])]
+            ) == positionLimit[position]
+
+
+#%% SOLVE LP
+## ############################################################################
+    
+    
+prob.writeLP('teamOptimization.lp')
+prob.solve()
+    
