@@ -1,0 +1,573 @@
+key,Id,First Name,Last Name,Position,Team,Opponent,Game,Time,Salary,FPPG,Injury Status,Starting,QB,TE,RB,DEF,WR,player_x,Avg,Best,Worst,Rank,player_y
+AARONJONES,nfl.p.30295,Aaron,Jones,RB,GB,MIN,MIN@GB,1:00PM EDT,18.0,4.4, ,No,0.0,0.0,1.0,0.0,0.0,AaronJones,21.9,5.0,30.0,22.0,Aaron Jones
+AARONRODGERS,nfl.p.7200,Aaron,Rodgers,QB,GB,MIN,MIN@GB,1:00PM EDT,33.0,12.9, ,No,1.0,0.0,0.0,0.0,0.0,AaronRodgers,11.2,3.0,22.0,10.0,Aaron Rodgers
+ADAMHUMPHRIES,nfl.p.29070,Adam,Humphries,WR,TEN,IND,IND@TEN,1:00PM EDT,10.0,1.0, ,No,0.0,0.0,0.0,0.0,1.0,AdamHumphries,75.2,39.0,100.0,76.0,Adam Humphries
+ADAMSHAHEEN,nfl.p.30158,Adam,Shaheen,TE,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,1.1, ,No,0.0,1.0,0.0,0.0,0.0,AdamShaheen,39.5,26.0,73.0,40.0,Adam Shaheen
+ADAMTHIELEN,nfl.p.27277,Adam,Thielen,WR,MIN,GB,MIN@GB,1:00PM EDT,28.0,11.8, ,No,0.0,0.0,0.0,0.0,1.0,AdamThielen,12.7,2.0,25.0,12.0,Adam Thielen
+ADRIANPETERSON,nfl.p.8261,Adrian,Peterson,RB,WAS,DAL,DAL@WAS,1:00PM EDT,13.0,11.2, ,No,0.0,0.0,1.0,0.0,0.0,AdrianPeterson,29.0,12.0,41.0,28.0,Adrian Peterson
+AJBROWN,nfl.p.31883,A.J.,Brown,WR,TEN,IND,IND@TEN,1:00PM EDT,15.0,11.5, ,No,0.0,0.0,0.0,0.0,1.0,A.J.Brown,57.1,13.0,90.0,53.0,A.J. Brown
+AJMCCARRON,nfl.p.27692,AJ,McCarron,QB,HOU,JAX,JAX@HOU,1:00PM EDT,20.0,0.1, ,No,1.0,0.0,0.0,0.0,0.0,AJMcCarron,,,,,
+ALBERTWILSON,,,,,,,,,,,,,,,,,,,77.5,49.0,139.0,88.0,Albert Wilson
+ALECINGOLD,nfl.p.32344,Alec,Ingold,RB,OAK,KC,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,AlecIngold,,,,,
+ALEXANDERMATTISON,nfl.p.31934,Alexander,Mattison,RB,MIN,GB,MIN@GB,1:00PM EDT,12.0,4.9, ,No,0.0,0.0,1.0,0.0,0.0,AlexanderMattison,57.5,33.0,77.0,59.0,Alexander Mattison
+ALEXARMAH,,,,,,,,,,,,,,,,,,,88.3,78.0,100.0,102.0,Alex Armah
+ALEXELLIS,nfl.p.29944,Alex,Ellis,TE,PHI,ATL,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,AlexEllis,,,,,
+ALEXERICKSON,nfl.p.29703,Alex,Erickson,WR,CIN,SF,SF@CIN,1:00PM EDT,10.0,2.8, ,No,0.0,0.0,0.0,0.0,1.0,AlexErickson,113.8,90.0,166.0,117.0,Alex Erickson
+ALEXTANNEY,nfl.p.26547,Alex,Tanney,QB,NYG,BUF,BUF@NYG,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,AlexTanney,,,,,
+ALLENHURNS,nfl.p.27874,Allen,Hurns,WR,MIA,NE,NE@MIA,1:00PM EDT,10.0,2.7, ,No,0.0,0.0,0.0,0.0,1.0,AllenHurns,102.8,70.0,134.0,115.0,Allen Hurns
+ALLENLAZARD,nfl.p.31268,Allen,Lazard,WR,GB,MIN,MIN@GB,1:00PM EDT,10.0,1.2, ,No,0.0,0.0,0.0,0.0,1.0,AllenLazard,,,,,
+ALLENROBINSON,,,,,,,,,,,,,,,,,,,24.4,9.0,53.0,24.0,Allen Robinson
+ALLENROBINSONII,nfl.p.27589,Allen,Robinson II,WR,CHI,DEN,CHI@DEN,4:25PM EDT,20.0,13.7, ,No,0.0,0.0,0.0,0.0,1.0,AllenRobinson II,,,,,
+ALSHONJEFFERY,nfl.p.25755,Alshon,Jeffery,WR,PHI,ATL,PHI@ATL,8:20PM EDT,22.0,19.6, ,No,0.0,0.0,0.0,0.0,1.0,AlshonJeffery,25.2,11.0,44.0,25.0,Alshon Jeffery
+ALVINKAMARA,nfl.p.30180,Alvin,Kamara,RB,NO,LAR,NO@LAR,4:25PM EDT,35.0,20.4, ,No,0.0,0.0,1.0,0.0,0.0,AlvinKamara,3.1,1.0,7.0,3.0,Alvin Kamara
+AMARICOOPER,nfl.p.28392,Amari,Cooper,WR,DAL,WAS,DAL@WAS,1:00PM EDT,23.0,19.6, ,No,0.0,0.0,0.0,0.0,1.0,AmariCooper,9.5,5.0,21.0,9.0,Amari Cooper
+AMEERABDULLAH,nfl.p.28442,Ameer,Abdullah,RB,MIN,GB,MIN@GB,1:00PM EDT,10.0,0.8, ,No,0.0,0.0,1.0,0.0,0.0,AmeerAbdullah,83.5,75.0,107.0,81.0,Ameer Abdullah
+ANDREELLINGTON,,,,,,,,,,,,,,,,,,,73.0,47.0,99.0,117.0,Andre Ellington
+ANDREWBECK,nfl.p.32225,Andrew,Beck,TE,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,AndrewBeck,,,,,
+ANDREWVOLLERT,nfl.p.31325,Andrew,Vollert,TE,LAC,DET,LAC@DET,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,AndrewVollert,,,,,
+ANDYDALTON,nfl.p.24822,Andy,Dalton,QB,CIN,SF,SF@CIN,1:00PM EDT,25.0,20.7, ,No,1.0,0.0,0.0,0.0,0.0,AndyDalton,18.6,13.0,26.0,18.0,Andy Dalton
+ANDYISABELLA,nfl.p.31894,Andy,Isabella,WR,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,AndyIsabella,106.2,67.0,149.0,105.0,Andy Isabella
+ANDYJANOVICH,,,,,,,,,,,,,,,,,,,116.0,97.0,139.0,129.0,Andy Janovich
+ANTHONYFIRKSER,nfl.p.30571,Anthony,Firkser,TE,TEN,IND,IND@TEN,1:00PM EDT,10.0,4.2, ,No,0.0,1.0,0.0,0.0,0.0,AnthonyFirkser,71.2,54.0,85.0,73.0,Anthony Firkser
+ANTHONYMILLER,nfl.p.31021,Anthony,Miller,WR,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,AnthonyMiller,67.7,43.0,119.0,67.0,Anthony Miller
+ANTHONYSHERMAN,nfl.p.24923,Anthony,Sherman,RB,KC,OAK,KC@OAK,4:05PM EDT,10.0,2.0, ,No,0.0,0.0,1.0,0.0,0.0,AnthonySherman,97.4,80.0,106.0,111.0,Anthony Sherman
+ANTONIOBROWN,nfl.p.24171,Antonio,Brown,WR,NE,MIA,NE@MIA,1:00PM EDT,27.0,18.1, ,No,0.0,0.0,0.0,0.0,1.0,AntonioBrown,31.2,7.0,103.0,35.0,Antonio Brown
+ANTONYAUCLAIR,,,,,,,,,,,,,,,,,,,78.0,74.0,80.0,85.0,Antony Auclair
+ARI,nfl.t.22,Arizona,Cardinals,DEF,ARI,BAL,ARI@BAL,1:00PM EDT,12.0,7.0, ,No,0.0,0.0,0.0,1.0,0.0,ARI,29.3,21.0,32.0,30.0,ARI
+ATL,nfl.t.1,Atlanta,Falcons,DEF,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,1.0,0.0,ATL,27.1,20.0,30.0,28.0,ATL
+AUDENTATE,nfl.p.31223,Auden,Tate,WR,CIN,SF,SF@CIN,1:00PM EDT,10.0,1.4, ,No,0.0,0.0,0.0,0.0,1.0,AudenTate,,,,,
+AUSTINCARR,nfl.p.30656,Austin,Carr,WR,NO,LAR,NO@LAR,4:25PM EDT,10.0,2.7, ,No,0.0,0.0,0.0,0.0,1.0,AustinCarr,140.5,120.0,160.0,152.0,Austin Carr
+AUSTINEKELER,nfl.p.30423,Austin,Ekeler,RB,LAC,DET,LAC@DET,1:00PM EDT,28.0,36.4, ,No,0.0,0.0,1.0,0.0,0.0,AustinEkeler,13.5,2.0,29.0,14.0,Austin Ekeler
+AUSTINHOOPER,nfl.p.29315,Austin,Hooper,TE,ATL,PHI,PHI@ATL,8:20PM EDT,13.0,12.2, ,No,0.0,1.0,0.0,0.0,0.0,AustinHooper,14.0,6.0,21.0,14.0,Austin Hooper
+AUSTINSEFERIANJENKINS,,,,,,,,,,,,,,,,,,,35.5,23.0,48.0,72.0,Austin Seferian-Jenkins
+BAKERMAYFIELD,,,,,,,,,,,,,,,,,,,12.3,5.0,22.0,12.0,Baker Mayfield
+BAL,nfl.t.33,Baltimore,Ravens,DEF,BAL,ARI,ARI@BAL,1:00PM EDT,20.0,13.0, ,No,0.0,0.0,0.0,1.0,0.0,BAL,2.6,1.0,6.0,2.0,BAL
+BEAUBRINKLEY,nfl.p.26016,Beau,Brinkley,TE,TEN,IND,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,BeauBrinkley,,,,,
+BENBRAUNECKER,nfl.p.29913,Ben,Braunecker,TE,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.9, ,No,0.0,1.0,0.0,0.0,0.0,BenBraunecker,65.1,38.0,89.0,67.0,Ben Braunecker
+BENNIEFOWLER,,,,,,,,,,,,,,,,,,,98.1,69.0,113.0,99.0,Bennie Fowler
+BENNIEFOWLERIII,nfl.p.27826,Bennie,Fowler III,WR,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,6.5, ,No,0.0,0.0,0.0,0.0,1.0,BennieFowler III,,,,,
+BENNYSNELLJR,nfl.p.31954,Benny,Snell Jr.,RB,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,BennySnell Jr.,81.1,68.0,114.0,80.0,Benny Snell Jr.
+BENROETHLISBERGER,nfl.p.6770,Ben,Roethlisberger,QB,PIT,SEA,SEA@PIT,1:00PM EDT,35.0,10.7, ,No,1.0,0.0,0.0,0.0,0.0,BenRoethlisberger,12.5,3.0,23.0,13.0,Ben Roethlisberger
+BILALPOWELL,,,,,,,,,,,,,,,,,,,86.7,54.0,103.0,87.0,Bilal Powell
+BLAINEGABBERT,,,,,,,,,,,,,,,,,,,38.4,35.0,39.0,39.0,Blaine Gabbert
+BLAKEBELL,nfl.p.28505,Blake,Bell,TE,KC,OAK,KC@OAK,4:05PM EDT,10.0,1.2, ,No,0.0,1.0,0.0,0.0,0.0,BlakeBell,55.3,44.0,71.0,57.0,Blake Bell
+BLAKEBORTLES,nfl.p.27531,Blake,Bortles,QB,LAR,NO,NO@LAR,4:25PM EDT,20.0,14.2, ,No,1.0,0.0,0.0,0.0,0.0,BlakeBortles,39.9,37.0,41.0,40.0,Blake Bortles
+BLAKEJARWIN,nfl.p.30784,Blake,Jarwin,TE,DAL,WAS,DAL@WAS,1:00PM EDT,10.0,11.4, ,No,0.0,1.0,0.0,0.0,0.0,BlakeJarwin,33.2,24.0,41.0,35.0,Blake Jarwin
+BOBOWILSON,,,,,,,,,,,,,,,,,,,142.5,110.0,153.0,154.0,Bobo Wilson
+BRADLEYSOWELL,nfl.p.26050,Bradley,Sowell,TE,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,3.4, ,No,0.0,1.0,0.0,0.0,0.0,BradleySowell,,,,,
+BRANDINCOOKS,nfl.p.27548,Brandin,Cooks,WR,LAR,NO,NO@LAR,4:25PM EDT,21.0,4.9, ,No,0.0,0.0,0.0,0.0,1.0,BrandinCooks,13.3,9.0,37.0,13.0,Brandin Cooks
+BRANDONALLEN,nfl.p.29435,Brandon,Allen,QB,DEN,CHI,CHI@DEN,4:25PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,BrandonAllen,,,,,
+BRANDONBOLDEN,,,,,,,,,,,,,,,,,,,104.4,97.0,112.0,115.0,Brandon Bolden
+BRANDONDILLON,nfl.p.32142,Brandon,Dillon,TE,MIN,GB,MIN@GB,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,BrandonDillon,,,,,
+BRAXTONBERRIOS,,,,,,,,,,,,,,,,,,,138.7,105.0,163.0,145.0,Braxton Berrios
+BRESHADPERRIMAN,,,,,,,,,,,,,,,,,,,86.6,33.0,102.0,89.0,Breshad Perriman
+BRETTHUNDLEY,nfl.p.28535,Brett,Hundley,QB,ARI,BAL,ARI@BAL,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,BrettHundley,,,,,
+BRIANHILL,nfl.p.30269,Brian,Hill,RB,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,3.0, ,No,0.0,0.0,1.0,0.0,0.0,BrianHill,86.1,71.0,122.0,86.0,Brian Hill
+BRIANHOYER,nfl.p.9547,Brian,Hoyer,QB,IND,TEN,IND@TEN,1:00PM EDT,20.0,-0.3, ,No,1.0,0.0,0.0,0.0,0.0,BrianHoyer,,,,,
+BRITTANGOLDEN,nfl.p.25970,Brittan,Golden,WR,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,BrittanGolden,,,,,
+BUDDYHOWELL,nfl.p.31537,Buddy,Howell,RB,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,BuddyHowell,97.7,83.0,109.0,99.0,Buddy Howell
+BUF,nfl.t.2,Buffalo,Bills,DEF,BUF,NYG,BUF@NYG,1:00PM EDT,13.0,10.0, ,No,0.0,0.0,0.0,1.0,0.0,BUF,6.2,2.0,18.0,5.0,BUF
+BYRONPRINGLE,nfl.p.31496,Byron,Pringle,WR,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,ByronPringle,137.0,125.0,155.0,160.0,Byron Pringle
+CALVINRIDLEY,nfl.p.30996,Calvin,Ridley,WR,ATL,PHI,PHI@ATL,8:20PM EDT,21.0,14.4, ,No,0.0,0.0,0.0,0.0,1.0,CalvinRidley,26.3,13.0,51.0,28.0,Calvin Ridley
+CAMERONBRATE,,,,,,,,,,,,,,,,,,,28.1,13.0,39.0,26.0,Cameron Brate
+CAMNEWTON,,,,,,,,,,,,,,,,,,,7.7,1.0,27.0,8.0,Cam Newton
+CAR,,,,,,,,,,,,,,,,,,,7.8,2.0,23.0,9.0,CAR
+CARLOSHYDE,nfl.p.27585,Carlos,Hyde,RB,HOU,JAX,JAX@HOU,1:00PM EDT,12.0,9.0, ,No,0.0,0.0,1.0,0.0,0.0,CarlosHyde,39.8,26.0,62.0,39.0,Carlos Hyde
+CARSONWENTZ,nfl.p.29236,Carson,Wentz,QB,PHI,ATL,PHI@ATL,8:20PM EDT,34.0,25.0, ,No,1.0,0.0,0.0,0.0,0.0,CarsonWentz,5.3,2.0,20.0,5.0,Carson Wentz
+CASEKEENUM,nfl.p.26483,Case,Keenum,QB,WAS,DAL,DAL@WAS,1:00PM EDT,21.0,27.2, ,No,1.0,0.0,0.0,0.0,0.0,CaseKeenum,26.9,16.0,32.0,27.0,Case Keenum
+CETHANCARTER,nfl.p.30577,Cethan,Carter,TE,CIN,SF,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,CethanCarter,84.5,83.0,86.0,88.0,Cethan Carter
+CHADBEEBE,nfl.p.31508,Chad,Beebe,WR,MIN,GB,MIN@GB,1:00PM EDT,10.0,1.4, ,No,0.0,0.0,0.0,0.0,1.0,ChadBeebe,105.5,81.0,124.0,108.0,Chad Beebe
+CHANDLERCOX,nfl.p.32065,Chandler,Cox,RB,MIA,NE,NE@MIA,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,ChandlerCox,,,,,
+CHARLESCLAY,nfl.p.24961,Charles,Clay,TE,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,1.0, ,No,0.0,1.0,0.0,0.0,0.0,CharlesClay,43.1,27.0,63.0,41.0,Charles Clay
+CHASEDANIEL,nfl.p.9678,Chase,Daniel,QB,CHI,DEN,CHI@DEN,4:25PM EDT,20.0,8.0, ,No,1.0,0.0,0.0,0.0,0.0,ChaseDaniel,,,,,
+CHASEEDMONDS,nfl.p.31104,Chase,Edmonds,RB,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,0.5, ,No,0.0,0.0,1.0,0.0,0.0,ChaseEdmonds,68.0,59.0,79.0,67.0,Chase Edmonds
+CHESTERROGERS,nfl.p.29609,Chester,Rogers,WR,IND,TEN,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,ChesterRogers,112.5,81.0,134.0,121.0,Chester Rogers
+CHI,nfl.t.3,Chicago,Bears,DEF,CHI,DEN,CHI@DEN,4:25PM EDT,20.0,9.0, ,No,0.0,0.0,0.0,1.0,0.0,CHI,3.5,1.0,15.0,3.0,CHI
+CHRISCARSON,nfl.p.30362,Chris,Carson,RB,SEA,PIT,SEA@PIT,1:00PM EDT,21.0,21.1, ,No,0.0,0.0,1.0,0.0,0.0,ChrisCarson,9.3,5.0,21.0,9.0,Chris Carson
+CHRISCONLEY,nfl.p.28464,Chris,Conley,WR,JAX,HOU,JAX@HOU,1:00PM EDT,14.0,18.7, ,No,0.0,0.0,0.0,0.0,1.0,ChrisConley,67.2,40.0,90.0,65.0,Chris Conley
+CHRISGODWIN,,,,,,,,,,,,,,,,,,,18.3,7.0,34.0,18.0,Chris Godwin
+CHRISHOGAN,,,,,,,,,,,,,,,,,,,103.8,62.0,145.0,102.0,Chris Hogan
+CHRISLACY,nfl.p.31651,Chris,Lacy,WR,DET,LAC,LAC@DET,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,ChrisLacy,133.5,112.0,155.0,165.0,Chris Lacy
+CHRISMANHERTZ,,,,,,,,,,,,,,,,,,,65.0,53.0,71.0,69.0,Chris Manhertz
+CHRISMOORE,nfl.p.29341,Chris,Moore,WR,BAL,ARI,ARI@BAL,1:00PM EDT,10.0,2.3, ,No,0.0,0.0,0.0,0.0,1.0,ChrisMoore,130.0,104.0,143.0,138.0,Chris Moore
+CHRISTHOMPSON,nfl.p.26777,Chris,Thompson,RB,WAS,DAL,DAL@WAS,1:00PM EDT,13.0,11.3, ,No,0.0,0.0,1.0,0.0,0.0,ChrisThompson,40.0,27.0,57.0,40.0,Chris Thompson
+CHRISTIANKIRK,nfl.p.31017,Christian,Kirk,WR,ARI,BAL,ARI@BAL,1:00PM EDT,13.0,8.4, ,No,0.0,0.0,0.0,0.0,1.0,ChristianKirk,41.2,22.0,57.0,41.0,Christian Kirk
+CHRISTIANMCCAFFREY,,,,,,,,,,,,,,,,,,,1.4,1.0,4.0,1.0,Christian McCaffrey
+CIN,nfl.t.4,Cincinnati,Bengals,DEF,CIN,SF,SF@CIN,1:00PM EDT,13.0,6.0, ,No,0.0,0.0,0.0,1.0,0.0,CIN,19.8,7.0,32.0,21.0,CIN
+CJANDERSON,nfl.p.26878,C.J.,Anderson,RB,DET,LAC,LAC@DET,1:00PM EDT,12.0,3.5, ,No,0.0,0.0,1.0,0.0,0.0,C.J.Anderson,48.4,40.0,60.0,47.0,C.J. Anderson
+CJBEATHARD,nfl.p.30217,C.J.,Beathard,QB,SF,CIN,SF@CIN,1:00PM EDT,20.0,16.4, ,No,1.0,0.0,0.0,0.0,0.0,C.J.Beathard,,,,,
+CJBOARD,nfl.p.30513,C.J.,Board,WR,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,C.J.Board,,,,,
+CJHAM,nfl.p.29951,C.J.,Ham,RB,MIN,GB,MIN@GB,1:00PM EDT,10.0,1.1, ,No,0.0,0.0,1.0,0.0,0.0,C.J.Ham,104.0,83.0,133.0,113.0,CJ Ham
+CJPROSISE,nfl.p.29324,C.J.,Prosise,RB,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,1.7, ,No,0.0,0.0,1.0,0.0,0.0,C.J.Prosise,92.0,70.0,122.0,89.0,C.J. Prosise
+CJUZOMAH,nfl.p.28545,C.J.,Uzomah,TE,CIN,SF,SF@CIN,1:00PM EDT,11.0,8.6, ,No,0.0,1.0,0.0,0.0,0.0,C.J.Uzomah,28.1,16.0,47.0,27.0,C.J. Uzomah
+CLARKHARRIS,nfl.p.8497,Clark,Harris,TE,CIN,SF,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,ClarkHarris,,,,,
+CLE,,,,,,,,,,,,,,,,,,,7.7,2.0,14.0,8.0,CLE
+CODYCORE,nfl.p.29433,Cody,Core,WR,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,3.0, ,No,0.0,0.0,0.0,0.0,1.0,CodyCore,142.0,107.0,167.0,144.0,Cody Core
+CODYLATIMER,,,,,,,,,,,,,,,,,,,78.8,30.0,103.0,85.0,Cody Latimer
+COLEBEASLEY,,,,,,,,,,,,,,,,,,,68.7,30.0,87.0,66.0,Cole Beasley
+COOPERKUPP,nfl.p.30182,Cooper,Kupp,WR,LAR,NO,NO@LAR,4:25PM EDT,22.0,8.1, ,No,0.0,0.0,0.0,0.0,1.0,CooperKupp,17.5,3.0,36.0,16.0,Cooper Kupp
+COOPERRUSH,nfl.p.30788,Cooper,Rush,QB,DAL,WAS,DAL@WAS,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,CooperRush,,,,,
+CORDARRELLEPATTERSON,nfl.p.26652,Cordarrelle,Patterson,WR,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.6, ,No,0.0,0.0,0.0,0.0,1.0,CordarrellePatterson,92.1,74.0,123.0,91.0,Cordarrelle Patterson
+COREYCLEMENT,nfl.p.30707,Corey,Clement,RB,PHI,ATL,PHI@ATL,8:20PM EDT,10.0,6.4, ,No,0.0,0.0,1.0,0.0,0.0,CoreyClement,76.0,55.0,105.0,74.0,Corey Clement
+COREYDAVIS,nfl.p.30118,Corey,Davis,WR,TEN,IND,IND@TEN,1:00PM EDT,14.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,CoreyDavis,48.6,23.0,98.0,48.0,Corey Davis
+COURTLANDSUTTON,nfl.p.31010,Courtland,Sutton,WR,DEN,CHI,CHI@DEN,4:25PM EDT,16.0,15.5, ,No,0.0,0.0,0.0,0.0,1.0,CourtlandSutton,42.0,17.0,53.0,42.0,Courtland Sutton
+CULLENGILLASPIA,nfl.p.32052,Cullen,Gillaspia,RB,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,CullenGillaspia,,,,,
+CURTISSAMUEL,,,,,,,,,,,,,,,,,,,33.8,14.0,59.0,31.0,Curtis Samuel
+DAESEANHAMILTON,nfl.p.31083,DaeSean,Hamilton,WR,DEN,CHI,CHI@DEN,4:25PM EDT,12.0,1.5, ,No,0.0,0.0,0.0,0.0,1.0,DaeSeanHamilton,74.2,52.0,96.0,71.0,DaeSean Hamilton
+DAKPRESCOTT,nfl.p.29369,Dak,Prescott,QB,DAL,WAS,DAL@WAS,1:00PM EDT,32.0,33.4, ,No,1.0,0.0,0.0,0.0,0.0,DakPrescott,6.6,2.0,17.0,6.0,Dak Prescott
+DAL,nfl.t.6,Dallas,Cowboys,DEF,DAL,WAS,DAL@WAS,1:00PM EDT,12.0,6.0, ,No,0.0,0.0,0.0,1.0,0.0,DAL,7.0,3.0,17.0,6.0,DAL
+DALLASGOEDERT,nfl.p.31019,Dallas,Goedert,TE,PHI,ATL,PHI@ATL,8:20PM EDT,10.0,2.6, ,No,0.0,1.0,0.0,0.0,0.0,DallasGoedert,21.4,15.0,37.0,21.0,Dallas Goedert
+DALTONSCHULTZ,nfl.p.31107,Dalton,Schultz,TE,DAL,WAS,DAL@WAS,1:00PM EDT,10.0,2.2, ,No,0.0,1.0,0.0,0.0,0.0,DaltonSchultz,68.0,61.0,75.0,83.0,Dalton Schultz
+DALVINCOOK,nfl.p.30154,Dalvin,Cook,RB,MIN,GB,MIN@GB,1:00PM EDT,30.0,25.0, ,No,0.0,0.0,1.0,0.0,0.0,DalvinCook,8.7,2.0,23.0,6.0,Dalvin Cook
+DALYNDAWKINS,nfl.p.31620,Dalyn,Dawkins,RB,TEN,IND,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,DalynDawkins,,,,,
+DAMIENHARRIS,nfl.p.31919,Damien,Harris,RB,NE,MIA,NE@MIA,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,DamienHarris,72.5,52.0,118.0,73.0,Damien Harris
+DAMIENWILLIAMS,nfl.p.28115,Damien,Williams,RB,KC,OAK,KC@OAK,4:05PM EDT,24.0,15.5, ,No,0.0,0.0,1.0,0.0,0.0,DamienWilliams,19.6,8.0,40.0,19.0,Damien Williams
+DAMIEREBYRD,nfl.p.28730,Damiere,Byrd,WR,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,6.2, ,No,0.0,0.0,0.0,0.0,1.0,DamiereByrd,102.0,66.0,134.0,112.0,Damiere Byrd
+DAMIONRATLEY,,,,,,,,,,,,,,,,,,,118.9,88.0,162.0,131.0,Damion Ratley
+DAMIONWILLIS,nfl.p.32471,Damion,Willis,WR,CIN,SF,SF@CIN,1:00PM EDT,10.0,4.5, ,No,0.0,0.0,0.0,0.0,1.0,DamionWillis,95.6,58.0,115.0,95.0,Damion Willis
+DANIELJONES,nfl.p.31838,Daniel,Jones,QB,NYG,BUF,BUF@NYG,1:00PM EDT,20.0,-0.8, ,No,1.0,0.0,0.0,0.0,0.0,DanielJones,36.7,33.0,40.0,37.0,Daniel Jones
+DANNYAMENDOLA,nfl.p.9037,Danny,Amendola,WR,DET,LAC,LAC@DET,1:00PM EDT,14.0,19.9, ,No,0.0,0.0,0.0,0.0,1.0,DannyAmendola,63.3,33.0,84.0,58.0,Danny Amendola
+DANNYVITALE,nfl.p.29431,Danny,Vitale,RB,GB,MIN,MIN@GB,1:00PM EDT,10.0,0.4, ,No,0.0,0.0,1.0,0.0,0.0,DannyVitale,,,,,
+DANTEPETTIS,nfl.p.31014,Dante,Pettis,WR,SF,CIN,SF@CIN,1:00PM EDT,14.0,1.2, ,No,0.0,0.0,0.0,0.0,1.0,DantePettis,66.0,30.0,108.0,69.0,Dante Pettis
+DANVITALE,,,,,,,,,,,,,,,,,,,117.5,115.0,120.0,133.0,Dan Vitale
+DAREOGUNBOWALE,,,,,,,,,,,,,,,,,,,61.0,45.0,71.0,62.0,Dare Ogunbowale
+DARIUSJENNINGS,nfl.p.29038,Darius,Jennings,WR,TEN,IND,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,DariusJennings,142.6,106.0,155.0,148.0,Darius Jennings
+DARIUSSLAYTON,,,,,,,,,,,,,,,,,,,131.7,118.0,147.0,157.0,Darius Slayton
+DARRELLDANIELS,nfl.p.30523,Darrell,Daniels,TE,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,DarrellDaniels,,,,,
+DARRELLHENDERSON,,,,,,,,,,,,,,,,,,,63.1,44.0,98.0,65.0,Darrell Henderson
+DARRELLHENDERSONJR,nfl.p.31902,Darrell,Henderson Jr.,RB,LAR,NO,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,DarrellHenderson Jr.,,,,,
+DARRELWILLIAMS,nfl.p.31500,Darrel,Williams,RB,KC,OAK,KC@OAK,4:05PM EDT,10.0,3.6, ,No,0.0,0.0,1.0,0.0,0.0,DarrelWilliams,94.9,76.0,117.0,101.0,Darrel Williams
+DARRENFELLS,nfl.p.26612,Darren,Fells,TE,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,DarrenFells,54.9,40.0,66.0,58.0,Darren Fells
+DARRENSPROLES,nfl.p.7306,Darren,Sproles,RB,PHI,ATL,PHI@ATL,8:20PM EDT,11.0,9.8, ,No,0.0,0.0,1.0,0.0,0.0,DarrenSproles,57.9,34.0,85.0,55.0,Darren Sproles
+DARRENWALLER,nfl.p.28592,Darren,Waller,TE,OAK,KC,KC@OAK,4:05PM EDT,13.0,10.5, ,No,0.0,1.0,0.0,0.0,0.0,DarrenWaller,7.1,2.0,18.0,6.0,Darren Waller
+DARWINTHOMPSON,nfl.p.32046,Darwin,Thompson,RB,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.8, ,No,0.0,0.0,1.0,0.0,0.0,DarwinThompson,66.0,59.0,105.0,66.0,Darwin Thompson
+DAVANTEADAMS,nfl.p.27581,Davante,Adams,WR,GB,MIN,MIN@GB,1:00PM EDT,28.0,5.6, ,No,0.0,0.0,0.0,0.0,1.0,DavanteAdams,5.1,2.0,22.0,5.0,Davante Adams
+DAVIDBLOUGH,nfl.p.32272,David,Blough,QB,DET,LAC,LAC@DET,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,DavidBlough,,,,,
+DAVIDFLUELLEN,,,,,,,,,,,,,,,,,,,94.0,78.0,111.0,118.0,David Fluellen
+DAVIDJOHNSON,nfl.p.28474,David,Johnson,RB,ARI,BAL,ARI@BAL,1:00PM EDT,25.0,22.7, ,No,0.0,0.0,1.0,0.0,0.0,DavidJohnson,11.9,4.0,24.0,12.0,David Johnson
+DAVIDMONTGOMERY,nfl.p.31905,David,Montgomery,RB,CHI,DEN,CHI@DEN,4:25PM EDT,17.0,5.0, ,No,0.0,0.0,1.0,0.0,0.0,DavidMontgomery,30.8,16.0,51.0,31.0,David Montgomery
+DAVIDMOORE,,,,,,,,,,,,,,,,,,,98.7,87.0,122.0,139.0,David Moore
+DAVIDNJOKU,,,,,,,,,,,,,,,,,,,11.6,5.0,20.0,12.0,David Njoku
+DAVIDWELLS,nfl.p.31283,David,Wells,TE,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,DavidWells,,,,,
+DAWSONKNOX,nfl.p.31928,Dawson,Knox,TE,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,0.6, ,No,0.0,1.0,0.0,0.0,0.0,DawsonKnox,40.6,27.0,71.0,42.0,Dawson Knox
+DAXRAYMOND,nfl.p.32261,Dax,Raymond,TE,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,DaxRaymond,,,,,
+DEANDRECARTER,nfl.p.28947,DeAndre,Carter,WR,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,0.4, ,No,0.0,0.0,0.0,0.0,1.0,DeAndreCarter,135.6,96.0,145.0,142.0,DeAndre Carter
+DEANDREHOPKINS,,,,,,,,,,,,,,,,,,,2.3,1.0,10.0,2.0,DeAndre Hopkins
+DEANDREWASHINGTON,nfl.p.29377,DeAndre,Washington,RB,OAK,KC,KC@OAK,4:05PM EDT,13.0,0.8, ,No,0.0,0.0,1.0,0.0,0.0,DeAndreWashington,83.7,63.0,132.0,84.0,DeAndre Washington
+DEANTHONYTHOMAS,nfl.p.27652,De'Anthony,Thomas,WR,KC,OAK,KC@OAK,4:05PM EDT,12.0,2.2, ,No,0.0,0.0,0.0,0.0,1.0,De'AnthonyThomas,107.2,79.0,125.0,124.0,De'Anthony Thomas
+DEDEWESTBROOK,nfl.p.30223,Dede,Westbrook,WR,JAX,HOU,JAX@HOU,1:00PM EDT,16.0,11.7, ,No,0.0,0.0,0.0,0.0,1.0,DedeWestbrook,39.6,20.0,52.0,38.0,Dede Westbrook
+DEEBOSAMUEL,nfl.p.31868,Deebo,Samuel,WR,SF,CIN,SF@CIN,1:00PM EDT,11.0,3.2, ,No,0.0,0.0,0.0,0.0,1.0,DeeboSamuel,65.2,36.0,96.0,63.0,Deebo Samuel
+DELANIEWALKER,nfl.p.7924,Delanie,Walker,TE,TEN,IND,IND@TEN,1:00PM EDT,19.0,20.0, ,No,0.0,1.0,0.0,0.0,0.0,DelanieWalker,7.5,2.0,15.0,7.0,Delanie Walker
+DEMARCUSROBINSON,nfl.p.29360,Demarcus,Robinson,WR,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.5, ,No,0.0,0.0,0.0,0.0,1.0,DemarcusRobinson,79.0,53.0,109.0,80.0,Demarcus Robinson
+DEMARYIUSTHOMAS,,,,,,,,,,,,,,,,,,,103.3,65.0,132.0,109.0,Demaryius Thomas
+DEMETRIUSHARRIS,,,,,,,,,,,,,,,,,,,51.6,42.0,60.0,49.0,Demetrius Harris
+DEN,nfl.t.7,Denver,Broncos,DEF,DEN,CHI,CHI@DEN,4:25PM EDT,18.0,0.0, ,No,0.0,0.0,0.0,1.0,0.0,DEN,7.5,3.0,20.0,7.0,DEN
+DEONCAIN,,,,,,,,,,,,,,,,,,,90.4,56.0,127.0,90.0,Deon Cain
+DEONTEHARRIS,nfl.p.32398,Deonte,Harris,WR,NO,LAR,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,DeonteHarris,155.0,145.0,165.0,172.0,Deonte Harris
+DEONYELDER,nfl.p.31519,Deon,Yelder,TE,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,DeonYelder,,,,,
+DEREKCARR,nfl.p.27564,Derek,Carr,QB,OAK,KC,KC@OAK,4:05PM EDT,26.0,14.6, ,No,1.0,0.0,0.0,0.0,0.0,DerekCarr,18.8,10.0,27.0,19.0,Derek Carr
+DEREKCARRIER,nfl.p.26416,Derek,Carrier,TE,OAK,KC,KC@OAK,4:05PM EDT,10.0,1.6, ,No,0.0,1.0,0.0,0.0,0.0,DerekCarrier,60.3,51.0,70.0,78.0,Derek Carrier
+DEREKWATT,nfl.p.29432,Derek,Watt,RB,LAC,DET,LAC@DET,1:00PM EDT,10.0,0.4, ,No,0.0,0.0,1.0,0.0,0.0,DerekWatt,102.3,84.0,116.0,110.0,Derek Watt
+DERNESTJOHNSON,,,,,,,,,,,,,,,,,,,89.5,62.0,100.0,93.0,D'Ernest Johnson
+DERRICKHENRY,nfl.p.29279,Derrick,Henry,RB,TEN,IND,IND@TEN,1:00PM EDT,28.0,28.4, ,No,0.0,0.0,1.0,0.0,0.0,DerrickHenry,11.0,1.0,26.0,10.0,Derrick Henry
+DESEANJACKSON,nfl.p.8826,DeSean,Jackson,WR,PHI,ATL,PHI@ATL,8:20PM EDT,22.0,31.4, ,No,0.0,0.0,0.0,0.0,1.0,DeSeanJackson,25.6,7.0,44.0,26.0,DeSean Jackson
+DESHAUNWATSON,nfl.p.30125,Deshaun,Watson,QB,HOU,JAX,JAX@HOU,1:00PM EDT,36.0,31.7, ,No,1.0,0.0,0.0,0.0,0.0,DeshaunWatson,4.4,1.0,14.0,4.0,Deshaun Watson
+DESHONEKIZER,nfl.p.30165,DeShone,Kizer,QB,OAK,KC,KC@OAK,4:05PM EDT,20.0,2.5, ,No,1.0,0.0,0.0,0.0,0.0,DeShoneKizer,,,,,
+DET,nfl.t.8,Detroit,Lions,DEF,DET,LAC,LAC@DET,1:00PM EDT,12.0,7.0, ,No,0.0,0.0,0.0,1.0,0.0,DET,23.8,13.0,28.0,25.0,DET
+DEVANTEPARKER,nfl.p.28402,DeVante,Parker,WR,MIA,NE,NE@MIA,1:00PM EDT,11.0,9.0, ,No,0.0,0.0,0.0,0.0,1.0,DeVanteParker,56.6,33.0,81.0,52.0,Devante Parker
+DEVINEOZIGBO,nfl.p.32390,Devine,Ozigbo,RB,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,DevineOzigbo,100.0,69.0,137.0,121.0,Devine Ozigbo
+DEVINFUNCHESS,,,,,,,,,,,,,,,,,,,110.7,87.0,138.0,149.0,Devin Funchess
+DEVINSINGLETARY,nfl.p.31906,Devin,Singletary,RB,BUF,NYG,BUF@NYG,1:00PM EDT,14.0,12.3, ,No,0.0,0.0,1.0,0.0,0.0,DevinSingletary,26.4,13.0,45.0,25.0,Devin Singletary
+DEVINSMITH,nfl.p.28425,Devin,Smith,WR,DAL,WAS,DAL@WAS,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,DevinSmith,145.0,119.0,160.0,166.0,Devin Smith
+DEVONTAEBOOKER,nfl.p.29370,Devontae,Booker,RB,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,4.3, ,No,0.0,0.0,1.0,0.0,0.0,DevontaeBooker,77.5,65.0,93.0,75.0,Devontae Booker
+DEVONTAFREEMAN,nfl.p.27631,Devonta,Freeman,RB,ATL,PHI,PHI@ATL,8:20PM EDT,17.0,2.6, ,No,0.0,0.0,1.0,0.0,0.0,DevontaFreeman,23.3,14.0,37.0,23.0,Devonta Freeman
+DEVONTEBOYD,nfl.p.31557,Devonte,Boyd,WR,CIN,SF,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,DevonteBoyd,,,,,
+DEXTERWILLIAMS,nfl.p.32026,Dexter,Williams,RB,GB,MIN,MIN@GB,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,DexterWilliams,95.4,72.0,121.0,97.0,Dexter Williams
+DIONLEWIS,nfl.p.24936,Dion,Lewis,RB,TEN,IND,IND@TEN,1:00PM EDT,13.0,2.8, ,No,0.0,0.0,1.0,0.0,0.0,DionLewis,50.0,32.0,59.0,50.0,Dion Lewis
+DIONTAEJOHNSON,nfl.p.31898,Diontae,Johnson,WR,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,4.0, ,No,0.0,0.0,0.0,0.0,1.0,DiontaeJohnson,105.0,80.0,131.0,103.0,Diontae Johnson
+DIONTAESPENCER,nfl.p.28279,Diontae,Spencer,WR,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,DiontaeSpencer,142.0,128.0,156.0,169.0,Diontae Spencer
+DJCHARK,,,,,,,,,,,,,,,,,,,63.5,42.0,99.0,60.0,D.J. Chark
+DJCHARKJR,nfl.p.31031,DJ,Chark Jr.,WR,JAX,HOU,JAX@HOU,1:00PM EDT,15.0,22.6, ,No,0.0,0.0,0.0,0.0,1.0,DJChark Jr.,,,,,
+DJFOSTER,nfl.p.29872,D.J.,Foster,RB,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,D.J.Foster,104.7,96.0,116.0,128.0,D.J. Foster
+DJMOORE,,,,,,,,,,,,,,,,,,,18.6,11.0,47.0,19.0,D.J. Moore
+DKMETCALF,nfl.p.31896,DK,Metcalf,WR,SEA,PIT,SEA@PIT,1:00PM EDT,13.0,10.9, ,No,0.0,0.0,0.0,0.0,1.0,DKMetcalf,42.0,26.0,63.0,43.0,D.K. Metcalf
+DONTEMONCRIEF,nfl.p.27618,Donte,Moncrief,WR,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,2.2, ,No,0.0,0.0,0.0,0.0,1.0,DonteMoncrief,50.7,36.0,65.0,50.0,Donte Moncrief
+DONTRELLEINMAN,nfl.p.25120,Dontrelle,Inman,WR,LAC,DET,LAC@DET,1:00PM EDT,10.0,1.0, ,No,0.0,0.0,0.0,0.0,1.0,DontrelleInman,95.0,63.0,137.0,110.0,Dontrelle Inman
+DONTRELLHILLIARD,,,,,,,,,,,,,,,,,,,69.8,59.0,99.0,69.0,Dontrell Hilliard
+DREWBREES,nfl.p.5479,Drew,Brees,QB,NO,LAR,NO@LAR,4:25PM EDT,33.0,21.8, ,No,1.0,0.0,0.0,0.0,0.0,DrewBrees,11.9,3.0,23.0,11.0,Drew Brees
+DREWSAMPLE,nfl.p.31884,Drew,Sample,TE,CIN,SF,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,DrewSample,69.4,61.0,78.0,70.0,Drew Sample
+DUKEJOHNSON,nfl.p.28465,Duke,Johnson,RB,HOU,JAX,JAX@HOU,1:00PM EDT,16.0,11.0, ,No,0.0,0.0,1.0,0.0,0.0,DukeJohnson,27.0,11.0,42.0,26.0,Duke Johnson
+DURHAMSMYTHE,nfl.p.31093,Durham,Smythe,TE,MIA,NE,NE@MIA,1:00PM EDT,10.0,1.0, ,No,0.0,1.0,0.0,0.0,0.0,DurhamSmythe,72.0,53.0,75.0,79.0,Durham Smythe
+DWAYNEHARRIS,nfl.p.24963,Dwayne,Harris,WR,OAK,KC,KC@OAK,4:05PM EDT,10.0,1.2, ,No,0.0,0.0,0.0,0.0,1.0,DwayneHarris,133.0,103.0,142.0,143.0,Dwayne Harris
+DWAYNEHASKINS,,,,,,,,,,,,,,,,,,,34.8,31.0,37.0,35.0,Dwayne Haskins
+DWAYNEHASKINSJR,nfl.p.31847,Dwayne,Haskins Jr.,QB,WAS,DAL,DAL@WAS,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,DwayneHaskins Jr.,,,,,
+DWAYNEWASHINGTON,nfl.p.29470,Dwayne,Washington,RB,NO,LAR,NO@LAR,4:25PM EDT,10.0,2.6, ,No,0.0,0.0,1.0,0.0,0.0,DwayneWashington,98.5,85.0,116.0,116.0,Dwayne Washington
+EASTONSTICK,nfl.p.31998,Easton,Stick,QB,LAC,DET,LAC@DET,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,EastonStick,,,,,
+ELIJAHMCGUIRE,,,,,,,,,,,,,,,,,,,86.9,61.0,105.0,88.0,Elijah McGuire
+ELIJHAAPENNY,nfl.p.29906,Elijhaa,Penny,RB,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,0.3, ,No,0.0,0.0,1.0,0.0,0.0,ElijhaaPenny,101.2,73.0,136.0,109.0,Elijhaa Penny
+ELIMANNING,nfl.p.6760,Eli,Manning,QB,NYG,BUF,BUF@NYG,1:00PM EDT,20.0,14.8, ,No,1.0,0.0,0.0,0.0,0.0,EliManning,28.6,18.0,32.0,29.0,Eli Manning
+EMANUELHALL,,,,,,,,,,,,,,,,,,,120.5,91.0,150.0,159.0,Emanuel Hall
+EMMANUELSANDERS,nfl.p.24057,Emmanuel,Sanders,WR,DEN,CHI,CHI@DEN,4:25PM EDT,18.0,17.1, ,No,0.0,0.0,0.0,0.0,1.0,EmmanuelSanders,47.1,19.0,65.0,46.0,Emmanuel Sanders
+ERICEBRON,nfl.p.27538,Eric,Ebron,TE,IND,TEN,IND@TEN,1:00PM EDT,13.0,1.3, ,No,0.0,1.0,0.0,0.0,0.0,EricEbron,16.0,7.0,24.0,16.0,Eric Ebron
+ERICTOMLINSON,nfl.p.28658,Eric,Tomlinson,TE,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,1.2, ,No,0.0,1.0,0.0,0.0,0.0,EricTomlinson,89.0,87.0,91.0,89.0,Eric Tomlinson
+EVANENGRAM,nfl.p.30136,Evan,Engram,TE,NYG,BUF,BUF@NYG,1:00PM EDT,21.0,23.1, ,No,0.0,1.0,0.0,0.0,0.0,EvanEngram,4.1,1.0,7.0,4.0,Evan Engram
+EZEKIELELLIOTT,nfl.p.29238,Ezekiel,Elliott,RB,DAL,WAS,DAL@WAS,1:00PM EDT,33.0,12.8, ,No,0.0,0.0,1.0,0.0,0.0,EzekielElliott,3.6,1.0,31.0,4.0,Ezekiel Elliott
+FELTONDAVIS,nfl.p.32356,Felton,Davis,WR,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,FeltonDavis,,,,,
+FOSTERMOREAU,nfl.p.31969,Foster,Moreau,TE,OAK,KC,KC@OAK,4:05PM EDT,10.0,3.0, ,No,0.0,1.0,0.0,0.0,0.0,FosterMoreau,49.0,29.0,64.0,46.0,Foster Moreau
+FRANKGORE,nfl.p.7241,Frank,Gore,RB,BUF,NYG,BUF@NYG,1:00PM EDT,13.0,2.0, ,No,0.0,0.0,1.0,0.0,0.0,FrankGore,51.4,33.0,63.0,52.0,Frank Gore
+GARDNERMINSHEW,,,,,,,,,,,,,,,,,,,28.6,23.0,32.0,28.0,Gardner Minshew
+GARDNERMINSHEWII,nfl.p.32010,Gardner,Minshew II,QB,JAX,HOU,JAX@HOU,1:00PM EDT,23.0,18.6, ,No,1.0,0.0,0.0,0.0,0.0,GardnerMinshew II,,,,,
+GARYJENNINGS,nfl.p.31952,Gary,Jennings,WR,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,GaryJennings,125.5,108.0,141.0,150.0,Gary Jennings
+GB,nfl.t.9,Green Bay,Packers,DEF,GB,MIN,MIN@GB,1:00PM EDT,12.0,14.0, ,No,0.0,0.0,0.0,1.0,0.0,GB,13.1,2.0,21.0,12.0,GB
+GENOSMITH,nfl.p.26662,Geno,Smith,QB,SEA,PIT,SEA@PIT,1:00PM EDT,20.0,-2.2, ,No,1.0,0.0,0.0,0.0,0.0,GenoSmith,,,,,
+GEOFFSWAIM,nfl.p.28634,Geoff,Swaim,TE,JAX,HOU,JAX@HOU,1:00PM EDT,13.0,3.7, ,No,0.0,1.0,0.0,0.0,0.0,GeoffSwaim,33.6,19.0,45.0,37.0,Geoff Swaim
+GEORGEKITTLE,nfl.p.30259,George,Kittle,TE,SF,CIN,SF@CIN,1:00PM EDT,29.0,9.4, ,No,0.0,1.0,0.0,0.0,0.0,GeorgeKittle,2.1,1.0,5.0,2.0,George Kittle
+GERALDEVERETT,nfl.p.30157,Gerald,Everett,TE,LAR,NO,NO@LAR,4:25PM EDT,10.0,1.2, ,No,0.0,1.0,0.0,0.0,0.0,GeraldEverett,28.2,21.0,39.0,28.0,Gerald Everett
+GEREMYDAVIS,,,,,,,,,,,,,,,,,,,136.0,131.0,141.0,168.0,Geremy Davis
+GERONIMOALLISON,nfl.p.29719,Geronimo,Allison,WR,GB,MIN,MIN@GB,1:00PM EDT,11.0,10.5, ,No,0.0,0.0,0.0,0.0,1.0,GeronimoAllison,61.1,44.0,103.0,59.0,Geronimo Allison
+GIOVANIBERNARD,nfl.p.26660,Giovani,Bernard,RB,CIN,SF,SF@CIN,1:00PM EDT,14.0,7.3, ,No,0.0,0.0,1.0,0.0,0.0,GiovaniBernard,33.1,17.0,55.0,32.0,Giovani Bernard
+GREGOLSEN,,,,,,,,,,,,,,,,,,,13.2,5.0,36.0,13.0,Greg Olsen
+GUNNEROLSZEWSKI,nfl.p.32612,Gunner,Olszewski,WR,NE,MIA,NE@MIA,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,GunnerOlszewski,,,,,
+GUSEDWARDS,nfl.p.31424,Gus,Edwards,RB,BAL,ARI,ARI@BAL,1:00PM EDT,16.0,5.6, ,No,0.0,0.0,1.0,0.0,0.0,GusEdwards,55.6,36.0,72.0,60.0,Gus Edwards
+HALEHENTGES,nfl.p.32295,Hale,Hentges,TE,IND,TEN,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,HaleHentges,,,,,
+HAYDENHURST,nfl.p.30995,Hayden,Hurst,TE,BAL,ARI,ARI@BAL,1:00PM EDT,10.0,5.6, ,No,0.0,1.0,0.0,0.0,0.0,HaydenHurst,30.7,19.0,43.0,30.0,Hayden Hurst
+HOU,nfl.t.34,Houston,Texans,DEF,HOU,JAX,JAX@HOU,1:00PM EDT,21.0,2.0, ,No,0.0,0.0,0.0,1.0,0.0,HOU,4.6,1.0,23.0,4.0,HOU
+HUNTERRENFROW,nfl.p.31981,Hunter,Renfrow,WR,OAK,KC,KC@OAK,4:05PM EDT,13.0,2.3, ,No,0.0,0.0,0.0,0.0,1.0,HunterRenfrow,85.0,57.0,105.0,83.0,Hunter Renfrow
+IANTHOMAS,,,,,,,,,,,,,,,,,,,34.8,18.0,65.0,33.0,Ian Thomas
+IND,nfl.t.11,Indianapolis,Colts,DEF,IND,TEN,IND@TEN,1:00PM EDT,16.0,7.0, ,No,0.0,0.0,0.0,1.0,0.0,IND,16.9,10.0,30.0,16.0,IND
+IRVSMITHJR,nfl.p.31882,Irv,Smith Jr.,TE,MIN,GB,MIN@GB,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,IrvSmith Jr.,42.4,20.0,65.0,39.0,Irv Smith Jr.
+ISAIAHMCKENZIE,nfl.p.30285,Isaiah,McKenzie,WR,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,5.4, ,No,0.0,0.0,0.0,0.0,1.0,IsaiahMcKenzie,131.2,111.0,138.0,140.0,Isaiah McKenzie
+ISAIAHSEARIGHT,nfl.p.32486,Isaiah,Searight,TE,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,IsaiahSearight,,,,,
+ITOSMITH,nfl.p.31096,Ito,Smith,RB,ATL,PHI,PHI@ATL,8:20PM EDT,11.0,4.5, ,No,0.0,0.0,1.0,0.0,0.0,ItoSmith,48.8,39.0,61.0,48.0,Ito Smith
+JAC,,,,,,,,,,,,,,,,,,,13.4,2.0,27.0,13.0,JAC
+JACKDOYLE,nfl.p.27299,Jack,Doyle,TE,IND,TEN,IND@TEN,1:00PM EDT,14.0,2.5, ,No,0.0,1.0,0.0,0.0,0.0,JackDoyle,21.5,13.0,44.0,20.0,Jack Doyle
+JACOBYBRISSETT,nfl.p.29325,Jacoby,Brissett,QB,IND,TEN,IND@TEN,1:00PM EDT,25.0,16.5, ,No,1.0,0.0,0.0,0.0,0.0,JacobyBrissett,25.8,20.0,30.0,26.0,Jacoby Brissett
+JAEDENGRAHAM,nfl.p.31749,Jaeden,Graham,TE,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,JaedenGraham,,,,,
+JAKEDOLEGALA,nfl.p.32464,Jake,Dolegala,QB,CIN,SF,SF@CIN,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,JakeDolegala,,,,,
+JAKEEMGRANT,nfl.p.29420,Jakeem,Grant,WR,MIA,NE,NE@MIA,1:00PM EDT,10.0,-1.8, ,No,0.0,0.0,0.0,0.0,1.0,JakeemGrant,99.3,59.0,113.0,106.0,Jakeem Grant
+JAKEKUMEROW,nfl.p.28974,Jake,Kumerow,WR,GB,MIN,MIN@GB,1:00PM EDT,10.0,4.1, ,No,0.0,0.0,0.0,0.0,1.0,JakeKumerow,104.5,90.0,143.0,104.0,Jake Kumerow
+JAKOBIMEYERS,nfl.p.32231,Jakobi,Meyers,WR,NE,MIA,NE@MIA,1:00PM EDT,10.0,2.7, ,No,0.0,0.0,0.0,0.0,1.0,JakobiMeyers,125.3,95.0,158.0,130.0,Jakobi Meyers
+JALEELSCOTT,nfl.p.31102,Jaleel,Scott,WR,BAL,ARI,ARI@BAL,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JaleelScott,,,,,
+JALENHURD,,,,,,,,,,,,,,,,,,,124.2,96.0,147.0,136.0,Jalen Hurd
+JALENRICHARD,nfl.p.30000,Jalen,Richard,RB,OAK,KC,KC@OAK,4:05PM EDT,13.0,0.3, ,No,0.0,0.0,1.0,0.0,0.0,JalenRichard,60.4,38.0,73.0,61.0,Jalen Richard
+JAMAALWILLIAMS,nfl.p.30247,Jamaal,Williams,RB,GB,MIN,MIN@GB,1:00PM EDT,13.0,2.5, ,No,0.0,0.0,1.0,0.0,0.0,JamaalWilliams,57.1,46.0,66.0,58.0,Jamaal Williams
+JAMEISWINSTON,,,,,,,,,,,,,,,,,,,17.0,9.0,24.0,17.0,Jameis Winston
+JAMESCONNER,nfl.p.30218,James,Conner,RB,PIT,SEA,SEA@PIT,1:00PM EDT,31.0,8.5, ,No,0.0,0.0,1.0,0.0,0.0,JamesConner,8.8,5.0,34.0,8.0,James Conner
+JAMESDEVELIN,nfl.p.24760,James,Develin,RB,NE,MIA,NE@MIA,1:00PM EDT,10.0,2.3, ,No,0.0,0.0,1.0,0.0,0.0,JamesDevelin,96.6,77.0,134.0,98.0,James Develin
+JAMESOSHAUGHNESSY,nfl.p.28561,James,O'Shaughnessy,TE,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,5.2, ,No,0.0,1.0,0.0,0.0,0.0,JamesO'Shaughnessy,40.0,24.0,72.0,43.0,James O'Shaughnessy
+JAMESWASHINGTON,nfl.p.31030,James,Washington,WR,PIT,SEA,SEA@PIT,1:00PM EDT,12.0,6.1, ,No,0.0,0.0,0.0,0.0,1.0,JamesWashington,55.7,33.0,101.0,54.0,James Washington
+JAMESWHITE,nfl.p.27658,James,White,RB,NE,MIA,NE@MIA,1:00PM EDT,22.0,10.7, ,No,0.0,0.0,1.0,0.0,0.0,JamesWhite,28.4,16.0,39.0,27.0,James White
+JAMESWINCHESTER,nfl.p.27494,James,Winchester,TE,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,JamesWinchester,,,,,
+JAMISONCROWDER,,,,,,,,,,,,,,,,,,,36.9,16.0,60.0,36.0,Jamison Crowder
+JAMIZEOLAWALE,nfl.p.26535,Jamize,Olawale,RB,DAL,WAS,DAL@WAS,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,JamizeOlawale,98.4,85.0,126.0,105.0,Jamize Olawale
+JAREDCOOK,nfl.p.9353,Jared,Cook,TE,NO,LAR,NO@LAR,4:25PM EDT,17.0,4.7, ,No,0.0,1.0,0.0,0.0,0.0,JaredCook,9.2,4.0,19.0,9.0,Jared Cook
+JAREDGOFF,nfl.p.29235,Jared,Goff,QB,LAR,NO,NO@LAR,4:25PM EDT,35.0,10.4, ,No,1.0,0.0,0.0,0.0,0.0,JaredGoff,9.1,3.0,18.0,9.0,Jared Goff
+JARIUSWRIGHT,,,,,,,,,,,,,,,,,,,103.6,81.0,117.0,113.0,Jarius Wright
+JARONBROWN,nfl.p.27074,Jaron,Brown,WR,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,4.9, ,No,0.0,0.0,0.0,0.0,1.0,JaronBrown,97.4,67.0,114.0,98.0,Jaron Brown
+JARRETTSTIDHAM,nfl.p.31965,Jarrett,Stidham,QB,NE,MIA,NE@MIA,1:00PM EDT,22.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,JarrettStidham,37.4,36.0,38.0,38.0,Jarrett Stidham
+JARVISLANDRY,,,,,,,,,,,,,,,,,,,36.1,22.0,50.0,34.0,Jarvis Landry
+JASONWITTEN,nfl.p.6405,Jason,Witten,TE,DAL,WAS,DAL@WAS,1:00PM EDT,14.0,9.0, ,No,0.0,1.0,0.0,0.0,0.0,JasonWitten,24.8,15.0,36.0,23.0,Jason Witten
+JAVONWIMS,nfl.p.31194,Javon,Wims,WR,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JavonWims,134.0,108.0,161.0,141.0,Javon Wims
+JAX,nfl.t.30,Jacksonville,Jaguars,DEF,JAX,HOU,JAX@HOU,1:00PM EDT,15.0,-4.0, ,No,0.0,0.0,0.0,1.0,0.0,JAX,,,,,
+JAYLENSAMUELS,nfl.p.31135,Jaylen,Samuels,RB,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,1.1, ,No,0.0,0.0,1.0,0.0,0.0,JaylenSamuels,57.0,38.0,67.0,56.0,Jaylen Samuels
+JDMCKISSIC,nfl.p.29650,J.D.,McKissic,RB,DET,LAC,LAC@DET,1:00PM EDT,10.0,3.4, ,No,0.0,0.0,1.0,0.0,0.0,J.D.McKissic,90.3,71.0,129.0,90.0,J.D. McKissic
+JEFFDRISKEL,nfl.p.29441,Jeff,Driskel,QB,CIN,SF,SF@CIN,1:00PM EDT,20.0,10.9, ,No,1.0,0.0,0.0,0.0,0.0,JeffDriskel,,,,,
+JEFFHEUERMAN,nfl.p.28480,Jeff,Heuerman,TE,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,5.6, ,No,0.0,1.0,0.0,0.0,0.0,JeffHeuerman,49.8,36.0,61.0,47.0,Jeff Heuerman
+JEFFWILSON,,,,,,,,,,,,,,,,,,,68.4,38.0,100.0,72.0,Jeff Wilson
+JERELLADAMS,nfl.p.29418,Jerell,Adams,TE,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,JerellAdams,79.5,77.0,82.0,87.0,Jerell Adams
+JEREMYSPRINKLE,nfl.p.30267,Jeremy,Sprinkle,TE,WAS,DAL,DAL@WAS,1:00PM EDT,10.0,1.3, ,No,0.0,1.0,0.0,0.0,0.0,JeremySprinkle,57.3,40.0,70.0,59.0,Jeremy Sprinkle
+JESSEJAMES,nfl.p.28548,Jesse,James,TE,DET,LAC,LAC@DET,1:00PM EDT,10.0,2.0, ,No,0.0,1.0,0.0,0.0,0.0,JesseJames,43.4,25.0,52.0,45.0,Jesse James
+JIMMYGAROPPOLO,nfl.p.27590,Jimmy,Garoppolo,QB,SF,CIN,SF@CIN,1:00PM EDT,25.0,11.4, ,No,1.0,0.0,0.0,0.0,0.0,JimmyGaroppolo,22.1,16.0,29.0,22.0,Jimmy Garoppolo
+JIMMYGRAHAM,,,,,,,,,,,,,,,,,,,14.7,5.0,20.0,15.0,Jimmy Graham
+JJARCEGAWHITESIDE,nfl.p.31889,JJ,Arcega-Whiteside,WR,PHI,ATL,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JJArcega-Whiteside,100.0,74.0,144.0,100.0,J.J. Arcega-Whiteside
+JJNELSON,,,,,,,,,,,,,,,,,,,112.4,92.0,148.0,119.0,J.J. Nelson
+JOEFLACCO,nfl.p.8795,Joe,Flacco,QB,DEN,CHI,CHI@DEN,4:25PM EDT,20.0,14.8, ,No,1.0,0.0,0.0,0.0,0.0,JoeFlacco,30.4,21.0,32.0,30.0,Joe Flacco
+JOEMIXON,,,,,,,,,,,,,,,,,,,37.0,7.0,95.0,51.0,Joe Mixon
+JOHNBROWN,nfl.p.27619,John,Brown,WR,BUF,NYG,BUF@NYG,1:00PM EDT,19.0,21.8, ,No,0.0,0.0,0.0,0.0,1.0,JohnBrown,27.4,6.0,54.0,29.0,John Brown
+JOHNKELLY,,,,,,,,,,,,,,,,,,,86.3,71.0,94.0,92.0,John Kelly
+JOHNNYHOLTON,nfl.p.29958,Johnny,Holton,WR,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JohnnyHolton,,,,,
+JOHNNYMUNDT,nfl.p.30373,Johnny,Mundt,TE,LAR,NO,NO@LAR,4:25PM EDT,10.0,0.5, ,No,0.0,1.0,0.0,0.0,0.0,JohnnyMundt,,,,,
+JOHNROSS,,,,,,,,,,,,,,,,,,,40.7,18.0,63.0,40.0,John Ross
+JOHNROSSIII,nfl.p.30122,John,Ross III,WR,CIN,SF,SF@CIN,1:00PM EDT,16.0,31.3, ,No,0.0,0.0,0.0,0.0,1.0,JohnRoss III,,,,,
+JOHNURSUA,nfl.p.32068,John,Ursua,WR,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JohnUrsua,126.4,104.0,137.0,137.0,John Ursua
+JOJONATSON,nfl.p.30531,JoJo,Natson,WR,LAR,NO,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JoJoNatson,126.5,102.0,151.0,163.0,JoJo Natson
+JONNUSMITH,nfl.p.30213,Jonnu,Smith,TE,TEN,IND,IND@TEN,1:00PM EDT,10.0,2.2, ,No,0.0,1.0,0.0,0.0,0.0,JonnuSmith,43.1,29.0,54.0,44.0,Jonnu Smith
+JORDANAKINS,nfl.p.31068,Jordan,Akins,TE,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,2.2, ,No,0.0,1.0,0.0,0.0,0.0,JordanAkins,35.5,23.0,68.0,34.0,Jordan Akins
+JORDANCHUNN,nfl.p.31280,Jordan,Chunn,RB,DAL,WAS,DAL@WAS,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,JordanChunn,,,,,
+JORDANHOWARD,nfl.p.29384,Jordan,Howard,RB,PHI,ATL,PHI@ATL,8:20PM EDT,14.0,6.5, ,No,0.0,0.0,1.0,0.0,0.0,JordanHoward,41.8,33.0,60.0,42.0,Jordan Howard
+JORDANSCARLETT,,,,,,,,,,,,,,,,,,,82.9,68.0,114.0,82.0,Jordan Scarlett
+JORDANWILKINS,nfl.p.31139,Jordan,Wilkins,RB,IND,TEN,IND@TEN,1:00PM EDT,10.0,3.5, ,No,0.0,0.0,1.0,0.0,0.0,JordanWilkins,79.1,69.0,93.0,78.0,Jordan Wilkins
+JOSHADAMS,,,,,,,,,,,,,,,,,,,87.4,64.0,102.0,91.0,Josh Adams
+JOSHALLEN,nfl.p.30977,Josh,Allen,QB,BUF,NYG,BUF@NYG,1:00PM EDT,27.0,18.0, ,No,1.0,0.0,0.0,0.0,0.0,JoshAllen,12.9,2.0,26.0,14.0,Josh Allen
+JOSHBELLAMY,,,,,,,,,,,,,,,,,,,115.5,72.0,129.0,126.0,Josh Bellamy
+JOSHDOBBS,nfl.p.30248,Josh,Dobbs,QB,JAX,PIT,SEA@PIT,1:00PM EDT,20.0,0.4, ,No,1.0,0.0,0.0,0.0,0.0,JoshDobbs,,,,,
+JOSHGORDON,nfl.p.26561,Josh,Gordon,WR,NE,MIA,NE@MIA,1:00PM EDT,26.0,14.8, ,No,0.0,0.0,0.0,0.0,1.0,JoshGordon,23.0,11.0,44.0,22.0,Josh Gordon
+JOSHHILL,nfl.p.26950,Josh,Hill,TE,NO,LAR,NO@LAR,4:25PM EDT,10.0,0.3, ,No,0.0,1.0,0.0,0.0,0.0,JoshHill,52.0,36.0,62.0,51.0,Josh Hill
+JOSHJACOBS,nfl.p.31856,Josh,Jacobs,RB,OAK,KC,KC@OAK,4:05PM EDT,21.0,23.8, ,No,0.0,0.0,1.0,0.0,0.0,JoshJacobs,15.3,5.0,28.0,16.0,Josh Jacobs
+JOSHJOHNSON,nfl.p.8937,Josh,Johnson,QB,DET,LAC,LAC@DET,1:00PM EDT,20.0,13.4, ,No,1.0,0.0,0.0,0.0,0.0,JoshJohnson,,,,,
+JOSHMCCOWN,nfl.p.5967,Josh,McCown,QB,PHI,ATL,PHI@ATL,8:20PM EDT,20.0,6.2, ,No,1.0,0.0,0.0,0.0,0.0,JoshMcCown,,,,,
+JOSHREYNOLDS,nfl.p.30230,Josh,Reynolds,WR,LAR,NO,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JoshReynolds,96.7,70.0,124.0,96.0,Josh Reynolds
+JOSHROSEN,nfl.p.30980,Josh,Rosen,QB,MIA,NE,NE@MIA,1:00PM EDT,20.0,-0.8, ,No,1.0,0.0,0.0,0.0,0.0,JoshRosen,33.0,31.0,35.0,33.0,Josh Rosen
+JPHOLTZ,nfl.p.29666,J.P.,Holtz,TE,CHI,WAS,DAL@WAS,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,J.P.Holtz,,,,,
+JUJUSMITHSCHUSTER,nfl.p.30175,JuJu,Smith-Schuster,WR,PIT,SEA,SEA@PIT,1:00PM EDT,29.0,10.8, ,No,0.0,0.0,0.0,0.0,1.0,JuJuSmith-Schuster,6.1,2.0,29.0,6.0,JuJu Smith-Schuster
+JULIANEDELMAN,nfl.p.9496,Julian,Edelman,WR,NE,MIA,NE@MIA,1:00PM EDT,19.0,13.4, ,No,0.0,0.0,0.0,0.0,1.0,JulianEdelman,16.3,5.0,29.0,15.0,Julian Edelman
+JULIOJONES,nfl.p.24793,Julio,Jones,WR,ATL,PHI,PHI@ATL,8:20PM EDT,36.0,12.1, ,No,0.0,0.0,0.0,0.0,1.0,JulioJones,1.8,1.0,7.0,1.0,Julio Jones
+JUSTICEHILL,nfl.p.31945,Justice,Hill,RB,BAL,ARI,ARI@BAL,1:00PM EDT,13.0,2.7, ,No,0.0,0.0,1.0,0.0,0.0,JusticeHill,55.1,44.0,68.0,57.0,Justice Hill
+JUSTINHARDY,nfl.p.28495,Justin,Hardy,WR,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,6.1, ,No,0.0,0.0,0.0,0.0,1.0,JustinHardy,118.5,83.0,164.0,122.0,Justin Hardy
+JUSTINJACKSON,nfl.p.31221,Justin,Jackson,RB,LAC,DET,LAC@DET,1:00PM EDT,15.0,6.6, ,No,0.0,0.0,1.0,0.0,0.0,JustinJackson,38.6,29.0,53.0,38.0,Justin Jackson
+JUSTINWATSON,,,,,,,,,,,,,,,,,,,128.9,103.0,154.0,128.0,Justin Watson
+JUWANNWINFREE,nfl.p.32019,Juwann,Winfree,WR,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,JuwannWinfree,,,,,
+KADENSMITH,nfl.p.32008,Kaden,Smith,TE,SF,CIN,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,KadenSmith,,,,,
+KALENBALLAGE,nfl.p.31100,Kalen,Ballage,RB,MIA,NE,NE@MIA,1:00PM EDT,10.0,1.7, ,No,0.0,0.0,1.0,0.0,0.0,KalenBallage,52.5,39.0,64.0,53.0,Kalen Ballage
+KARANHIGDON,,,,,,,,,,,,,,,,,,,103.0,83.0,127.0,125.0,Karan Higdon
+KC,nfl.t.12,Kansas City,Chiefs,DEF,KC,OAK,KC@OAK,4:05PM EDT,20.0,5.0, ,No,0.0,0.0,0.0,1.0,0.0,KC,12.1,5.0,26.0,11.0,KC
+KEELANCOLE,nfl.p.30396,Keelan,Cole,WR,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,5.4, ,No,0.0,0.0,0.0,0.0,1.0,KeelanCole,104.9,80.0,136.0,101.0,Keelan Cole
+KEELANDOSS,nfl.p.32342,Keelan,Doss,WR,OAK,KC,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,KeelanDoss,,,,,
+KEENANALLEN,nfl.p.26699,Keenan,Allen,WR,LAC,DET,LAC@DET,1:00PM EDT,24.0,22.3, ,No,0.0,0.0,0.0,0.0,1.0,KeenanAllen,7.1,2.0,25.0,7.0,Keenan Allen
+KEESEANJOHNSON,nfl.p.32006,KeeSean,Johnson,WR,ARI,BAL,ARI@BAL,1:00PM EDT,11.0,7.1, ,No,0.0,0.0,0.0,0.0,1.0,KeeSeanJohnson,77.4,31.0,106.0,78.0,KeeSean Johnson
+KEITHKIRKWOOD,nfl.p.31517,Keith,Kirkwood,WR,NO,LAR,NO@LAR,4:25PM EDT,10.0,5.9, ,No,0.0,0.0,0.0,0.0,1.0,KeithKirkwood,107.8,91.0,148.0,107.0,Keith Kirkwood
+KEITHSMITH,nfl.p.28141,Keith,Smith,RB,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,0.5, ,No,0.0,0.0,1.0,0.0,0.0,KeithSmith,107.0,101.0,113.0,130.0,Keith Smith
+KEKECOUTEE,nfl.p.31073,Keke,Coutee,WR,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,10.2, ,No,0.0,0.0,0.0,0.0,1.0,KekeCoutee,82.2,52.0,109.0,82.0,Keke Coutee
+KELVINHARMON,nfl.p.32038,Kelvin,Harmon,WR,WAS,DAL,DAL@WAS,1:00PM EDT,10.0,4.1, ,No,0.0,0.0,0.0,0.0,1.0,KelvinHarmon,113.9,100.0,127.0,118.0,Kelvin Harmon
+KENDRICKBOURNE,nfl.p.30551,Kendrick,Bourne,WR,SF,CIN,SF@CIN,1:00PM EDT,10.0,1.4, ,No,0.0,0.0,0.0,0.0,1.0,KendrickBourne,98.8,78.0,132.0,97.0,Kendrick Bourne
+KENJONBARNER,,,,,,,,,,,,,,,,,,,88.5,86.0,91.0,124.0,Kenjon Barner
+KENNYGOLLADAY,nfl.p.30209,Kenny,Golladay,WR,DET,LAC,LAC@DET,1:00PM EDT,16.0,12.2, ,No,0.0,0.0,0.0,0.0,1.0,KennyGolladay,22.6,10.0,35.0,21.0,Kenny Golladay
+KENNYSTILLS,nfl.p.26767,Kenny,Stills,WR,HOU,JAX,JAX@HOU,1:00PM EDT,11.0,11.2, ,No,0.0,0.0,0.0,0.0,1.0,KennyStills,65.3,46.0,101.0,64.0,Kenny Stills
+KENYANDRAKE,nfl.p.29307,Kenyan,Drake,RB,MIA,NE,NE@MIA,1:00PM EDT,13.0,3.7, ,No,0.0,0.0,1.0,0.0,0.0,KenyanDrake,36.7,22.0,60.0,35.0,Kenyan Drake
+KERRITHWHYTEJR,nfl.p.32054,Kerrith,Whyte Jr.,RB,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,KerrithWhyte Jr.,,,,,
+KERRYONJOHNSON,nfl.p.31013,Kerryon,Johnson,RB,DET,LAC,LAC@DET,1:00PM EDT,21.0,7.2, ,No,0.0,0.0,1.0,0.0,0.0,KerryonJohnson,20.0,9.0,30.0,20.0,Kerryon Johnson
+KHADARELHODGE,,,,,,,,,,,,,,,,,,,151.0,150.0,152.0,170.0,Khadarel Hodge
+KIRKCOUSINS,nfl.p.25812,Kirk,Cousins,QB,MIN,GB,MIN@GB,1:00PM EDT,27.0,14.3, ,No,1.0,0.0,0.0,0.0,0.0,KirkCousins,23.4,13.0,31.0,24.0,Kirk Cousins
+KYLEJUSZCZYK,nfl.p.26753,Kyle,Juszczyk,RB,SF,CIN,SF@CIN,1:00PM EDT,10.0,3.3, ,No,0.0,0.0,1.0,0.0,0.0,KyleJuszczyk,95.1,71.0,119.0,100.0,Kyle Juszczyk
+KYLERMURRAY,nfl.p.31833,Kyler,Murray,QB,ARI,BAL,ARI@BAL,1:00PM EDT,23.0,22.6, ,No,1.0,0.0,0.0,0.0,0.0,KylerMurray,20.7,5.0,30.0,21.0,Kyler Murray
+KYLERUDOLPH,nfl.p.24830,Kyle,Rudolph,TE,MIN,GB,MIN@GB,1:00PM EDT,16.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,KyleRudolph,19.6,15.0,30.0,18.0,Kyle Rudolph
+LAC,nfl.t.24,Los Angeles,Chargers,DEF,LAC,DET,LAC@DET,1:00PM EDT,14.0,2.0, ,No,0.0,0.0,0.0,1.0,0.0,LAC,11.3,3.0,24.0,10.0,LAC
+LAMARJACKSON,nfl.p.31002,Lamar,Jackson,QB,BAL,ARI,ARI@BAL,1:00PM EDT,31.0,33.6, ,No,1.0,0.0,0.0,0.0,0.0,LamarJackson,3.0,1.0,16.0,2.0,Lamar Jackson
+LANCEKENDRICKS,nfl.p.24834,Lance,Kendricks,TE,NE,MIA,NE@MIA,1:00PM EDT,10.0,2.3, ,No,0.0,1.0,0.0,0.0,0.0,LanceKendricks,,,,,
+LAR,nfl.t.14,Los Angeles,Rams,DEF,LAR,NO,NO@LAR,4:25PM EDT,17.0,9.0, ,No,0.0,0.0,0.0,1.0,0.0,LAR,21.6,3.0,30.0,23.0,LAR
+LARRYFITZGERALD,nfl.p.6762,Larry,Fitzgerald,WR,ARI,BAL,ARI@BAL,1:00PM EDT,17.0,21.3, ,No,0.0,0.0,0.0,0.0,1.0,LarryFitzgerald,36.0,19.0,53.0,33.0,Larry Fitzgerald
+LATAVIUSMURRAY,nfl.p.26804,Latavius,Murray,RB,NO,LAR,NO@LAR,4:25PM EDT,15.0,11.7, ,No,0.0,0.0,1.0,0.0,0.0,LataviusMurray,33.5,22.0,49.0,33.0,Latavius Murray
+LEESMITH,nfl.p.24946,Lee,Smith,TE,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,LeeSmith,58.3,49.0,64.0,75.0,Lee Smith
+LEONARDFOURNETTE,nfl.p.30117,Leonard,Fournette,RB,JAX,HOU,JAX@HOU,1:00PM EDT,20.0,9.4, ,No,0.0,0.0,1.0,0.0,0.0,LeonardFournette,16.2,4.0,26.0,17.0,Leonard Fournette
+LESEANMCCOY,nfl.p.9317,LeSean,McCoy,RB,KC,OAK,KC@OAK,4:05PM EDT,14.0,9.8, ,No,0.0,0.0,1.0,0.0,0.0,LeSeanMcCoy,26.3,16.0,50.0,24.0,LeSean McCoy
+LEVEONBELL,,,,,,,,,,,,,,,,,,,8.8,2.0,29.0,7.0,Le'Veon Bell
+LEVINETOILOLO,nfl.p.26756,Levine,Toilolo,TE,SF,CIN,SF@CIN,1:00PM EDT,10.0,3.9, ,No,0.0,1.0,0.0,0.0,0.0,LevineToilolo,79.0,68.0,90.0,86.0,Levine Toilolo
+LOGANPAULSEN,nfl.p.24608,Logan,Paulsen,TE,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,2.8, ,No,0.0,1.0,0.0,0.0,0.0,LoganPaulsen,66.0,50.0,82.0,82.0,Logan Paulsen
+LOGANTHOMAS,nfl.p.27648,Logan,Thomas,TE,DET,LAC,LAC@DET,1:00PM EDT,10.0,1.8, ,No,0.0,1.0,0.0,0.0,0.0,LoganThomas,70.0,59.0,79.0,81.0,Logan Thomas
+LUKESTOCKER,nfl.p.24891,Luke,Stocker,TE,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,LukeStocker,59.9,47.0,78.0,62.0,Luke Stocker
+MACKHOLLINS,nfl.p.30231,Mack,Hollins,WR,PHI,ATL,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,MackHollins,135.6,101.0,165.0,153.0,Mack Hollins
+MALCOLMBROWN,nfl.p.28990,Malcolm,Brown,RB,LAR,NO,NO@LAR,4:25PM EDT,16.0,17.3, ,No,0.0,0.0,1.0,0.0,0.0,MalcolmBrown,40.9,19.0,65.0,41.0,Malcolm Brown
+MALIKTURNER,nfl.p.31777,Malik,Turner,WR,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,1.5, ,No,0.0,0.0,0.0,0.0,1.0,MalikTurner,120.0,112.0,128.0,158.0,Malik Turner
+MARCEDESLEWIS,nfl.p.7777,Marcedes,Lewis,TE,GB,MIN,MIN@GB,1:00PM EDT,10.0,2.4, ,No,0.0,1.0,0.0,0.0,0.0,MarcedesLewis,53.2,32.0,70.0,55.0,Marcedes Lewis
+MARCUSJOHNSON,nfl.p.29678,Marcus,Johnson,WR,IND,TEN,IND@TEN,1:00PM EDT,10.0,4.8, ,No,0.0,0.0,0.0,0.0,1.0,MarcusJohnson,,,,,
+MARCUSMARIOTA,nfl.p.28390,Marcus,Mariota,QB,TEN,IND,IND@TEN,1:00PM EDT,25.0,24.3, ,No,1.0,0.0,0.0,0.0,0.0,MarcusMariota,22.7,10.0,29.0,23.0,Marcus Mariota
+MARKANDREWS,nfl.p.31056,Mark,Andrews,TE,BAL,ARI,ARI@BAL,1:00PM EDT,16.0,20.8, ,No,0.0,1.0,0.0,0.0,0.0,MarkAndrews,7.7,3.0,21.0,8.0,Mark Andrews
+MARKINGRAM,,,,,,,,,,,,,,,,,,,13.0,5.0,25.0,13.0,Mark Ingram
+MARKINGRAMII,nfl.p.24815,Mark,Ingram II,RB,BAL,ARI,ARI@BAL,1:00PM EDT,23.0,22.7, ,No,0.0,0.0,1.0,0.0,0.0,MarkIngram II,,,,,
+MARKWALTON,nfl.p.31082,Mark,Walton,RB,MIA,NE,NE@MIA,1:00PM EDT,10.0,0.1, ,No,0.0,0.0,1.0,0.0,0.0,MarkWalton,85.4,74.0,107.0,85.0,Mark Walton
+MARLONMACK,nfl.p.30256,Marlon,Mack,RB,IND,TEN,IND@TEN,1:00PM EDT,26.0,25.4, ,No,0.0,0.0,1.0,0.0,0.0,MarlonMack,16.3,5.0,29.0,18.0,Marlon Mack
+MARQISELEE,,,,,,,,,,,,,,,,,,,94.3,43.0,135.0,94.0,Marqise Lee
+MARQUEZVALDESSCANTLING,nfl.p.31144,Marquez,Valdes-Scantling,WR,GB,MIN,MIN@GB,1:00PM EDT,10.0,7.2, ,No,0.0,0.0,0.0,0.0,1.0,MarquezValdes-Scantling,44.7,35.0,69.0,44.0,Marquez Valdes-Scantling
+MARQUISEBROWN,,,,,,,,,,,,,,,,,,,45.1,21.0,77.0,45.0,Marquise Brown
+MARQUISEGOODWIN,nfl.p.26701,Marquise,Goodwin,WR,SF,CIN,SF@CIN,1:00PM EDT,13.0,1.2, ,No,0.0,0.0,0.0,0.0,1.0,MarquiseGoodwin,57.6,44.0,85.0,57.0,Marquise Goodwin
+MARVINJONES,,,,,,,,,,,,,,,,,,,39.8,28.0,70.0,39.0,Marvin Jones
+MARVINJONESJR,nfl.p.25876,Marvin,Jones Jr.,WR,DET,LAC,LAC@DET,1:00PM EDT,14.0,8.0, ,No,0.0,0.0,0.0,0.0,1.0,MarvinJones Jr.,,,,,
+MASONRUDOLPH,nfl.p.31046,Mason,Rudolph,QB,PIT,SEA,SEA@PIT,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,MasonRudolph,,,,,
+MATTBARKLEY,nfl.p.26721,Matt,Barkley,QB,BUF,NYG,BUF@NYG,1:00PM EDT,20.0,17.1, ,No,1.0,0.0,0.0,0.0,0.0,MattBarkley,,,,,
+MATTBREIDA,nfl.p.30552,Matt,Breida,RB,SF,CIN,SF@CIN,1:00PM EDT,18.0,3.7, ,No,0.0,0.0,1.0,0.0,0.0,MattBreida,21.2,9.0,28.0,21.0,Matt Breida
+MATTDAYES,nfl.p.30365,Matt,Dayes,RB,NO,LAR,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,MattDayes,,,,,
+MATTHEWSLATER,nfl.p.8930,Matthew,Slater,WR,NE,MIA,NE@MIA,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,MatthewSlater,,,,,
+MATTHEWSTAFFORD,nfl.p.9265,Matthew,Stafford,QB,DET,LAC,LAC@DET,1:00PM EDT,27.0,27.6, ,No,1.0,0.0,0.0,0.0,0.0,MatthewStafford,20.2,13.0,29.0,20.0,Matthew Stafford
+MATTLACOSSE,,,,,,,,,,,,,,,,,,,47.9,32.0,69.0,50.0,Matt LaCosse
+MATTMOORE,nfl.p.8544,Matt,Moore,QB,KC,OAK,KC@OAK,4:05PM EDT,20.0,-0.1, ,No,1.0,0.0,0.0,0.0,0.0,MattMoore,,,,,
+MATTORZECH,nfl.p.32306,Matt,Orzech,TE,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,MattOrzech,,,,,
+MATTRYAN,nfl.p.8780,Matt,Ryan,QB,ATL,PHI,PHI@ATL,8:20PM EDT,37.0,20.6, ,No,1.0,0.0,0.0,0.0,0.0,MattRyan,7.3,2.0,25.0,7.0,Matt Ryan
+MATTSCHAUB,nfl.p.6849,Matt,Schaub,QB,ATL,PHI,PHI@ATL,8:20PM EDT,20.0,0.3, ,No,1.0,0.0,0.0,0.0,0.0,MattSchaub,,,,,
+MAXXWILLIAMS,nfl.p.28443,Maxx,Williams,TE,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,2.0, ,No,0.0,1.0,0.0,0.0,0.0,MaxxWilliams,58.6,46.0,73.0,60.0,Maxx Williams
+MECOLEHARDMAN,nfl.p.31888,Mecole,Hardman,WR,KC,OAK,KC@OAK,4:05PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,MecoleHardman,45.7,13.0,77.0,47.0,Mecole Hardman
+MIA,nfl.t.15,Miami,Dolphins,DEF,MIA,NE,NE@MIA,1:00PM EDT,10.0,-3.0, ,No,0.0,0.0,0.0,1.0,0.0,MIA,31.9,25.0,32.0,32.0,MIA
+MICHAELCRABTREE,nfl.p.9274,Michael,Crabtree,WR,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,7.2, ,No,0.0,0.0,0.0,0.0,1.0,MichaelCrabtree,110.7,49.0,159.0,116.0,Michael Crabtree
+MICHAELGALLUP,nfl.p.31051,Michael,Gallup,WR,DAL,WAS,DAL@WAS,1:00PM EDT,17.0,19.3, ,No,0.0,0.0,0.0,0.0,1.0,MichaelGallup,33.2,18.0,60.0,30.0,Michael Gallup
+MICHAELTHOMAS,nfl.p.29281,Michael,Thomas,WR,NO,LAR,NO@LAR,4:25PM EDT,33.0,17.3, ,No,0.0,0.0,0.0,0.0,1.0,MichaelThomas,4.6,1.0,10.0,4.0,Michael Thomas
+MIKEBOONE,nfl.p.31228,Mike,Boone,RB,MIN,GB,MIN@GB,1:00PM EDT,10.0,1.0, ,No,0.0,0.0,1.0,0.0,0.0,MikeBoone,84.2,75.0,120.0,83.0,Mike Boone
+MIKEDAVIS,nfl.p.28514,Mike,Davis,RB,CHI,DEN,CHI@DEN,4:25PM EDT,12.0,6.6, ,No,0.0,0.0,1.0,0.0,0.0,MikeDavis,47.3,30.0,60.0,46.0,Mike Davis
+MIKEEVANS,,,,,,,,,,,,,,,,,,,11.0,3.0,26.0,10.0,Mike Evans
+MIKEGESICKI,nfl.p.31012,Mike,Gesicki,TE,MIA,NE,NE@MIA,1:00PM EDT,10.0,4.1, ,No,0.0,1.0,0.0,0.0,0.0,MikeGesicki,24.3,11.0,35.0,24.0,Mike Gesicki
+MIKEGLENNON,nfl.p.26696,Mike,Glennon,QB,OAK,KC,KC@OAK,4:05PM EDT,20.0,5.5, ,No,1.0,0.0,0.0,0.0,0.0,MikeGlennon,,,,,
+MIKETHOMAS,nfl.p.29440,Mike,Thomas,WR,LAR,NO,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,MikeThomas,157.5,152.0,163.0,173.0,Mike Thomas
+MIKEWEBER,,,,,,,,,,,,,,,,,,,77.0,66.0,88.0,119.0,Mike Weber
+MIKEWILLIAMS,,,,,,,,,,,,,,,,,,,46.1,23.0,131.0,55.0,Mike Williams
+MILESBOYKIN,nfl.p.31925,Miles,Boykin,WR,BAL,ARI,ARI@BAL,1:00PM EDT,12.0,7.0, ,No,0.0,0.0,0.0,0.0,1.0,MilesBoykin,84.5,59.0,123.0,84.0,Miles Boykin
+MILESSANDERS,nfl.p.31885,Miles,Sanders,RB,PHI,ATL,PHI@ATL,8:20PM EDT,16.0,3.2, ,No,0.0,0.0,1.0,0.0,0.0,MilesSanders,29.5,19.0,44.0,30.0,Miles Sanders
+MIN,nfl.t.16,Minnesota,Vikings,DEF,MIN,GB,MIN@GB,1:00PM EDT,17.0,16.0, ,No,0.0,0.0,0.0,1.0,0.0,MIN,15.3,5.0,28.0,15.0,MIN
+MITCHELLTRUBISKY,nfl.p.30115,Mitchell,Trubisky,QB,CHI,DEN,CHI@DEN,4:25PM EDT,20.0,9.2, ,No,1.0,0.0,0.0,0.0,0.0,MitchellTrubisky,,,,,
+MITCHTRUBISKY,,,,,,,,,,,,,,,,,,,24.3,11.0,30.0,25.0,Mitch Trubisky
+MOALIECOX,nfl.p.30112,Mo,Alie-Cox,TE,IND,TEN,IND@TEN,1:00PM EDT,10.0,0.8, ,No,0.0,1.0,0.0,0.0,0.0,MoAlie-Cox,62.1,45.0,70.0,63.0,Mo Alie-Cox
+MOHAMEDSANU,nfl.p.25793,Mohamed,Sanu,WR,ATL,PHI,PHI@ATL,8:20PM EDT,16.0,8.2, ,No,0.0,0.0,0.0,0.0,1.0,MohamedSanu,55.4,41.0,70.0,51.0,Mohamed Sanu
+MYCOLEPRUITT,nfl.p.28531,MyCole,Pruitt,TE,TEN,IND,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,MyColePruitt,66.6,50.0,74.0,71.0,MyCole Pruitt
+MYLESGASKIN,nfl.p.32066,Myles,Gaskin,RB,MIA,NE,NE@MIA,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,MylesGaskin,92.1,80.0,117.0,95.0,Myles Gaskin
+NE,nfl.t.17,New England,Patriots,DEF,NE,MIA,NE@MIA,1:00PM EDT,22.0,10.0, ,No,0.0,0.0,0.0,1.0,0.0,NE,1.3,1.0,15.0,1.0,NE
+NELSONAGHOLOR,nfl.p.28408,Nelson,Agholor,WR,PHI,ATL,PHI@ATL,8:20PM EDT,11.0,2.1, ,No,0.0,0.0,0.0,0.0,1.0,NelsonAgholor,84.6,50.0,102.0,86.0,Nelson Agholor
+NICKBAWDEN,nfl.p.31207,Nick,Bawden,RB,DET,LAC,LAC@DET,1:00PM EDT,10.0,0.5, ,No,0.0,0.0,1.0,0.0,0.0,NickBawden,104.3,88.0,117.0,126.0,Nick Bawden
+NICKBELLORE,nfl.p.25295,Nick,Bellore,RB,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,NickBellore,,,,,
+NICKBOYLE,nfl.p.28559,Nick,Boyle,TE,BAL,ARI,ARI@BAL,1:00PM EDT,10.0,4.1, ,No,0.0,1.0,0.0,0.0,0.0,NickBoyle,50.6,37.0,60.0,48.0,Nick Boyle
+NICKCHUBB,,,,,,,,,,,,,,,,,,,5.8,1.0,19.0,5.0,Nick Chubb
+NICKMULLENS,nfl.p.30563,Nick,Mullens,QB,SF,CIN,SF@CIN,1:00PM EDT,20.0,16.7, ,No,1.0,0.0,0.0,0.0,0.0,NickMullens,,,,,
+NICKOLEARY,nfl.p.28582,Nick,O'Leary,TE,MIA,NE,NE@MIA,1:00PM EDT,10.0,3.1, ,No,0.0,1.0,0.0,0.0,0.0,NickO'Leary,58.3,30.0,66.0,65.0,Nick O'Leary
+NICKVANNETT,nfl.p.29328,Nick,Vannett,TE,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,2.6, ,No,0.0,1.0,0.0,0.0,0.0,NickVannett,33.0,22.0,49.0,32.0,Nick Vannett
+NO,nfl.t.18,New Orleans,Saints,DEF,NO,LAR,NO@LAR,4:25PM EDT,12.0,7.0, ,No,0.0,0.0,0.0,1.0,0.0,NO,25.6,8.0,29.0,26.0,NO
+NOAHFANT,nfl.p.31852,Noah,Fant,TE,DEN,CHI,CHI@DEN,4:25PM EDT,11.0,3.4, ,No,0.0,1.0,0.0,0.0,0.0,NoahFant,22.6,10.0,38.0,22.0,Noah Fant
+NSIMBAWEBSTER,nfl.p.32137,Nsimba,Webster,WR,LAR,NO,NO@LAR,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,NsimbaWebster,,,,,
+NYG,nfl.t.19,New York,Giants,DEF,NYG,BUF,BUF@NYG,1:00PM EDT,13.0,-4.0, ,No,0.0,0.0,0.0,1.0,0.0,NYG,18.2,4.0,29.0,18.0,NYG
+NYHEIMHINES,nfl.p.31074,Nyheim,Hines,RB,IND,TEN,IND@TEN,1:00PM EDT,11.0,3.7, ,No,0.0,0.0,1.0,0.0,0.0,NyheimHines,55.5,40.0,68.0,54.0,Nyheim Hines
+NYJ,,,,,,,,,,,,,,,,,,,19.3,8.0,27.0,19.0,NYJ
+OAK,nfl.t.13,Oakland,Raiders,DEF,OAK,KC,KC@OAK,4:05PM EDT,10.0,4.0, ,No,0.0,0.0,0.0,1.0,0.0,OAK,30.9,21.0,33.0,31.0,OAK
+ODELLBECKHAMJR,,,,,,,,,,,,,,,,,,,3.8,1.0,13.0,3.0,Odell Beckham Jr.
+OJHOWARD,,,,,,,,,,,,,,,,,,,5.6,3.0,18.0,5.0,O.J. Howard
+OLABISIJOHNSON,nfl.p.32079,Olabisi,Johnson,WR,MIN,GB,MIN@GB,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,OlabisiJohnson,128.0,111.0,142.0,133.0,Olabisi Johnson
+OLAMIDEZACCHEAUS,nfl.p.32123,Olamide,Zaccheaus,WR,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,OlamideZaccheaus,,,,,
+PARRISCAMPBELL,nfl.p.31891,Parris,Campbell,WR,IND,TEN,IND@TEN,1:00PM EDT,10.0,1.3, ,No,0.0,0.0,0.0,0.0,1.0,ParrisCampbell,81.9,58.0,121.0,81.0,Parris Campbell
+PATRICKDIMARCO,nfl.p.25158,Patrick,DiMarco,RB,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,1.9, ,No,0.0,0.0,1.0,0.0,0.0,PatrickDiMarco,92.5,73.0,109.0,103.0,Patrick DiMarco
+PATRICKLAIRD,nfl.p.32439,Patrick,Laird,RB,MIA,NE,NE@MIA,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,PatrickLaird,,,,,
+PATRICKMAHOMES,nfl.p.30123,Patrick,Mahomes,QB,KC,OAK,KC@OAK,4:05PM EDT,41.0,27.3, ,No,1.0,0.0,0.0,0.0,0.0,PatrickMahomes,1.1,1.0,7.0,1.0,Patrick Mahomes
+PATRICKRICARD,nfl.p.30592,Patrick,Ricard,RB,BAL,ARI,ARI@BAL,1:00PM EDT,10.0,6.6, ,No,0.0,0.0,1.0,0.0,0.0,PatrickRicard,,,,,
+PATRICKSCALES,nfl.p.25370,Patrick,Scales,TE,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,PatrickScales,,,,,
+PAULPERKINS,nfl.p.29383,Paul,Perkins,RB,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,PaulPerkins,90.0,78.0,115.0,112.0,Paul Perkins
+PAULRICHARDSON,,,,,,,,,,,,,,,,,,,74.6,43.0,92.0,74.0,Paul Richardson
+PAULRICHARDSONJR,nfl.p.27573,Paul,Richardson Jr.,WR,WAS,DAL,DAL@WAS,1:00PM EDT,14.0,5.6, ,No,0.0,0.0,0.0,0.0,1.0,PaulRichardson Jr.,,,,,
+PEYTONBARBER,,,,,,,,,,,,,,,,,,,45.6,31.0,64.0,44.0,Peyton Barber
+PHAROHCOOPER,nfl.p.29351,Pharoh,Cooper,WR,CIN,SF,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,PharohCooper,151.5,144.0,159.0,171.0,Pharoh Cooper
+PHI,nfl.t.21,Philadelphia,Eagles,DEF,PHI,ATL,PHI@ATL,8:20PM EDT,12.0,1.0, ,No,0.0,0.0,0.0,1.0,0.0,PHI,19.6,2.0,25.0,20.0,PHI
+PHILIPRIVERS,nfl.p.6763,Philip,Rivers,QB,LAC,DET,LAC@DET,1:00PM EDT,32.0,24.9, ,No,1.0,0.0,0.0,0.0,0.0,PhilipRivers,16.1,5.0,24.0,16.0,Philip Rivers
+PHILLIPDORSETT,,,,,,,,,,,,,,,,,,,78.7,28.0,114.0,79.0,Phillip Dorsett
+PHILLIPDORSETTII,nfl.p.28417,Phillip,Dorsett II,WR,NE,MIA,NE@MIA,1:00PM EDT,14.0,23.5, ,No,0.0,0.0,0.0,0.0,1.0,PhillipDorsett II,,,,,
+PHILLIPLINDSAY,nfl.p.31379,Phillip,Lindsay,RB,DEN,CHI,CHI@DEN,4:25PM EDT,16.0,8.6, ,No,0.0,0.0,1.0,0.0,0.0,PhillipLindsay,29.3,10.0,42.0,29.0,Phillip Lindsay
+PIT,nfl.t.23,Pittsburgh,Steelers,DEF,PIT,SEA,SEA@PIT,1:00PM EDT,14.0,0.0, ,No,0.0,0.0,0.0,1.0,0.0,PIT,17.4,7.0,29.0,17.0,PIT
+PRESTONWILLIAMS,nfl.p.32447,Preston,Williams,WR,MIA,NE,NE@MIA,1:00PM EDT,10.0,9.9, ,No,0.0,0.0,0.0,0.0,1.0,PrestonWilliams,73.8,37.0,145.0,77.0,Preston Williams
+QADREEOLLISON,nfl.p.31984,Qadree,Ollison,RB,ATL,PHI,PHI@ATL,8:20PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,QadreeOllison,92.9,76.0,98.0,96.0,Qadree Ollison
+RAHEEMMOSTERT,nfl.p.28654,Raheem,Mostert,RB,SF,CIN,SF@CIN,1:00PM EDT,13.0,4.5, ,No,0.0,0.0,1.0,0.0,0.0,RaheemMostert,47.7,21.0,87.0,49.0,Raheem Mostert
+RANDALLCOBB,nfl.p.24851,Randall,Cobb,WR,DAL,WAS,DAL@WAS,1:00PM EDT,17.0,14.9, ,No,0.0,0.0,0.0,0.0,1.0,RandallCobb,64.6,42.0,92.0,61.0,Randall Cobb
+RASHAADPENNY,nfl.p.30997,Rashaad,Penny,RB,SEA,PIT,SEA@PIT,1:00PM EDT,11.0,1.8, ,No,0.0,0.0,1.0,0.0,0.0,RashaadPenny,46.6,38.0,59.0,45.0,Rashaad Penny
+RASHARDHIGGINS,,,,,,,,,,,,,,,,,,,72.3,54.0,90.0,70.0,Rashard Higgins
+RAYRAYMCCLOUD,,,,,,,,,,,,,,,,,,,137.7,109.0,157.0,161.0,Ray-Ray McCloud
+REGGIEBONNAFON,,,,,,,,,,,,,,,,,,,90.1,71.0,101.0,94.0,Reggie Bonnafon
+REXBURKHEAD,nfl.p.26813,Rex,Burkhead,RB,NE,MIA,NE@MIA,1:00PM EDT,10.0,11.0, ,No,0.0,0.0,1.0,0.0,0.0,RexBurkhead,44.2,14.0,62.0,43.0,Rex Burkhead
+RHETTELLISON,nfl.p.25838,Rhett,Ellison,TE,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,1.3, ,No,0.0,1.0,0.0,0.0,0.0,RhettEllison,52.1,43.0,64.0,53.0,Rhett Ellison
+RICHARDRODGERS,nfl.p.27626,Richard,Rodgers,TE,PHI,ATL,PHI@ATL,8:20PM EDT,10.0,1.2, ,No,0.0,1.0,0.0,0.0,0.0,RichardRodgers,,,,,
+RICHIEJAMES,,,,,,,,,,,,,,,,,,,108.5,80.0,137.0,114.0,Richie James
+RICHIEJAMESJR,nfl.p.31210,Richie,James Jr.,WR,SF,CIN,SF@CIN,1:00PM EDT,10.0,10.4, ,No,0.0,0.0,0.0,0.0,1.0,RichieJames Jr.,,,,,
+RICKYSEALSJONES,,,,,,,,,,,,,,,,,,,55.0,41.0,69.0,80.0,Ricky Seals-Jones
+RILEYRIDLEY,nfl.p.31958,Riley,Ridley,WR,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,RileyRidley,136.3,113.0,157.0,156.0,Riley Ridley
+ROBBYANDERSON,,,,,,,,,,,,,,,,,,,36.1,24.0,64.0,37.0,Robby Anderson
+ROBERTFOSTER,nfl.p.31601,Robert,Foster,WR,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,7.8, ,No,0.0,0.0,0.0,0.0,1.0,RobertFoster,92.0,51.0,129.0,93.0,Robert Foster
+ROBERTGRIFFIN,,,,,,,,,,,,,,,,,,,40.1,38.0,41.0,41.0,Robert Griffin
+ROBERTGRIFFINIII,nfl.p.25712,Robert,Griffin III,QB,BAL,ARI,ARI@BAL,1:00PM EDT,20.0,7.1, ,No,1.0,0.0,0.0,0.0,0.0,RobertGriffin III,,,,,
+ROBERTTONYAN,nfl.p.30777,Robert,Tonyan,TE,GB,MIN,MIN@GB,1:00PM EDT,10.0,3.3, ,No,0.0,1.0,0.0,0.0,0.0,RobertTonyan,50.6,30.0,81.0,54.0,Robert Tonyan
+ROBERTWOODS,nfl.p.26664,Robert,Woods,WR,LAR,NO,NO@LAR,4:25PM EDT,23.0,12.6, ,No,0.0,0.0,0.0,0.0,1.0,RobertWoods,12.5,7.0,49.0,11.0,Robert Woods
+RODSMITH,nfl.p.28718,Rod,Smith,RB,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,2.0, ,No,0.0,0.0,1.0,0.0,0.0,RodSmith,,,,,
+RONALDJONESII,,,,,,,,,,,,,,,,,,,37.0,27.0,57.0,36.0,Ronald Jones II
+ROOSEVELTNIX,,,,,,,,,,,,,,,,,,,115.5,114.0,117.0,132.0,Roosevelt Nix
+ROSSDWELLEY,nfl.p.31329,Ross,Dwelley,TE,SF,CIN,SF@CIN,1:00PM EDT,10.0,0.8, ,No,0.0,1.0,0.0,0.0,0.0,RossDwelley,71.5,61.0,87.0,68.0,Ross Dwelley
+ROYCEFREEMAN,nfl.p.31041,Royce,Freeman,RB,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,6.6, ,No,0.0,0.0,1.0,0.0,0.0,RoyceFreeman,38.5,31.0,53.0,37.0,Royce Freeman
+RUSSELLGAGE,,,,,,,,,,,,,,,,,,,130.8,119.0,142.0,135.0,Russell Gage
+RUSSELLSHEPARD,nfl.p.27055,Russell,Shepard,WR,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,4.5, ,No,0.0,0.0,0.0,0.0,1.0,RussellShepard,121.5,99.0,136.0,129.0,Russell Shepard
+RUSSELLWILSON,nfl.p.25785,Russell,Wilson,QB,SEA,PIT,SEA@PIT,1:00PM EDT,30.0,16.6, ,No,1.0,0.0,0.0,0.0,0.0,RussellWilson,14.4,6.0,21.0,15.0,Russell Wilson
+RYANFINLEY,nfl.p.31936,Ryan,Finley,QB,CIN,SF,SF@CIN,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,RyanFinley,,,,,
+RYANFITZPATRICK,nfl.p.7426,Ryan,Fitzpatrick,QB,MIA,NE,NE@MIA,1:00PM EDT,22.0,11.2, ,No,1.0,0.0,0.0,0.0,0.0,RyanFitzpatrick,30.5,16.0,32.0,31.0,Ryan Fitzpatrick
+RYANGRANT,nfl.p.27670,Ryan,Grant,WR,OAK,KC,KC@OAK,4:05PM EDT,10.0,3.1, ,No,0.0,0.0,0.0,0.0,1.0,RyanGrant,93.4,64.0,110.0,92.0,Ryan Grant
+RYANGRIFFIN,,,,,,,,,,,,,,,,,,,33.7,18.0,61.0,36.0,Ryan Griffin
+RYANIZZO,nfl.p.31220,Ryan,Izzo,TE,NE,MIA,NE@MIA,1:00PM EDT,10.0,0.8, ,No,0.0,1.0,0.0,0.0,0.0,RyanIzzo,50.6,30.0,65.0,56.0,Ryan Izzo
+RYANSWITZER,nfl.p.30246,Ryan,Switzer,WR,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,5.9, ,No,0.0,0.0,0.0,0.0,1.0,RyanSwitzer,98.9,72.0,117.0,111.0,Ryan Switzer
+RYANTANNEHILL,nfl.p.25718,Ryan,Tannehill,QB,TEN,IND,IND@TEN,1:00PM EDT,20.0,-0.2, ,No,1.0,0.0,0.0,0.0,0.0,RyanTannehill,35.8,33.0,37.0,36.0,Ryan Tannehill
+RYQUELLARMSTEAD,nfl.p.31972,Ryquell,Armstead,RB,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,0.7, ,No,0.0,0.0,1.0,0.0,0.0,RyquellArmstead,70.0,60.0,74.0,70.0,Ryquell Armstead
+SAMAJEPERINE,nfl.p.30227,Samaje,Perine,RB,CIN,SF,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,SamajePerine,95.7,66.0,126.0,120.0,Samaje Perine
+SAMMYWATKINS,nfl.p.27532,Sammy,Watkins,WR,KC,OAK,KC@OAK,4:05PM EDT,27.0,42.3, ,No,0.0,0.0,0.0,0.0,1.0,SammyWatkins,7.5,1.0,25.0,8.0,Sammy Watkins
+SAQUONBARKLEY,nfl.p.30972,Saquon,Barkley,RB,NYG,BUF,BUF@NYG,1:00PM EDT,40.0,15.9, ,No,0.0,0.0,1.0,0.0,0.0,SaquonBarkley,2.7,1.0,10.0,2.0,Saquon Barkley
+SCOTTSIMONSON,nfl.p.28215,Scott,Simonson,TE,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,1.9, ,No,0.0,1.0,0.0,0.0,0.0,ScottSimonson,,,,,
+SEA,nfl.t.26,Seattle,Seahawks,DEF,SEA,PIT,SEA@PIT,1:00PM EDT,15.0,12.0, ,No,0.0,0.0,0.0,1.0,0.0,SEA,23.1,6.0,29.0,24.0,SEA
+SEANCULKIN,nfl.p.30420,Sean,Culkin,TE,LAC,DET,LAC@DET,1:00PM EDT,10.0,2.9, ,No,0.0,1.0,0.0,0.0,0.0,SeanCulkin,55.3,34.0,74.0,61.0,Sean Culkin
+SEANMANNION,nfl.p.28477,Sean,Mannion,QB,MIN,GB,MIN@GB,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,SeanMannion,,,,,
+SETHDEVALVE,nfl.p.29372,Seth,DeValve,TE,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,2.3, ,No,0.0,1.0,0.0,0.0,0.0,SethDeValve,70.0,67.0,73.0,84.0,Seth DeValve
+SETHROBERTS,nfl.p.28214,Seth,Roberts,WR,BAL,ARI,ARI@BAL,1:00PM EDT,10.0,1.5, ,No,0.0,0.0,0.0,0.0,1.0,SethRoberts,115.7,84.0,141.0,123.0,Seth Roberts
+SF,nfl.t.25,San Francisco,49ers,DEF,SF,CIN,SF@CIN,1:00PM EDT,13.0,27.0, ,No,0.0,0.0,0.0,1.0,0.0,SF,20.1,5.0,29.0,22.0,SF
+SHAWNPOINDEXTER,nfl.p.32325,Shawn,Poindexter,WR,SF,CIN,SF@CIN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,ShawnPoindexter,,,,,
+SONYMICHEL,nfl.p.31001,Sony,Michel,RB,NE,MIA,NE@MIA,1:00PM EDT,25.0,1.4, ,No,0.0,0.0,1.0,0.0,0.0,SonyMichel,14.2,5.0,30.0,15.0,Sony Michel
+STEFONDIGGS,nfl.p.28534,Stefon,Diggs,WR,MIN,GB,MIN@GB,1:00PM EDT,22.0,4.7, ,No,0.0,0.0,0.0,0.0,1.0,StefonDiggs,24.2,10.0,65.0,23.0,Stefon Diggs
+STEPHENCARLSON,,,,,,,,,,,,,,,,,,,84.0,58.0,110.0,151.0,Stephen Carlson
+STEVENSIMSJR,nfl.p.32187,Steven,Sims Jr.,WR,WAS,DAL,DAL@WAS,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,StevenSims Jr.,,,,,
+TAIWANJONES,nfl.p.24912,Taiwan,Jones,RB,HOU,JAX,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,TaiwanJones,116.0,110.0,127.0,131.0,Taiwan Jones
+TAJAESHARPE,nfl.p.29374,Tajae,Sharpe,WR,TEN,IND,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,TajaeSharpe,114.8,93.0,135.0,120.0,Tajae Sharpe
+TARIKCOHEN,nfl.p.30232,Tarik,Cohen,RB,CHI,DEN,CHI@DEN,4:25PM EDT,15.0,8.9, ,No,0.0,0.0,1.0,0.0,0.0,TarikCohen,33.8,24.0,52.0,34.0,Tarik Cohen
+TAVONAUSTIN,,,,,,,,,,,,,,,,,,,95.7,66.0,123.0,108.0,Tavon Austin
+TAVONAUSTIN,,,,,,,,,,,,,,,,,,,123.0,98.0,154.0,127.0,Tavon Austin
+TAYLORGABRIEL,nfl.p.28234,Taylor,Gabriel,WR,CHI,DEN,CHI@DEN,4:25PM EDT,10.0,3.4, ,No,0.0,0.0,0.0,0.0,1.0,TaylorGabriel,75.4,55.0,101.0,73.0,Taylor Gabriel
+TAYSOMHILL,nfl.p.30614,Taysom,Hill,QB,NO,LAR,NO@LAR,4:25PM EDT,20.0,8.2, ,No,1.0,0.0,0.0,0.0,0.0,TaysomHill,33.6,32.0,35.0,34.0,Taysom Hill
+TAYWANTAYLOR,,,,,,,,,,,,,,,,,,,119.8,97.0,143.0,125.0,Taywan Taylor
+TB,,,,,,,,,,,,,,,,,,,28.1,20.0,31.0,29.0,TB
+TEDDYBRIDGEWATER,nfl.p.27560,Teddy,Bridgewater,QB,NO,LAR,NO@LAR,4:25PM EDT,20.0,2.1, ,No,1.0,0.0,0.0,0.0,0.0,TeddyBridgewater,,,,,
+TEDGINN,,,,,,,,,,,,,,,,,,,57.6,34.0,93.0,56.0,Ted Ginn
+TEDGINNJR,nfl.p.8263,Ted,Ginn Jr.,WR,NO,LAR,NO@LAR,4:25PM EDT,14.0,13.6, ,No,0.0,0.0,0.0,0.0,1.0,TedGinn Jr.,,,,,
+TEN,nfl.t.10,Tennessee,Titans,DEF,TEN,IND,IND@TEN,1:00PM EDT,14.0,23.0, ,No,0.0,0.0,0.0,1.0,0.0,TEN,13.8,6.0,26.0,14.0,TEN
+TERRYMCLAURIN,nfl.p.31908,Terry,McLaurin,WR,WAS,DAL,DAL@WAS,1:00PM EDT,13.0,21.0, ,No,0.0,0.0,0.0,0.0,1.0,TerryMcLaurin,50.6,18.0,95.0,49.0,Terry McLaurin
+TEVINCOLEMAN,,,,,,,,,,,,,,,,,,,81.2,22.0,93.0,106.0,Tevin Coleman
+TIMBOYLE,nfl.p.31431,Tim,Boyle,QB,GB,MIN,MIN@GB,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,TimBoyle,,,,,
+TIMPATRICK,,,,,,,,,,,,,,,,,,,141.3,125.0,164.0,164.0,Tim Patrick
+TJHOCKENSON,nfl.p.31840,T.J.,Hockenson,TE,DET,LAC,LAC@DET,1:00PM EDT,17.0,22.1, ,No,0.0,1.0,0.0,0.0,0.0,T.J.Hockenson,10.2,2.0,27.0,10.0,T.J. Hockenson
+TJLOGAN,,,,,,,,,,,,,,,,,,,104.7,91.0,119.0,127.0,T.J. Logan
+TJYELDON,nfl.p.28424,T.J.,Yeldon,RB,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,10.4, ,No,0.0,0.0,1.0,0.0,0.0,T.J.Yeldon,71.5,60.0,97.0,71.0,T.J. Yeldon
+TODDGURLEY,,,,,,,,,,,,,,,,,,,11.8,5.0,24.0,11.0,Todd Gurley
+TODDGURLEYII,nfl.p.28398,Todd,Gurley II,RB,LAR,NO,NO@LAR,4:25PM EDT,18.0,10.6, ,No,0.0,0.0,1.0,0.0,0.0,ToddGurley II,,,,,
+TOMBRADY,nfl.p.5228,Tom,Brady,QB,NE,MIA,NE@MIA,1:00PM EDT,39.0,25.6, ,No,1.0,0.0,0.0,0.0,0.0,TomBrady,3.7,1.0,12.0,3.0,Tom Brady
+TOMMYSWEENEY,nfl.p.32060,Tommy,Sweeney,TE,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,4.5, ,No,0.0,1.0,0.0,0.0,0.0,TommySweeney,48.7,40.0,59.0,52.0,Tommy Sweeney
+TONYPOLLARD,nfl.p.31960,Tony,Pollard,RB,DAL,WAS,DAL@WAS,1:00PM EDT,10.0,2.4, ,No,0.0,0.0,1.0,0.0,0.0,TonyPollard,62.0,35.0,68.0,64.0,Tony Pollard
+TRACEMCSORLEY,nfl.p.32029,Trace,McSorley,QB,BAL,ARI,ARI@BAL,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,TraceMcSorley,,,,,
+TRAVISBENJAMIN,nfl.p.25810,Travis,Benjamin,WR,LAC,DET,LAC@DET,1:00PM EDT,10.0,2.2, ,No,0.0,0.0,0.0,0.0,1.0,TravisBenjamin,81.3,43.0,104.0,87.0,Travis Benjamin
+TRAVISFULGHAM,nfl.p.32016,Travis,Fulgham,WR,DET,LAC,LAC@DET,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,TravisFulgham,135.5,135.0,136.0,167.0,Travis Fulgham
+TRAVISHOMER,nfl.p.32036,Travis,Homer,RB,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,TravisHomer,99.7,84.0,109.0,122.0,Travis Homer
+TRAVISKELCE,nfl.p.26686,Travis,Kelce,TE,KC,OAK,KC@OAK,4:05PM EDT,30.0,10.3, ,No,0.0,1.0,0.0,0.0,0.0,TravisKelce,1.1,1.0,3.0,1.0,Travis Kelce
+TRAYVEONWILLIAMS,,,,,,,,,,,,,,,,,,,75.1,19.0,103.0,77.0,Trayveon Williams
+TRENTONCANNON,,,,,,,,,,,,,,,,,,,99.0,81.0,108.0,114.0,Trenton Cannon
+TRENTSHERFIELD,nfl.p.31320,Trent,Sherfield,WR,ARI,BAL,ARI@BAL,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,TrentSherfield,135.0,112.0,150.0,155.0,Trent Sherfield
+TRENTTAYLOR,nfl.p.30290,Trent,Taylor,WR,SF,CIN,SF@CIN,1:00PM EDT,10.0,3.3,D,No,0.0,0.0,0.0,0.0,1.0,TrentTaylor,119.0,92.0,138.0,146.0,Trent Taylor
+TREQUANSMITH,nfl.p.31061,Tre'Quan,Smith,WR,NO,LAR,NO@LAR,4:25PM EDT,14.0,9.6, ,No,0.0,0.0,0.0,0.0,1.0,Tre'QuanSmith,69.0,53.0,90.0,68.0,Tre'Quan Smith
+TREVONWESCO,,,,,,,,,,,,,,,,,,,72.3,63.0,81.0,74.0,Trevon Wesco
+TREVORDAVIS,nfl.p.29397,Trevor,Davis,WR,GB,MIN,MIN@GB,1:00PM EDT,10.0,3.3, ,No,0.0,0.0,0.0,0.0,1.0,TrevorDavis,124.5,93.0,140.0,132.0,Trevor Davis
+TREVORSIEMIAN,,,,,,,,,,,,,,,,,,,31.0,23.0,36.0,32.0,Trevor Siemian
+TREYBURTON,,,,,,,,,,,,,,,,,,,22.1,10.0,72.0,25.0,Trey Burton
+TREYQUINN,nfl.p.31226,Trey,Quinn,WR,WAS,DAL,DAL@WAS,1:00PM EDT,10.0,11.3, ,No,0.0,0.0,0.0,0.0,1.0,TreyQuinn,66.4,48.0,110.0,62.0,Trey Quinn
+TROYFUMAGALLI,nfl.p.31126,Troy,Fumagalli,TE,DEN,CHI,CHI@DEN,4:25PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,TroyFumagalli,73.3,60.0,85.0,76.0,Troy Fumagalli
+TROYMAINEPOPE,nfl.p.30061,Troymaine,Pope,RB,LAC,DET,LAC@DET,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,TroymainePope,97.4,84.0,110.0,104.0,Troymaine Pope
+TYHILTON,nfl.p.25802,T.Y.,Hilton,WR,IND,TEN,IND@TEN,1:00PM EDT,22.0,24.7, ,No,0.0,0.0,0.0,0.0,1.0,T.Y.Hilton,15.4,4.0,27.0,14.0,T.Y. Hilton
+TYJOHNSON,nfl.p.32018,Ty,Johnson,RB,DET,LAC,LAC@DET,1:00PM EDT,10.0,0.6, ,No,0.0,0.0,1.0,0.0,0.0,TyJohnson,77.0,65.0,131.0,76.0,Ty Johnson
+TYLERBOYD,nfl.p.29288,Tyler,Boyd,WR,CIN,SF,SF@CIN,1:00PM EDT,20.0,10.3, ,No,0.0,0.0,0.0,0.0,1.0,TylerBoyd,21.0,7.0,51.0,20.0,Tyler Boyd
+TYLERCONKLIN,nfl.p.31127,Tyler,Conklin,TE,MIN,GB,MIN@GB,1:00PM EDT,10.0,2.6, ,No,0.0,1.0,0.0,0.0,0.0,TylerConklin,73.7,67.0,84.0,77.0,Tyler Conklin
+TYLEREIFERT,nfl.p.26644,Tyler,Eifert,TE,CIN,SF,SF@CIN,1:00PM EDT,12.0,5.2, ,No,0.0,1.0,0.0,0.0,0.0,TylerEifert,17.8,10.0,29.0,17.0,Tyler Eifert
+TYLERERVIN,nfl.p.29353,Tyler,Ervin,RB,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,TylerErvin,100.7,71.0,123.0,123.0,Tyler Ervin
+TYLERERVIN,nfl.p.29353,Tyler,Ervin,RB,JAX,HOU,JAX@HOU,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,1.0,0.0,0.0,TylerErvin,124.5,112.0,137.0,162.0,Tyler Ervin
+TYLERHIGBEE,nfl.p.29344,Tyler,Higbee,TE,LAR,NO,NO@LAR,4:25PM EDT,10.0,10.0, ,No,0.0,1.0,0.0,0.0,0.0,TylerHigbee,29.4,17.0,52.0,29.0,Tyler Higbee
+TYLERKROFT,,,,,,,,,,,,,,,,,,,46.6,25.0,54.0,66.0,Tyler Kroft
+TYLERLOCKETT,,,,,,,,,,,,,,,,,,,18.0,7.0,65.0,17.0,Tyler Lockett
+TYLEROTT,nfl.p.28221,Tyler,Ott,TE,SEA,PIT,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,TylerOtt,,,,,
+TYMONTGOMERY,,,,,,,,,,,,,,,,,,,63.1,34.0,79.0,63.0,Ty Montgomery
+TYRELLWILLIAMS,nfl.p.28691,Tyrell,Williams,WR,OAK,KC,KC@OAK,4:05PM EDT,19.0,19.5, ,No,0.0,0.0,0.0,0.0,1.0,TyrellWilliams,25.9,3.0,50.0,27.0,Tyrell Williams
+TYRODTAYLOR,nfl.p.24967,Tyrod,Taylor,QB,LAC,DET,LAC@DET,1:00PM EDT,20.0,0.0, ,No,1.0,0.0,0.0,0.0,0.0,TyrodTaylor,41.7,38.0,43.0,42.0,Tyrod Taylor
+VANCEMCDONALD,nfl.p.26678,Vance,McDonald,TE,PIT,SEA,SEA@PIT,1:00PM EDT,15.0,5.0, ,No,0.0,1.0,0.0,0.0,0.0,VanceMcDonald,11.4,6.0,20.0,11.0,Vance McDonald
+VERNONDAVIS,nfl.p.7755,Vernon,Davis,TE,WAS,DAL,DAL@WAS,1:00PM EDT,13.0,13.9, ,No,0.0,1.0,0.0,0.0,0.0,VernonDavis,19.7,4.0,45.0,19.0,Vernon Davis
+VERRANTUCKER,,,,,,,,,,,,,,,,,,,71.5,56.0,87.0,147.0,Verran Tucker
+VINCEMAYLE,nfl.p.28511,Vince,Mayle,TE,LAC,DET,LAC@DET,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,VinceMayle,,,,,
+VIRGILGREEN,nfl.p.24991,Virgil,Green,TE,LAC,DET,LAC@DET,1:00PM EDT,10.0,0.9, ,No,0.0,1.0,0.0,0.0,0.0,VirgilGreen,31.2,19.0,43.0,38.0,Virgil Green
+WAS,nfl.t.28,Washington,Redskins,DEF,WAS,DAL,DAL@WAS,1:00PM EDT,16.0,0.0, ,No,0.0,0.0,0.0,1.0,0.0,WAS,26.8,19.0,31.0,27.0,WAS
+WAYNEGALLMAN,,,,,,,,,,,,,,,,,,,68.8,53.0,92.0,68.0,Wayne Gallman
+WAYNEGALLMANJR,nfl.p.30253,Wayne,Gallman Jr.,RB,NYG,BUF,BUF@NYG,1:00PM EDT,10.0,11.6, ,No,0.0,0.0,1.0,0.0,0.0,WayneGallman Jr.,,,,,
+WENDELLSMALLWOOD,nfl.p.29387,Wendell,Smallwood,RB,WAS,DAL,DAL@WAS,1:00PM EDT,10.0,6.6, ,No,0.0,0.0,1.0,0.0,0.0,WendellSmallwood,78.7,67.0,103.0,79.0,Wendell Smallwood
+WILLDISSLY,nfl.p.31090,Will,Dissly,TE,SEA,PIT,SEA@PIT,1:00PM EDT,12.0,1.7, ,No,0.0,1.0,0.0,0.0,0.0,WillDissly,29.7,12.0,46.0,31.0,Will Dissly
+WILLFULLER,,,,,,,,,,,,,,,,,,,35.6,15.0,53.0,32.0,Will Fuller
+WILLFULLERV,nfl.p.29255,Will,Fuller V,WR,HOU,JAX,JAX@HOU,1:00PM EDT,15.0,7.9, ,No,0.0,0.0,0.0,0.0,1.0,WillFuller V,,,,,
+WILLIESNEAD,,,,,,,,,,,,,,,,,,,73.7,46.0,94.0,72.0,Willie Snead
+WILLIESNEADIV,nfl.p.28026,Willie,Snead IV,WR,BAL,ARI,ARI@BAL,1:00PM EDT,15.0,11.1, ,No,0.0,0.0,0.0,0.0,1.0,WillieSnead IV,,,,,
+XAVIERGRIMBLE,nfl.p.28184,Xavier,Grimble,TE,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,1.4, ,No,0.0,1.0,0.0,0.0,0.0,XavierGrimble,62.2,50.0,83.0,64.0,Xavier Grimble
+ZACHERTZ,nfl.p.26658,Zach,Ertz,TE,PHI,ATL,PHI@ATL,8:20PM EDT,22.0,7.9, ,No,0.0,1.0,0.0,0.0,0.0,ZachErtz,3.7,1.0,10.0,3.0,Zach Ertz
+ZACHGENTRY,nfl.p.31973,Zach,Gentry,TE,PIT,SEA,SEA@PIT,1:00PM EDT,10.0,0.0, ,No,0.0,1.0,0.0,0.0,0.0,ZachGentry,,,,,
+ZACHLINE,nfl.p.27135,Zach,Line,RB,NO,LAR,NO@LAR,4:25PM EDT,10.0,1.6, ,No,0.0,0.0,1.0,0.0,0.0,ZachLine,102.1,89.0,138.0,107.0,Zach Line
+ZACHPASCAL,nfl.p.30502,Zach,Pascal,WR,IND,TEN,IND@TEN,1:00PM EDT,10.0,0.0, ,No,0.0,0.0,0.0,0.0,1.0,ZachPascal,123.5,101.0,161.0,134.0,Zach Pascal
+ZAYJONES,nfl.p.30150,Zay,Jones,WR,BUF,NYG,BUF@NYG,1:00PM EDT,10.0,2.8, ,No,0.0,0.0,0.0,0.0,1.0,ZayJones,76.4,36.0,98.0,75.0,Zay Jones
