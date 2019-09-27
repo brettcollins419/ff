@@ -13,6 +13,7 @@ import os
 import numpy as np
 import pulp
 import re
+import socket
 
 #%% FUNCTIONS
 
@@ -28,7 +29,7 @@ fantasyProsDict = {
 
 def fantasyProsRankingsDataLoad(position
                                 , fantasyProsDict = fantasyProsDict
-                                , fileName = 'FantasyPros_2019_Week_2_{}_Rankings.csv'
+                                , fileName = 'data\\FantasyPros_2019_Week_2_{}_Rankings.csv'
                                 ):
     
     '''Read data into a dataframe and append column labeling the player position'''
@@ -62,11 +63,33 @@ def fantasyProsRankingsDataLoad(position
 #%% LOAD DATA
 
 
+# Working Directory Dictionary
+pcs = {
+    'WaterBug' : {'wd':'C:\\Users\\brett\\Documents\\ff',
+                  'repo':'C:\\Users\\brett\\Documents\\march_madness_ml\\march_madness'},
 
-#os.chdir('C:\\Users\\u00bec7\\Desktop\\personal\\ff\\data')
-os.chdir('C:\\Users\\brett\\Documents\\ff\\data')
+    'WHQPC-L60102' : {'wd':'C:\\Users\\u00bec7\\Desktop\\personal\\ff',
+                      'repo':'C:\\Users\\u00bec7\\Desktop\\personal\\ff'},
+                      
+    'raspberrypi' : {'wd':'/home/pi/Documents/ff',
+                     'repo':'/home/pi/Documents/ff'},
+                     
+    'jeebs' : {'wd': 'C:\\Users\\brett\\Documents\\ff\\',
+               'repo' : 'C:\\Users\\brett\\Documents\\ff\\'}
+    }
 
-data = pd.read_csv('Yahoo_DF_player_export_w2.csv')
+# Set working directory & load functions
+pc = pcs.get(socket.gethostname())
+
+del(pcs)
+
+
+
+# Set up environment
+os.chdir(pc['repo'])
+
+
+data = pd.read_csv('data\\Yahoo_DF_player_export_w2.csv')
 
 
 positions = ['QB', 'TE', 'RB', 'DEF', 'WR']
@@ -178,6 +201,37 @@ fpRankings = pd.concat([fantasyProsRankingsDataLoad(position)
                         ], sort = True)
 
 
+
+
+
+# Generate Key
+dataInput.loc[:, 'key'] = list(map(lambda player: re.sub('\W', '', 
+               ''.join((player[0][0]
+                       , player[1].split(' ')[0]
+                        , player[2]
+                        , player[3]
+        )).upper()), dataInput[['First Name', 'Last Name', 'Team', 'Position']].values.tolist()))
+
+
+
+# Fix Defense
+
+
+# Generate player for merging datasets
+dataInput.loc[:, 'player'] = (
+        list(map(lambda player: dataInput['First Name'] 
+                                + ' ' + dataInput['Last Name']
+                                )
+
+
+# Fix defense position name
+dataInput.loc[dataInput['Position'] == 'DEF', 'player'] = (
+        dataInput[dataInput['Position']=='DEF']['Team']
+        )
+
+
+# Create Key of first initial, last name, team, and position
+data
 
 ## ######################
 # Need to remove II, III, Jr., etc. & name match (Mitch -> Mitchell)
