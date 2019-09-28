@@ -27,6 +27,42 @@ fantasyProsDict = {
         , 'DST' : {'label': 'DEF', 'column' : 'Team DST'}
         }
 
+# Dictionary for defense for projections
+defenseDict = {
+        'Arizona Cardinals' : 'ARI'
+        , 'Atlanta Falcons' : 'ATL'
+        , 'Baltimore Ravens' : 'BAL'
+        , 'Buffalo Bills' : 'BUF'
+        , 'Carolina Panthers' : 'CAR'
+        , 'Chicago Bears' : 'CHI'
+        , 'Cincinnati Bengals' : 'CIN'
+        , 'Cleveland Browns' : 'CLE'
+        , 'Dallas Cowboys' : 'DAL'
+        , 'Denver Broncos' : 'DEN'
+        , 'Detroit Lions' : 'DET'
+        , 'Green Bay Packers' : 'GB'
+        , 'Houston Texans' : 'HOU'
+        , 'Indianapolis Colts' : 'IND'
+        , 'Jacksonville Jaguars' : 'JAX'
+        , 'Kansas City Chiefs' : 'KC'
+        , 'Los Angeles Chargers' : 'LAC'
+        , 'Los Angeles Rams' : 'LAR'
+        , 'Miami Dolphins' : 'MIA'
+        , 'Minnesota Vikings' : 'MIN'
+        , 'New England Patriots' : 'NE'
+        , 'New Orleans Saints' : 'NO'
+        , 'New York Giants' : 'NYG'
+        , 'New York Jets' : 'NYJ'
+        , 'Oakland Raiders' : 'OAK'
+        , 'Philadelphia Eagles' : 'PHI'
+        , 'Pittsburgh Steelers' : 'PIT'
+        , 'San Francisco 49ers' : 'SF'
+        , 'Seattle Seahawks' : 'SEA'
+        , 'Tampa Bay Buccaneers' : 'TB'
+        , 'Tennessee Titans' : 'TEN'
+        , 'Washington Redskins' : 'WAS'
+        }
+
 
 def fantasyProsRankingsDataLoad(position
                                 , fantasyProsDict = fantasyProsDict
@@ -62,6 +98,7 @@ def fantasyProsRankingsDataLoad(position
 
 def fantasyProsProjectionsDataLoad(position
                                 , fantasyProsDict = fantasyProsDict
+                                , defenseDict = defenseDict
                                 , fileName = 'data\\FantasyPros_Fantasy_Football_Projections_{}.csv'
                                 ):
     
@@ -71,7 +108,7 @@ def fantasyProsProjectionsDataLoad(position
     
 
     # Filter empy Rows
-    data = data[data['FPTS'] != None]
+    data = data[[not i for i in np.isnan(data['FPTS'])]]
 
     # Add position label
     data.loc[:, 'position'] = fantasyProsDict[position]['label']
@@ -83,17 +120,16 @@ def fantasyProsProjectionsDataLoad(position
     
     # Add Team for DST
     if position == 'DST':
-        data.loc[:, 'Team'] =[
-                team.split('(')[1].strip(')') for team in data['Player']
-                ]
+        data['Team'] = [defenseDict.get(player) for player in data['Player']]
     
         data.loc[:, 'Player'] = data['Team']
     
-    return data
+    
+    return data[['Player', 'Team', 'position', 'FPTS']]
 
 
 def fpRankingsKeyGen(keyList):
-    '''Generate key for fpRankings using first letter of first name, 
+    '''Generate key for fpRankings using first three letters of first name, 
     full last name, team, and position except defense is defense.'''
     
     if keyList[-1] == 'DEF':
@@ -101,7 +137,7 @@ def fpRankingsKeyGen(keyList):
     
     else:
         key = re.sub('\W', '',
-              ''.join((keyList[0].split(' ')[0][0]
+              ''.join((keyList[0].split(' ')[0][0:3]
                       , keyList[0].split(' ')[1]
                       , keyList[1]
                       , keyList[2])).upper()
@@ -111,7 +147,7 @@ def fpRankingsKeyGen(keyList):
 
 
 def salaryKeyGen(keyList):
-    '''Generate key for fpRankings using first letter of first name, 
+    '''Generate key for fpRankings using first three letters of first name, 
     full last name, team, and position except defense is defense.'''
     
     if keyList[-1] == 'DEF':
@@ -119,7 +155,7 @@ def salaryKeyGen(keyList):
     
     else:
         key = re.sub('\W', '', 
-               ''.join((keyList[0][0]
+               ''.join((keyList[0][0:3]
                        , keyList[1].split(' ')[0]
                        , keyList[2]
                        , keyList[3])).upper()
@@ -156,14 +192,62 @@ del(pcs)
 os.chdir(pc['repo'])
 
 
+# Load salary data
 data = pd.read_csv('data\\Yahoo_DF_player_export_w2.csv')
 
 
-positions = ['QB', 'TE', 'RB', 'DEF', 'WR']
+# Generate Key for salary data
+data.loc[:, 'key'] = list(map(lambda keyList: 
+    salaryKeyGen(keyList)
+    , data[['First Name', 'Last Name', 'Team', 'Position']].values.tolist()
+    ))
 
+
+# Identify positions with boolean field
+positions = ['QB', 'TE', 'RB', 'DEF', 'WR']
 
 for position in positions:
     data.loc[:,position] = (data['Position'] == position) * 1
+    
+    
+    
+    
+# Load and concat data for rankings
+fpRankings = pd.concat([fantasyProsRankingsDataLoad(position) 
+                        for position in fantasyProsDict.keys()
+                        ], sort = True)
+
+# Rename JAC to JAX
+fpRankings.loc[fpRankings['Team'] == 'JAC', 'Team'] = 'JAX'
+
+# Generate key for rankings data
+fpRankings.loc[:, 'key'] = list(map(lambda keyList: 
+    fpRankingsKeyGen(keyList)
+    , fpRankings[['player', 'Team', 'position']].values.tolist()
+    ))
+
+    
+    
+
+
+# Load and concat data for projections
+fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position) 
+                        for position in fantasyProsDict.keys()
+                        ], sort = True)
+        
+    
+# Generate key for projections
+fpProjections.loc[:, 'key'] = list(map(lambda keyList: 
+    fpRankingsKeyGen(keyList)
+    , fpProjections[['Player', 'Team', 'position']].values.tolist()
+    ))           
+
+    
+    
+    
+    
+    
+    
     
 # # of players required for each position
 positionLimit = {'QB':1
@@ -183,10 +267,29 @@ dataInput = copy.deepcopy(
         )
 
 
+dataInput = dataInput.set_index('key').merge(
+        fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank','player']]
+        , how = 'left'
+        , left_index = True
+        , right_index = True
+        )
+
+
+dataInput = dataInput.merge(
+        pd.DataFrame(fpProjections.set_index('key')['FPTS'])
+        , how = 'left'
+        , left_index = True
+        , right_index = True
+        )
+
+
+# Fill empty projections with 0
+dataInput['FPTS'].fillna(0, inplace = True)
+
 # Convert to dictionary for LP
 dataInputDict = (
         dataInput.set_index('Id')
-        [['Salary', 'FPPG'] + positions].to_dict('index')
+        [['Salary', 'FPPG', 'FPTS'] + positions].to_dict('index')
         )
 
 
@@ -203,7 +306,7 @@ playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
 
 # Add objective of maximizing FPPG
 prob += pulp.lpSum(
-        [playerVars[i]*dataInputDict[i]['FPPG'] 
+        [playerVars[i]*dataInputDict[i]['FPTS'] 
         for i in dataInput['Id']]
         )
 
@@ -264,15 +367,12 @@ finalTeam[['FPPG', 'Salary']].sum()
 #%% FANTASY PROS DATA
 ## ############################################################################
 
-# Load and concat data
+
+# Load and concat data for rankings
 fpRankings = pd.concat([fantasyProsRankingsDataLoad(position) 
                         for position in fantasyProsDict.keys()
                         ], sort = True)
 
-fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position) 
-                        for position in fantasyProsDict.keys()
-                        ], sort = True)
-        
 # Rename JAC to JAX
 fpRankings.loc[fpRankings['Team'] == 'JAC', 'Team'] = 'JAX'
 
@@ -293,13 +393,36 @@ dataInput.loc[:, 'key'] = list(map(lambda keyList:
 
 
 
-x = dataInput.set_index('key').merge(
+# Load and concat data for projections
+fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position) 
+                        for position in fantasyProsDict.keys()
+                        ], sort = True)
+        
+    
+# Generate key for projections
+fpProjections.loc[:, 'key'] = list(map(lambda keyList: 
+    fpRankingsKeyGen(keyList)
+    , fpProjections[['Player', 'Team', 'position']].values.tolist()
+    ))           
+
+
+dataInput = dataInput.set_index('key').merge(
         fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank','player']]
         , how = 'left'
         , left_index = True
         , right_index = True
         )
 
-x.to_csv('fpRankings_validation.csv')
+
+dataInput = dataInput.merge(
+        pd.DataFrame(fpProjections.set_index('key')['FPTS'])
+        , how = 'left'
+        , left_index = True
+        , right_index = True
+        )
+
+
+
+dataInput.to_csv('fpRankings_validation.csv')
 
 #dataInput.loc[:, 'avgRanking'] = fpRankings.set_index('key')['Avg']
