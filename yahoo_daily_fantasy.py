@@ -14,6 +14,7 @@ import numpy as np
 import pulp
 import re
 import socket
+import copy
 
 #%% FUNCTIONS
 
@@ -59,6 +60,72 @@ def fantasyProsRankingsDataLoad(position
     return data
 
 
+def fantasyProsProjectionsDataLoad(position
+                                , fantasyProsDict = fantasyProsDict
+                                , fileName = 'data\\FantasyPros_Fantasy_Football_Projections_{}.csv'
+                                ):
+    
+    '''Read data into a dataframe and append column labeling the player position'''
+    
+    data = pd.read_csv(fileName.format(position))
+    
+
+    # Filter empy Rows
+    data = data[data['FPTS'] != None]
+
+    # Add position label
+    data.loc[:, 'position'] = fantasyProsDict[position]['label']
+    
+    # Rename Column
+    data.rename(columns = {fantasyProsDict[position]['column'] : 'Player'},
+                           inplace = True)
+
+    
+    # Add Team for DST
+    if position == 'DST':
+        data.loc[:, 'Team'] =[
+                team.split('(')[1].strip(')') for team in data['Player']
+                ]
+    
+        data.loc[:, 'Player'] = data['Team']
+    
+    return data
+
+
+def fpRankingsKeyGen(keyList):
+    '''Generate key for fpRankings using first letter of first name, 
+    full last name, team, and position except defense is defense.'''
+    
+    if keyList[-1] == 'DEF':
+        key = keyList[-2]
+    
+    else:
+        key = re.sub('\W', '',
+              ''.join((keyList[0].split(' ')[0][0]
+                      , keyList[0].split(' ')[1]
+                      , keyList[1]
+                      , keyList[2])).upper()
+              )
+              
+    return key
+
+
+def salaryKeyGen(keyList):
+    '''Generate key for fpRankings using first letter of first name, 
+    full last name, team, and position except defense is defense.'''
+    
+    if keyList[-1] == 'DEF':
+        key = keyList[-2]
+    
+    else:
+        key = re.sub('\W', '', 
+               ''.join((keyList[0][0]
+                       , keyList[1].split(' ')[0]
+                       , keyList[2]
+                       , keyList[3])).upper()
+               )
+               
+    return key
 
 #%% LOAD DATA
 
@@ -111,7 +178,9 @@ statusExclude = ['IR', 'SUSP', 'O', 'Q']
 
 
 # Filter only eligble players
-dataInput = data[data['Injury Status'].map(lambda s: s not in statusExclude)]
+dataInput = copy.deepcopy(
+        data[data['Injury Status'].map(lambda s: s not in statusExclude)]
+        )
 
 
 # Convert to dictionary for LP
@@ -200,75 +269,33 @@ fpRankings = pd.concat([fantasyProsRankingsDataLoad(position)
                         for position in fantasyProsDict.keys()
                         ], sort = True)
 
+fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position) 
+                        for position in fantasyProsDict.keys()
+                        ], sort = True)
+        
+# Rename JAC to JAX
+fpRankings.loc[fpRankings['Team'] == 'JAC', 'Team'] = 'JAX'
+
+# Generate key for rankings data
+fpRankings.loc[:, 'key'] = list(map(lambda keyList: 
+    fpRankingsKeyGen(keyList)
+    , fpRankings[['player', 'Team', 'position']].values.tolist()
+    ))
+
+    
+    
+# Generate Key for salary data
+dataInput.loc[:, 'key'] = list(map(lambda keyList: 
+    salaryKeyGen(keyList)
+    , dataInput[['First Name', 'Last Name', 'Team', 'Position']].values.tolist()
+    ))
 
 
-
-
-# Generate Key
-dataInput.loc[:, 'key'] = list(map(lambda player: re.sub('\W', '', 
-               ''.join((player[0][0]
-                       , player[1].split(' ')[0]
-                        , player[2]
-                        , player[3]
-        )).upper()), dataInput[['First Name', 'Last Name', 'Team', 'Position']].values.tolist()))
-
-
-
-# Fix Defense
-
-
-# Generate player for merging datasets
-dataInput.loc[:, 'player'] = (
-        list(map(lambda player: dataInput['First Name'] 
-                                + ' ' + dataInput['Last Name']
-                                )
-
-
-# Fix defense position name
-dataInput.loc[dataInput['Position'] == 'DEF', 'player'] = (
-        dataInput[dataInput['Position']=='DEF']['Team']
-        )
-
-
-# Create Key of first initial, last name, team, and position
-data
-
-## ######################
-# Need to remove II, III, Jr., etc. & name match (Mitch -> Mitchell)
-
-
-# Create key for joining data
-fpRankings.loc[:, 'key'] = (fpRankings['player']
-                            + fpRankings['Team']
-                            + fpRankings['position']
-                            )
-
-fpRankings.loc[:, 'key'] = [re.sub('\W', '', player).upper() 
-                            for player in fpRankings['key']]
-
-
-
-dataInput.loc[:, 'player'] = (dataInput['First Name'] 
-                                + dataInput['Last Name']
-                                )
-
-dataInput.loc[dataInput['Position'] == 'DEF', 'player'] = (
-        dataInput[dataInput['Position']=='DEF']['Team']
-        )
-
-
-dataInput.loc[:, 'key'] = (dataInput['player']
-                                + dataInput['Team']
-                                + dataInput['Position']
-                                )
-
-dataInput.loc[:, 'key'] = [re.sub('\W', '', player).upper() 
-                            for player in dataInput['key']]
 
 
 x = dataInput.set_index('key').merge(
         fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank','player']]
-        , how = 'outer'
+        , how = 'left'
         , left_index = True
         , right_index = True
         )
