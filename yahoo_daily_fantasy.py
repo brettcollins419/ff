@@ -65,13 +65,14 @@ defenseDict = {
 
 
 def fantasyProsRankingsDataLoad(position
+                                , week
                                 , fantasyProsDict = fantasyProsDict
-                                , fileName = 'data\\FantasyPros_2019_Week_2_{}_Rankings.csv'
+                                , fileName = 'data\\FantasyPros_2019_Week_{}_{}_Rankings.csv'
                                 ):
     
     '''Read data into a dataframe and append column labeling the player position'''
     
-    data = pd.read_csv(fileName.format(position))
+    data = pd.read_csv(fileName.format(week, position))
     
 
     # Filter empy Rows
@@ -97,14 +98,15 @@ def fantasyProsRankingsDataLoad(position
 
 
 def fantasyProsProjectionsDataLoad(position
+                                , week
                                 , fantasyProsDict = fantasyProsDict
                                 , defenseDict = defenseDict
-                                , fileName = 'data\\FantasyPros_Fantasy_Football_Projections_{}.csv'
+                                , fileName = 'data\\FantasyPros_Fantasy_Football_Projections_{}_w{}.csv'
                                 ):
     
     '''Read data into a dataframe and append column labeling the player position'''
     
-    data = pd.read_csv(fileName.format(position))
+    data = pd.read_csv(fileName.format(position, week))
     
 
     # Filter empy Rows
@@ -165,6 +167,7 @@ def salaryKeyGen(keyList):
 
 #%% LOAD DATA
 
+week = 6
 
 # Working Directory Dictionary
 pcs = {
@@ -193,7 +196,7 @@ os.chdir(pc['repo'])
 
 
 # Load salary data
-data = pd.read_csv('data\\Yahoo_DF_player_export_w2.csv')
+data = pd.read_csv('data\\Yahoo_DF_player_export_w{}.csv'.format(week))
 
 
 # Generate Key for salary data
@@ -213,7 +216,7 @@ for position in positions:
     
     
 # Load and concat data for rankings
-fpRankings = pd.concat([fantasyProsRankingsDataLoad(position) 
+fpRankings = pd.concat([fantasyProsRankingsDataLoad(position, week) 
                         for position in fantasyProsDict.keys()
                         ], sort = True)
 
@@ -231,7 +234,7 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
 
 
 # Load and concat data for projections
-fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position) 
+fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position, week) 
                         for position in fantasyProsDict.keys()
                         ], sort = True)
         
@@ -268,7 +271,8 @@ dataInput = copy.deepcopy(
 
 
 dataInput = dataInput.set_index('key').merge(
-        fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank','player']]
+        fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank'
+                            ,'player', 'Proj. Pts']]
         , how = 'left'
         , left_index = True
         , right_index = True
@@ -285,11 +289,67 @@ dataInput = dataInput.merge(
 
 # Fill empty projections with 0
 dataInput['FPTS'].fillna(0, inplace = True)
+dataInput['Proj. Pts'].fillna(0, inplace = True)
+
+
+#%% INTRODUCING UNCERTAINTY
+
+
+
+# Rank projections for each group
+dataInput.loc[:, 'FPTS_rank_overall'] = (
+        dataInput.groupby('Position')['FPTS']
+            .rank(method = 'min'
+                  , ascending = False)
+            )
+            
+            
+# Rank projections for each group by team
+dataInput.loc[:, 'FPTS_rank_team'] = (
+        dataInput.groupby(['Position', 'Team'])['FPTS']
+            .rank(method = 'min'
+                  , ascending = False)
+            )
+
+dataInput.groupby('Position').agg(
+        {'FPTS_rank_overall':np.max
+         , 'FPTS_rank_team':np.max}
+        )
+
+# Max # of players to analyze for each position
+            # # of players required for each position
+positionRankCap = {'QB': {'team':1, 'overall':32}
+                   , 'TE':{'team':3, 'overall':64}
+                   , 'RB':{'team':3, 'overall':64}
+                   , 'DEF':{'team':1, 'overall':32}
+                   , 'WR':{'team':4, 'overall':100}
+                 }
+
+
+dataInput.loc[:, 'FPTS_team_rank_filter'] = [
+        p[1] <= positionRankCap[p[0]]['team']
+        for p in dataInput[['Position','FPTS_rank_team']].values
+        ]
+        
+
+x = dataInput[dataInput['FPTS_team_rank_filter']].groupby('Position').agg(
+        {'FPTS':(np.mean, np.std, len)
+         })
+    
+minAdjustment = 0.9
+maxAdjustment = 1.1
+
+dataInput['FPTS_rand'] = (
+        dataInput['FPTS'] * (minAdjustment + 
+                np.random.rand(dataInput.shape[0])
+                *(maxAdjustment - minAdjustment)
+                )
+        )
 
 # Convert to dictionary for LP
 dataInputDict = (
-        dataInput.set_index('Id')
-        [['Salary', 'FPPG', 'FPTS'] + positions].to_dict('index')
+        dataInput.set_index('ID')
+        [['Salary', 'FPPG', 'FPTS', 'Proj. Pts'] + positions].to_dict('index')
         )
 
 
@@ -298,6 +358,8 @@ dataInputDict = (
 
 # Setup LP Problem
 budget = 200
+target = 'FPPG'
+
 
 prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
 
@@ -306,14 +368,14 @@ playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
 
 # Add objective of maximizing FPPG
 prob += pulp.lpSum(
-        [playerVars[i]*dataInputDict[i]['FPTS'] 
-        for i in dataInput['Id']]
+        [playerVars[i]*dataInputDict[i][target] 
+        for i in dataInput['ID']]
         )
 
 # Salary Cap Constraint
 prob += pulp.lpSum(
         [(playerVars[i] * dataInputDict[i]['Salary']) 
-        for i in dataInput['Id']]
+        for i in dataInput['ID']]
         ) <= budget
 
 
@@ -321,24 +383,24 @@ prob += pulp.lpSum(
 for position in ['QB', 'DEF']:
     prob += pulp.lpSum(
             [(playerVars[i] * dataInputDict[i][position]) 
-            for i in dataInput['Id']]
+            for i in dataInput['ID']]
             ) == positionLimit[position]
 
 
 for position in ['RB', 'WR', 'TE']:
     prob += pulp.lpSum(
             [(playerVars[i] * dataInputDict[i][position]) 
-            for i in dataInput['Id']]
+            for i in dataInput['ID']]
             ) >= positionLimit[position]
 
     prob += pulp.lpSum(
             [(playerVars[i] * dataInputDict[i][position]) 
-            for i in dataInput['Id']]
+            for i in dataInput['ID']]
             ) <= (positionLimit[position] + 1)
 
 
 # Team Size Limit
-prob += pulp.lpSum([playerVars[i] for i in list(dataInput['Id'])]) == 9
+prob += pulp.lpSum([playerVars[i] for i in list(dataInput['ID'])]) == 9
 
 #%% SOLVE LP
 ## ############################################################################
@@ -353,15 +415,16 @@ print("Status:", pulp.LpStatus[prob.status])
 #%% FINAL TEAM
 
 finalTeam = (
-        dataInput.set_index('Id')
+        dataInput.set_index('ID')
         .loc[filter(lambda k: playerVars[k].varValue == 1,
                     playerVars.keys()), :][
         ['First Name', 'Last Name', 'Position', 
-         'Team', 'Opponent', 'Salary', 'FPPG']]
+         'Team', 'Opponent', 'Salary', 'FPPG', 
+         'Rank', 'FPTS']]
         )
 
 
-finalTeam[['FPPG', 'Salary']].sum()
+finalTeam[['FPPG', 'Salary', 'FPTS']].sum()
 
 
 #%% FANTASY PROS DATA
