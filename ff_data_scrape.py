@@ -113,6 +113,7 @@ gradesList = ('rushing'
               , 'defense'
               , 'field_goal'
               , 'special'
+              , 'receiving'
               )
 
 
@@ -160,7 +161,8 @@ for grade in gradesList:
         for f in dataList]
         , axis = 0)
     
-    dataAgg.to_csv('\\'.join([savePath, '{}_summary_agg.csv'.format(grade)]))
+    dataAgg.to_csv('\\'.join([savePath, '{}_summary_agg.csv'.format(grade)])
+                    , index = False)
 
 
 #%% DEV

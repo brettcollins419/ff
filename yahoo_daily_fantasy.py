@@ -167,7 +167,7 @@ def salaryKeyGen(keyList):
 
 #%% LOAD DATA
 
-week = 6
+week = 7
 
 # Working Directory Dictionary
 pcs = {
@@ -346,10 +346,18 @@ dataInput['FPTS_rand'] = (
                 )
         )
 
+
+dataInput['Proj. Pts_rand'] = (
+        dataInput['Proj. Pts'] * (minAdjustment + 
+                np.random.rand(dataInput.shape[0])
+                *(maxAdjustment - minAdjustment)
+                )
+        )
+
 # Convert to dictionary for LP
 dataInputDict = (
         dataInput.set_index('ID')
-        [['Salary', 'FPPG', 'FPTS', 'Proj. Pts'] + positions].to_dict('index')
+        [['Salary', 'FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand', 'Proj. Pts_rand'] + positions].to_dict('index')
         )
 
 
@@ -361,70 +369,88 @@ budget = 200
 target = 'FPPG'
 
 
-prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
-
-# Define player Variables
-playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
-
-# Add objective of maximizing FPPG
-prob += pulp.lpSum(
-        [playerVars[i]*dataInputDict[i][target] 
-        for i in dataInput['ID']]
-        )
-
-# Salary Cap Constraint
-prob += pulp.lpSum(
-        [(playerVars[i] * dataInputDict[i]['Salary']) 
-        for i in dataInput['ID']]
-        ) <= budget
-
-
-# Position Limits (not Flex)
-for position in ['QB', 'DEF']:
-    prob += pulp.lpSum(
-            [(playerVars[i] * dataInputDict[i][position]) 
-            for i in dataInput['ID']]
-            ) == positionLimit[position]
-
-
-for position in ['RB', 'WR', 'TE']:
-    prob += pulp.lpSum(
-            [(playerVars[i] * dataInputDict[i][position]) 
-            for i in dataInput['ID']]
-            ) >= positionLimit[position]
-
-    prob += pulp.lpSum(
-            [(playerVars[i] * dataInputDict[i][position]) 
-            for i in dataInput['ID']]
-            ) <= (positionLimit[position] + 1)
-
-
-# Team Size Limit
-prob += pulp.lpSum([playerVars[i] for i in list(dataInput['ID'])]) == 9
-
-#%% SOLVE LP
-## ############################################################################
+def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
     
-prob.writeLP('teamOptimization.lp')
-prob.solve()
     
-print("Status:", pulp.LpStatus[prob.status])
+    prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
+    
+    # Define player Variables
+    playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
+    
+    # Add objective of maximizing FPPG
+    prob += pulp.lpSum(
+            [playerVars[i]*dataInputDict[i][target] 
+            for i in dataInput['ID']]
+            )
+    
+    # Salary Cap Constraint
+    prob += pulp.lpSum(
+            [(playerVars[i] * dataInputDict[i]['Salary']) 
+            for i in dataInput['ID']]
+            ) <= budget
+    
+    
+    # Position Limits (not Flex)
+    for position in ['QB', 'DEF']:
+        prob += pulp.lpSum(
+                [(playerVars[i] * dataInputDict[i][position]) 
+                for i in dataInput['ID']]
+                ) == positionLimit[position]
+    
+    
+    for position in ['RB', 'WR', 'TE']:
+        prob += pulp.lpSum(
+                [(playerVars[i] * dataInputDict[i][position]) 
+                for i in dataInput['ID']]
+                ) >= positionLimit[position]
+    
+        prob += pulp.lpSum(
+                [(playerVars[i] * dataInputDict[i][position]) 
+                for i in dataInput['ID']]
+                ) <= (positionLimit[position] + 1)
+    
+    
+    # Team Size Limit
+    prob += pulp.lpSum([playerVars[i] for i in list(dataInput['ID'])]) == 9
+    
+
+        
+    prob.writeLP('teamOptimization.lp')
+    prob.solve()
+        
+    print("Status:", pulp.LpStatus[prob.status])
+
+    return playerVars
+
+
+budget = 200
+target = 'FPPG'
+
+
+
+
 
 
 
 #%% FINAL TEAM
 
-finalTeam = (
-        dataInput.set_index('ID')
-        .loc[filter(lambda k: playerVars[k].varValue == 1,
-                    playerVars.keys()), :][
-        ['First Name', 'Last Name', 'Position', 
-         'Team', 'Opponent', 'Salary', 'FPPG', 
-         'Rank', 'FPTS']]
-        )
+finalTeam = {}
 
+for target in  ['FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand', 'Proj. Pts_rand']:
 
-finalTeam[['FPPG', 'Salary', 'FPTS']].sum()
+    playerVars = optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit)
+
+    finalTeam[target] = (
+            dataInput.set_index('ID')
+            .loc[filter(lambda k: playerVars[k].varValue == 1,
+                        playerVars.keys()), :][
+            ['First Name', 'Last Name', 'Position', 
+             'Team', 'Opponent', 'Salary', 'FPPG', 
+             'Rank', 'FPTS', 'FPTS_rand', 'Proj. Pts_rand']]
+            )
+    
+    
+    #finalTeam[target][['Salary', 'FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand']].sum()
 
 
 #%% FANTASY PROS DATA
