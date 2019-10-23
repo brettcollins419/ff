@@ -168,24 +168,61 @@ for grade in gradesList:
 
 #%% MATCHUPS DATA
 ## ############################################################################
-    
+
+# Load games
 games = pd.read_csv('data\\spreadspoke_scores.csv')
 
 
+# Load team abbreviations
+teams = pd.read_csv('data\\nfl_teams.csv')
+
+
+# Add team abbreviations to games
+for team in ('home', 'away'):
+    games = (games.set_index('team_{}'.format(team))
+                  .merge(pd.DataFrame(teams.set_index('team_name')['team_id'])
+                          , how = 'inner'
+                          , left_index = True
+                          , right_index = True
+                          )
+                  .reset_index()
+                  .rename(columns = {'team_id':'team_id_{}'.format(team)
+                                     , 'index':'team_'.format(team)})
+                  
+                  )
+
+## Create team / opponent dataframe for referencing
+    
 # Make the home team the focus
-home = (games[['schedule_season', 'schedule_week', 'team_home', 'team_away']]
-        ).rename(columns = {'team_home':'team', 'team_away':'opponent'})
+home = (games[['schedule_season', 'schedule_week', 'team_id_home', 'team_id_away']]
+        ).rename(columns = {'team_id_home':'team', 'team_id_away':'opponent'})
 
 # Make the away team the focus
-away = (games[['schedule_season', 'schedule_week', 'team_home', 'team_away']]
-        ).rename(columns = {'team_home':'opponent', 'team_away':'team'})
+away = (games[['schedule_season', 'schedule_week', 'team_id_home', 'team_id_away']]
+        ).rename(columns = {'team_id_home':'opponent', 'team_id_away':'team'})
+
 
 # Concat home and away to get complete view for each team
 gameLookup = pd.concat([home,away], sort = True)
 
 
-# Add team abbreviations
-teams = pd.read_csv('data\\nfl_teams.csv')
+
+#%% MERGE OPPONENT WITH PLAYER STATS
+
+# Dictionary for team name conversions between datasets
+# (all other teams are the same between the datasets)
+# Key is PFF data and value is Matchups data
+teamAbrvsDict = {
+        'ARZ' : 'ARI'
+        , 'BLT' : 'BAL'
+        , 'CLV' : 'CLE'
+        , 'HST' : 'HOU'
+        , 'LA' : 'LAR'
+        , 'SD' : 'LAC'
+        , 'SL' : 'LAR'
+        }
+
+
 
 
 #%% DEV
