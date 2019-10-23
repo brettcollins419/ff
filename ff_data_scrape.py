@@ -165,17 +165,37 @@ for grade in gradesList:
                     , index = False)
 
 
+
+#%% MATCHUPS DATA
+## ############################################################################
+    
+games = pd.read_csv('data\\spreadspoke_scores.csv')
+
+
+# Make the home team the focus
+home = (games[['schedule_season', 'schedule_week', 'team_home', 'team_away']]
+        ).rename(columns = {'team_home':'team', 'team_away':'opponent'})
+
+# Make the away team the focus
+away = (games[['schedule_season', 'schedule_week', 'team_home', 'team_away']]
+        ).rename(columns = {'team_home':'opponent', 'team_away':'team'})
+
+# Concat home and away to get complete view for each team
+gameLookup = pd.concat([home,away], sort = True)
+
+
+# Add team abbreviations
+teams = pd.read_csv('data\\nfl_teams.csv')
+
+
 #%% DEV
 ## ############################################################################
 
-# MacOS
-#chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 
-# Windows
-chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+defense = pd.read_csv('\\'.join([savePath, '{}_summary_agg.csv'.format('defense')]))
 
-# Linux
-# chrome_path = '/usr/bin/google-chrome %s'
 
-## SUCCESS!!!
-webbrowser.get(chrome_path).open(address)
+
+x = dataAgg.groupby(['season','player_id', 'player']).cumsum()
+
+
