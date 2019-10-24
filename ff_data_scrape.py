@@ -17,7 +17,7 @@ import time
 import webbrowser
 import numpy as np
 from itertools import product, compress
-
+import copy
 
 
 #%% FUNCTIONS
@@ -123,6 +123,7 @@ weekList = np.arange(1,18).tolist()
 # Generate list for downloading
 downloadList = list(product(seasonList, weekList, gradesList))
 
+
 downloadList.sort(key = lambda x: (-x[0], -x[1], x[2]))
 
 # Filter out future dates
@@ -206,6 +207,12 @@ away = (games[['schedule_season', 'schedule_week', 'team_id_home', 'team_id_away
 gameLookup = pd.concat([home,away], sort = True)
 
 
+# Filter only to regular season
+gameLookupReg = copy.copy(
+        gameLookup.loc[[len(week) <= 2 for week in gameLookup['schedule_week']], :]
+        )
+
+gameLookupReg.loc[:, 'schedule_week'] = gameLookupReg.loc[:, 'schedule_week'].map(int)
 
 #%% MERGE OPPONENT WITH PLAYER STATS
 
@@ -222,9 +229,23 @@ teamAbrvsDict = {
         , 'SL' : 'LAR'
         }
 
-
-
-
+for f in os.listdir('pff_data'):
+    dataAgg = pd.read_csv('pff_data\\{}'.format(f))
+    
+    dataAgg.loc[:, 'team_name_games'] = [
+            teamAbrvsDict.get(team, team) for team in dataAgg['team_name']
+            ]
+    
+    
+    dataAggX = (
+        dataAgg.merge(gameLookupReg
+                      , how = 'left'
+                      , left_on = ['season', 'week', 'team_name_games']
+                      , right_on = ['schedule_season', 'schedule_week', 'team'])
+        ).drop(['schedule_season', 'schedule_week', 'team'], axis = 1)
+    
+    
+    x = dataAggX.groupby(['opponent'])['player'].count()
 #%% DEV
 ## ############################################################################
 
