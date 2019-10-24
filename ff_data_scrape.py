@@ -22,8 +22,8 @@ import copy
 
 #%% FUNCTIONS
 
-def downloadPFF(grade, season, week, savePath,
-                chromePath = (
+def downloadPFF(grade, season, week, savePath, pauseTime = 3
+                , chromePath = (
                         'C:/Program Files (x86)/Google/Chrome/'
                         'Application/chrome.exe %s')
                 ):
@@ -41,39 +41,59 @@ def downloadPFF(grade, season, week, savePath,
                 '?league=nfl&season={season}&week={week}&export=true'
                 ).format(grade = grade, season = season, week = week)
     
-    # Download file
-    webbrowser.get(chromePath).open(address)
-    
-
-    # Find downloaded file (most recent file with file name)
-    fileList = [
-            (f.stat().st_mtime, f.name) 
-            for f in os.scandir(savePath)
-            ]
-    
-    fileList.sort(reverse = True)
-
+ 
     # file name check for special teams
     if grade =='special':
         grade = 'special_teams'
-
-    # Most recent download    
-    download = list(filter(
-            lambda f: f[1].find('{grade}_summary'.format(grade=grade)) > -1
-            , fileList)
-        )[0]
     
+    # Delete any historical download files in directory
+    try:
+        os.remove('{path}\\{grade}_summary.csv'.format(path=savePath, grade=grade))
+    except: pass
+    
+    # Download file
+    webbrowser.get(chromePath).open(address)
+    
+    # Pause for download
+#    time.sleep(pauseTime)
+#    
+#
+#    # Find downloaded file (most recent file with file name)
+#    fileList = [
+#            (f.stat().st_mtime, f.name) 
+#            for f in os.scandir(savePath)
+#            ]
+#    
+#    fileList.sort(reverse = True)
+#
+#
+#
+#    # Most recent download    
+#    download = list(filter(
+#            lambda f: f[1].find('{grade}_summary'.format(grade=grade)) > -1
+#            , fileList)
+#        )[0]
+    
+    # Wait for file to download
+    while '{grade}_summary.csv'.format(grade=grade) not in os.listdir(savePath):
+        time.sleep(1)
+
 
     # Rename file with season and week
     newFileName = '{grade}_{season}_w{week}_summary.csv'.format(
                     grade = grade, season = season, week = week)
     
-    os.rename('\\'.join([savePath, download[1]])
-                , '\\'.join([savePath, newFileName])
+    os.rename('{path}\\{grade}_summary.csv'.format(path=savePath
+                                                  , grade=grade)
+                , '{path}\\{newFileName}'.format(path=savePath
+                                                   , newFileName=newFileName)
                 )   
 
     # Add season and week to file
-    data = pd.read_csv('\\'.join([savePath, newFileName]))
+    data = pd.read_csv(
+            '{path}\\{newFileName}'.format(path=savePath
+                                         , newFileName=newFileName)
+            )
     
     data.loc[:, 'season'] = season
     data.loc[:, 'week'] = week
@@ -127,31 +147,39 @@ downloadList = list(product(seasonList, weekList, gradesList))
 downloadList.sort(key = lambda x: (-x[0], -x[1], x[2]))
 
 # Filter out future dates
-currentWeek = 6
+currentWeek = 7
 downloadList = list(
         filter(lambda x: (x[0] + (x[1]/17)) <= (2019 + (currentWeek/17))
             , downloadList)
         )
 
 
+errorList = []
 
 # Iterate through files
 for season, week, grade in downloadList:
     try:
         downloadPFF(grade, season, week
-                    , savePath = 'C:\\Users\\brett\\Downloads')
+#                    , savePath = 'C:\\Users\\brett\\Downloads'
+                    , savePath = 'C:\\Users\\u00bec7\\Downloads')
+        
+        
     except:
         print('Cannot download', season, week, grade)
+        errorList.append((season, week, grade))
+        # Random sleep
+        time.sleep(1)
+        continue
         
-    # Random sleep
-    time.sleep(1 + np.random.rand())
+
 
 
 #%% COMBINE FILES
     
 for grade in gradesList:
     
-    savePath = 'C:\\Users\\brett\\Downloads'
+#    savePath = 'C:\\Users\\brett\\Downloads'
+    savePath = 'C:\\Users\\u00bec7\\Downloads'
     dataList = os.listdir(savePath)
     
     dataList = list(filter(
@@ -160,7 +188,8 @@ for grade in gradesList:
     
     dataAgg = pd.concat([pd.read_csv('\\'.join([savePath, f]))
         for f in dataList]
-        , axis = 0)
+        , axis = 0
+        , sort = True)
     
     dataAgg.to_csv('\\'.join([savePath, '{}_summary_agg.csv'.format(grade)])
                     , index = False)
