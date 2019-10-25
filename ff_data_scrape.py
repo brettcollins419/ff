@@ -22,7 +22,7 @@ import copy
 
 #%% FUNCTIONS
 
-def downloadPFF(grade, season, week, savePath, pauseTime = 3
+def downloadPFF(grade, season, week, savePath
                 , chromePath = (
                         'C:/Program Files (x86)/Google/Chrome/'
                         'Application/chrome.exe %s')
@@ -52,10 +52,10 @@ def downloadPFF(grade, season, week, savePath, pauseTime = 3
     except: pass
     
     # Download file
-    webbrowser.get(chromePath).open(address)
+    webbrowser.get(chromePath).open(address, autoraise=False)
     
     # Pause for download
-#    time.sleep(pauseTime)
+    time.sleep(1)
 #    
 #
 #    # Find downloaded file (most recent file with file name)
@@ -73,6 +73,7 @@ def downloadPFF(grade, season, week, savePath, pauseTime = 3
 #            lambda f: f[1].find('{grade}_summary'.format(grade=grade)) > -1
 #            , fileList)
 #        )[0]
+    
     
     # Wait for file to download
     while '{grade}_summary.csv'.format(grade=grade) not in os.listdir(savePath):
@@ -160,8 +161,9 @@ errorList = []
 for season, week, grade in downloadList:
     try:
         downloadPFF(grade, season, week
-#                    , savePath = 'C:\\Users\\brett\\Downloads'
-                    , savePath = 'C:\\Users\\u00bec7\\Downloads')
+                    , savePath = 'C:\\Users\\brett\\Downloads'
+#                    , savePath = 'C:\\Users\\u00bec7\\Downloads'
+                    )
         
         
     except:
@@ -175,13 +177,17 @@ for season, week, grade in downloadList:
 
 
 #%% COMBINE FILES
+## ############################################################################
+        
+# Merge all files of same format
     
 for grade in gradesList:
     
-#    savePath = 'C:\\Users\\brett\\Downloads'
-    savePath = 'C:\\Users\\u00bec7\\Downloads'
+    savePath = 'C:\\Users\\brett\\Downloads'
+#    savePath = 'C:\\Users\\u00bec7\\Downloads'
     dataList = os.listdir(savePath)
     
+    # Find all files of the same format
     dataList = list(filter(
             lambda f: f.find('{grade}'.format(grade=grade)) > -1
             , dataList))
@@ -191,7 +197,7 @@ for grade in gradesList:
         , axis = 0
         , sort = True)
     
-    dataAgg.to_csv('\\'.join([savePath, '{}_summary_agg.csv'.format(grade)])
+    dataAgg.to_csv('pff_data\\{}_summary_agg.csv'.format(grade)
                     , index = False)
 
 
@@ -223,18 +229,43 @@ for team in ('home', 'away'):
 
 ## Create team / opponent dataframe for referencing
     
+gameCols = ['schedule_season'
+            , 'schedule_week'
+            , 'team_id_home'
+            , 'team_id_away'
+            , 'spread_favorite'
+            , 'team_favorite_id'
+            , 'over_under_line'
+            , 'weather_temperature'
+            , 'weather_wind_mph'
+            , 'weather_detail']
+    
 # Make the home team the focus
-home = (games[['schedule_season', 'schedule_week', 'team_id_home', 'team_id_away']]
-        ).rename(columns = {'team_id_home':'team', 'team_id_away':'opponent'})
+home = games[gameCols].rename(
+        columns = {'team_id_home':'team', 'team_id_away':'opponent'})
 
 # Make the away team the focus
-away = (games[['schedule_season', 'schedule_week', 'team_id_home', 'team_id_away']]
-        ).rename(columns = {'team_id_home':'opponent', 'team_id_away':'team'})
+away = games[gameCols].rename(
+        columns = {'team_id_home':'opponent', 'team_id_away':'team'})
 
 
 # Concat home and away to get complete view for each team
 gameLookup = pd.concat([home,away], sort = True)
 
+
+# Make spread relative to the base team
+gameLookup.loc[:, 'spread_team']= gameLookup.apply(lambda r: 
+    r['spread_favorite'] * -1 if r['team'] == r['team_favorite_id']
+    else r['spread_favorite']
+    , axis = 1)
+    
+# Add boolean for if team is favorite
+gameLookup.loc[:, 'is_favorite'] = [
+        (s > 0)*1 for s in gameLookup['spread_team'].values
+        ]
+
+# Drop spread columns
+gameLookup.drop(['spread_favorite', 'team_favorite_id'], axis = 1, inplace = True)
 
 # Filter only to regular season
 gameLookupReg = copy.copy(
@@ -242,6 +273,9 @@ gameLookupReg = copy.copy(
         )
 
 gameLookupReg.loc[:, 'schedule_week'] = gameLookupReg.loc[:, 'schedule_week'].map(int)
+
+# Reset index for unique index
+gameLookupReg.reset_index(drop = True, inplace = True)
 
 #%% MERGE OPPONENT WITH PLAYER STATS
 
@@ -258,6 +292,7 @@ teamAbrvsDict = {
         , 'SL' : 'LAR'
         }
 
+# Merge game info and save data
 for f in os.listdir('pff_data'):
     dataAgg = pd.read_csv('pff_data\\{}'.format(f))
     
@@ -266,15 +301,17 @@ for f in os.listdir('pff_data'):
             ]
     
     
-    dataAggX = (
+    dataAgg = (
         dataAgg.merge(gameLookupReg
-                      , how = 'left'
+                      , how = 'inner'
                       , left_on = ['season', 'week', 'team_name_games']
                       , right_on = ['schedule_season', 'schedule_week', 'team'])
         ).drop(['schedule_season', 'schedule_week', 'team'], axis = 1)
     
     
-    x = dataAggX.groupby(['opponent'])['player'].count()
+    dataAgg.to_csv('pff_data\\{}'.format(f), index = False)
+    
+    
 #%% DEV
 ## ############################################################################
 
