@@ -241,12 +241,16 @@ gameCols = ['schedule_season'
             , 'weather_detail']
     
 # Make the home team the focus
-home = games[gameCols].rename(
-        columns = {'team_id_home':'team', 'team_id_away':'opponent'})
+home = copy.copy(games[gameCols])
+home.rename(
+        columns = {'team_id_home':'team', 'team_id_away':'opponent'}
+        , inplace = True)
 
 # Make the away team the focus
-away = games[gameCols].rename(
-        columns = {'team_id_home':'opponent', 'team_id_away':'team'})
+away = copy.copy(games[gameCols])
+away.rename(
+        columns = {'team_id_home':'opponent', 'team_id_away':'team'}
+        , inplace = True)
 
 
 # Concat home and away to get complete view for each team
