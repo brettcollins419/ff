@@ -201,6 +201,92 @@ for grade in gradesList:
                     , index = False)
 
 
+#%% AGGREGATE DEFENSE & SPECIAL TEAMS
+## ############################################################################
+    
+defense = pd.read_csv('pff_data\\defense_summary_agg.csv')
+
+# Dictonary for aggregating metrics
+defAggDict = {
+        'assists' : np.sum
+        , 'batted_passes' : np.sum
+        , 'declined_penalties' : np.sum
+        , 'forced_fumbles' : np.sum
+        , 'grades_coverage_defense' : np.mean
+        , 'grades_defense' : np.mean
+        , 'grades_pass_rush_defense' : np.mean
+        , 'grades_run_defense' : np.mean
+        , 'grades_tackle' : np.mean
+        , 'hits' : np.sum
+        , 'hurries' : np.sum
+        , 'interceptions' : np.sum
+        , 'missed_tackles' : np.sum
+        , 'pass_break_ups' : np.sum
+        , 'penalties' : np.sum
+        , 'receptions' : np.sum
+        , 'sacks' : np.sum
+        , 'snap_counts_coverage' : np.mean
+        , 'snap_counts_pass_rush' : np.mean
+        , 'snap_counts_run_defense' : np.mean
+        , 'snap_counts_total' : np.mean
+        , 'stops' : np.sum
+        , 'tackles' : np.sum
+        , 'targets' : np.sum
+        , 'total_pressures' : np.sum
+        , 'touchdowns' : np.sum
+        , 'yards' : np.sum
+        , 'yards_after_catch' : np.sum
+}
+
+# Aggregate defense stats
+defense = (
+        defense.groupby(['season', 'week', 'team_name'])
+               .agg(defAggDict)
+               .reset_index()
+               )
+
+# Compbine turnovers
+defense.loc[:, 'turnovers'] = (
+        defense[['forced_fumbles', 'interceptions']].sum(axis = 1)
+        )
+
+# Combine penalties
+defense.loc[:, 'all_penalties'] = (
+        defense[['penalties', 'declined_penalties']].sum(axis = 1)
+        )
+
+defense.to_csv('pff_data//defense_team_summary_agg.csv', index = False)
+
+
+specialTeams = pd.read_csv('pff_data//special_summary_agg.csv')
+
+specialAggDict = {
+        'assists' : np.sum
+        , 'declined_penalties' : np.sum
+        , 'grades_fgep_kicker' : np.mean
+        , 'grades_kick_return' : np.mean
+        , 'grades_kickoff_kicker' : np.mean
+        , 'grades_misc_st' : np.mean
+        , 'grades_punt_return' : np.mean
+        , 'grades_punter' : np.mean
+        , 'missed_tackles' : np.sum
+        , 'penalties' : np.sum
+        , 'tackles' : np.sum
+        }
+
+
+specialTeams = (
+        specialTeams.groupby(['season', 'week', 'team_name'])
+                    .agg(specialAggDict)
+                    .reset_index()
+                    )
+
+# Combine penalties
+specialTeams.loc[:, 'all_penalties'] = (
+        specialTeams[['penalties', 'declined_penalties']].sum(axis = 1)
+        )
+
+specialTeams.to_csv('pff_data//special_team_summary_agg.csv', index = False)
 
 #%% MATCHUPS DATA
 ## ############################################################################
@@ -259,13 +345,13 @@ gameLookup = pd.concat([home,away], sort = True)
 
 # Make spread relative to the base team
 gameLookup.loc[:, 'spread_team']= gameLookup.apply(lambda r: 
-    r['spread_favorite'] * -1 if r['team'] == r['team_favorite_id']
+    r['spread_favorite'] * -1 if r['team'] != r['team_favorite_id']
     else r['spread_favorite']
     , axis = 1)
     
 # Add boolean for if team is favorite
 gameLookup.loc[:, 'is_favorite'] = [
-        (s > 0)*1 for s in gameLookup['spread_team'].values
+        (s < 0)*1 for s in gameLookup['spread_team'].values
         ]
 
 # Drop spread columns
@@ -314,7 +400,9 @@ for f in os.listdir('pff_data'):
     
     
     dataAgg.to_csv('pff_data\\{}'.format(f), index = False)
+  
     
+
     
 #%% DEV
 ## ############################################################################
