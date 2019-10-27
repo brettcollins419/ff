@@ -167,7 +167,7 @@ def salaryKeyGen(keyList):
 
 #%% LOAD DATA
 
-week = 7
+week = 8
 
 # Working Directory Dictionary
 pcs = {
@@ -433,6 +433,7 @@ target = 'FPPG'
 
 
 #%% FINAL TEAM
+## ############################################################################
 
 finalTeam = {}
 
@@ -451,6 +452,94 @@ for target in  ['FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand', 'Proj. Pts_rand']:
     
     
     #finalTeam[target][['Salary', 'FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand']].sum()
+
+
+
+#%% DEV
+## ############################################################################
+
+data = pd.read_csv('data\\FantasyPros_Fantasy_Football_Projections'
+                   '_{}_high_low_w{}.csv'.format(position, week)
+        )
+
+# Filter empy Rows
+data = data[[not i for i in np.isnan(data['FPTS'])]]
+
+# Forward fll empty player fields
+data['Player'].fillna(method = 'ffill', inplace = True)
+
+
+# Create key for merging avg, high, and low data
+data.loc[:, 'key'] = list(map(lambda r: r//3, range(data.shape[0])))
+
+
+
+# Rename Column
+data.rename(columns = {fantasyProsDict[position]['column'] : 'Player'},
+                       inplace = True)
+
+
+# Add Team for DST
+if position == 'DST':
+    data['Team'] = [defenseDict.get(player) for player in data['Player']]
+
+    data.loc[:, 'Player'] = data['Team']
+
+
+# Add position label
+data.loc[:, 'position'] = fantasyProsDict[position]['label']
+
+
+
+# Split data into avg, high, and low
+dataAvg = copy.copy(data.loc[
+        [k not in ('high', 'low') for k in data['Team'].values.tolist()]
+        , :]
+        )
+
+dataHigh = copy.copy(
+        data.loc[[k == 'high' for k in data['Team'].values.tolist()], :]
+        )
+
+dataLow = copy.copy(
+        data.loc[[k == 'low' for k in data['Team'].values.tolist()], :] 
+        )
+    
+
+# Rename high and low columns
+dataHigh.rename(columns = {
+        k : '{}_high'.format(k) for k in 
+            list(filter(lambda col: col not in ('Player', 'Team', 'key', 'position')
+            , data.columns))
+        }
+        , inplace = True
+        )
+
+dataLow.rename(columns = {
+        k : '{}_low'.format(k) for k in 
+            list(filter(lambda col: col not in ('Player', 'Team', 'key', 'position')
+            , data.columns))
+        }
+        , inplace = True
+        )
+
+
+# Create dictionary for filling team name for each player
+playerHighLowDict = (
+        dataAvg[['key', 'Team']]
+            .set_index('key')
+            .to_dict('index')
+        )
+
+
+
+
+
+
+
+
+
+
 
 
 #%% FANTASY PROS DATA
