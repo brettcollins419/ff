@@ -130,6 +130,110 @@ def fantasyProsProjectionsDataLoad(position
     return data[['Player', 'Team', 'position', 'FPTS']]
 
 
+
+def fantasyProsAllProjectionsDataLoad(position
+                                , week
+                                , fantasyProsDict = fantasyProsDict
+                                , defenseDict = defenseDict
+                                , fileName = ('data\\FantasyPros_Fantasy_'
+                                              'Football_Projections_{}_'
+                                              'high_low_w{}.csv'
+                                              )
+                                ):
+    
+    '''Load fantansy pros projections with high, low, and averages.
+        Pivot high, low, and avg into single record for each player
+        and estimate std. dev.
+        
+        Return subset dataframe of just FPTS.
+    '''
+    
+    # Load data
+    data = pd.read_csv(fileName.format(position, week))
+    
+    # Filter empy Rows
+    data = data[[not i for i in np.isnan(data['FPTS'])]]
+    
+    # Forward fll empty player fields
+    data['Player'].fillna(method = 'ffill', inplace = True)
+    
+    
+    # Create key for merging avg, high, and low data
+    data.loc[:, 'key'] = list(map(lambda r: r//3, range(data.shape[0])))
+    
+    
+    
+    # Rename Column
+    data.rename(columns = {fantasyProsDict[position]['column'] : 'Player'},
+                           inplace = True)
+    
+    
+    # Add Team for DST
+    if position == 'DST':
+        data['Player'] = [defenseDict.get(player) for player in data['Player']]
+    
+        data.loc[:, 'Team'] = [
+                team[0] if team[1] not in ('high', 'low') else team[1]
+                for team in data[['Player', 'Team']].values.tolist()]
+    
+    
+    # Add position label
+    data.loc[:, 'position'] = fantasyProsDict[position]['label']
+    
+    
+    
+    # Split data into avg, high, and low
+    dataAvg = copy.copy(data.loc[
+            [k not in ('high', 'low') for k in data['Team'].values.tolist()]
+            , :]
+            )
+    
+    dataHigh = copy.copy(
+            data.loc[[k == 'high' for k in data['Team'].values.tolist()], :]
+            )
+    
+    dataLow = copy.copy(
+            data.loc[[k == 'low' for k in data['Team'].values.tolist()], :] 
+            )
+        
+    
+    # Rename high and low columns
+    dataHigh.rename(columns = {
+            k : '{}_high'.format(k) for k in 
+                list(filter(lambda col: col not in ('Player', 'Team', 'key', 'position')
+                , data.columns))
+            }
+            , inplace = True
+            )
+    
+    dataLow.rename(columns = {
+            k : '{}_low'.format(k) for k in 
+                list(filter(lambda col: col not in ('Player', 'Team', 'key', 'position')
+                , data.columns))
+            }
+            , inplace = True
+            )
+    
+    
+    # Combine high, low, and average projections into single record
+    data = (dataAvg.set_index('key')
+                   .merge(dataLow.set_index('key')
+                                 .drop(['Player', 'Team', 'position'], axis = 1)
+                         , how = 'inner'
+                         , left_index = True
+                         , right_index = True)
+                   .merge(dataHigh.set_index('key')
+                                 .drop(['Player', 'Team', 'position'], axis = 1)
+                         , how = 'inner'
+                         , left_index = True
+                         , right_index = True)               
+                   )
+
+    return data[['Player', 'Team', 'position', 'FPTS', 'FPTS_low', 'FPTS_high']]
+
+
+
+
 def fpRankingsKeyGen(keyList):
     '''Generate key for fpRankings using first three letters of first name, 
     full last name, team, and position except defense is defense.'''
@@ -164,6 +268,67 @@ def salaryKeyGen(keyList):
                )
                
     return key
+
+
+
+def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
+    '''Create linear optimiziation problem to optimize target parameter
+        given budget and constraints.
+        
+        Return lineup solution to linear problem
+    '''
+    
+    prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
+    
+    # Define player Variables
+    playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
+    
+    # Add objective of maximizing FPPG
+    prob += pulp.lpSum(
+            [playerVars[i]*dataInputDict[i][target] 
+            for i in dataInput['ID']]
+            )
+    
+    # Salary Cap Constraint
+    prob += pulp.lpSum(
+            [(playerVars[i] * dataInputDict[i]['Salary']) 
+            for i in dataInput['ID']]
+            ) <= budget
+    
+    
+    # Position Limits (not Flex)
+    for position in ['QB', 'DEF']:
+        prob += pulp.lpSum(
+                [(playerVars[i] * dataInputDict[i][position]) 
+                for i in dataInput['ID']]
+                ) == positionLimit[position]
+    
+    
+    for position in ['RB', 'WR', 'TE']:
+        prob += pulp.lpSum(
+                [(playerVars[i] * dataInputDict[i][position]) 
+                for i in dataInput['ID']]
+                ) >= positionLimit[position]
+    
+        prob += pulp.lpSum(
+                [(playerVars[i] * dataInputDict[i][position]) 
+                for i in dataInput['ID']]
+                ) <= (positionLimit[position] + 1)
+    
+    
+    # Team Size Limit
+    prob += pulp.lpSum([playerVars[i] for i in list(dataInput['ID'])]) == 9
+    
+
+        
+    prob.writeLP('teamOptimization.lp')
+    prob.solve()
+        
+    print("Status:", pulp.LpStatus[prob.status])
+
+    return playerVars
+
+
 
 #%% LOAD DATA
 
@@ -237,7 +402,11 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
 fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position, week) 
                         for position in fantasyProsDict.keys()
                         ], sort = True)
-        
+ 
+# Load and concat data for projections
+fpAllProjections = pd.concat([fantasyProsAllProjectionsDataLoad(position, week) 
+                        for position in fantasyProsDict.keys()
+                        ], sort = True)       
     
 # Generate key for projections
 fpProjections.loc[:, 'key'] = list(map(lambda keyList: 
@@ -369,59 +538,6 @@ budget = 200
 target = 'FPPG'
 
 
-def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
-    
-    
-    prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
-    
-    # Define player Variables
-    playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
-    
-    # Add objective of maximizing FPPG
-    prob += pulp.lpSum(
-            [playerVars[i]*dataInputDict[i][target] 
-            for i in dataInput['ID']]
-            )
-    
-    # Salary Cap Constraint
-    prob += pulp.lpSum(
-            [(playerVars[i] * dataInputDict[i]['Salary']) 
-            for i in dataInput['ID']]
-            ) <= budget
-    
-    
-    # Position Limits (not Flex)
-    for position in ['QB', 'DEF']:
-        prob += pulp.lpSum(
-                [(playerVars[i] * dataInputDict[i][position]) 
-                for i in dataInput['ID']]
-                ) == positionLimit[position]
-    
-    
-    for position in ['RB', 'WR', 'TE']:
-        prob += pulp.lpSum(
-                [(playerVars[i] * dataInputDict[i][position]) 
-                for i in dataInput['ID']]
-                ) >= positionLimit[position]
-    
-        prob += pulp.lpSum(
-                [(playerVars[i] * dataInputDict[i][position]) 
-                for i in dataInput['ID']]
-                ) <= (positionLimit[position] + 1)
-    
-    
-    # Team Size Limit
-    prob += pulp.lpSum([playerVars[i] for i in list(dataInput['ID'])]) == 9
-    
-
-        
-    prob.writeLP('teamOptimization.lp')
-    prob.solve()
-        
-    print("Status:", pulp.LpStatus[prob.status])
-
-    return playerVars
-
 
 budget = 200
 target = 'FPPG'
@@ -458,89 +574,10 @@ for target in  ['FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand', 'Proj. Pts_rand']:
 #%% DEV
 ## ############################################################################
 
-data = pd.read_csv('data\\FantasyPros_Fantasy_Football_Projections'
-                   '_{}_high_low_w{}.csv'.format(position, week)
-        )
 
-# Filter empy Rows
-data = data[[not i for i in np.isnan(data['FPTS'])]]
-
-# Forward fll empty player fields
-data['Player'].fillna(method = 'ffill', inplace = True)
-
-
-# Create key for merging avg, high, and low data
-data.loc[:, 'key'] = list(map(lambda r: r//3, range(data.shape[0])))
-
-
-
-# Rename Column
-data.rename(columns = {fantasyProsDict[position]['column'] : 'Player'},
-                       inplace = True)
-
-
-# Add Team for DST
-if position == 'DST':
-    data['Team'] = [defenseDict.get(player) for player in data['Player']]
-
-    data.loc[:, 'Player'] = data['Team']
-
-
-# Add position label
-data.loc[:, 'position'] = fantasyProsDict[position]['label']
-
-
-
-# Split data into avg, high, and low
-dataAvg = copy.copy(data.loc[
-        [k not in ('high', 'low') for k in data['Team'].values.tolist()]
-        , :]
-        )
-
-dataHigh = copy.copy(
-        data.loc[[k == 'high' for k in data['Team'].values.tolist()], :]
-        )
-
-dataLow = copy.copy(
-        data.loc[[k == 'low' for k in data['Team'].values.tolist()], :] 
-        )
-    
-
-# Rename high and low columns
-dataHigh.rename(columns = {
-        k : '{}_high'.format(k) for k in 
-            list(filter(lambda col: col not in ('Player', 'Team', 'key', 'position')
-            , data.columns))
-        }
-        , inplace = True
-        )
-
-dataLow.rename(columns = {
-        k : '{}_low'.format(k) for k in 
-            list(filter(lambda col: col not in ('Player', 'Team', 'key', 'position')
-            , data.columns))
-        }
-        , inplace = True
-        )
-
-
-# Create dictionary for filling team name for each player
-playerHighLowDict = (
-        dataAvg[['key', 'Team']]
-            .set_index('key')
-            .to_dict('index')
-        )
-
-
-
-
-
-
-
-
-
-
-
+x = {position : fantasyProsAllProjectionsDataLoad(position, week)
+    for position in fantasyProsDict.keys()
+    }
 
 #%% FANTASY PROS DATA
 ## ############################################################################
