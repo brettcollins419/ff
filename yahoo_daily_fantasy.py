@@ -5,7 +5,7 @@ Created on Thu Sep  5 13:00:42 2019
 @author: u00bec7
 """
 
-## Packages
+## PACKAGES
 
 
 import pandas as pd
@@ -15,6 +15,7 @@ import pulp
 import re
 import socket
 import copy
+from scipy.stats import norm
 
 #%% FUNCTIONS
 
@@ -232,6 +233,26 @@ def fantasyProsAllProjectionsDataLoad(position
     return data[['Player', 'Team', 'position', 'FPTS', 'FPTS_low', 'FPTS_high']]
 
 
+def calculateProjectionStats(projections, ci = 0.95):
+    '''Calculate range and estimate std. dev. of projections.
+    
+    Return same data frame with new stat columns.'''
+    
+
+    
+    projections.loc[:, 'FPTS_range'] = (
+            projections['FPTS_high'] - projections['FPTS_low']
+            )
+    
+    projections.loc[:, 'FPTS_lever'] = (
+            (projections['FPTS'] - projections['FPTS_low']) / 
+            (projections['FPTS_range'])
+            )
+        
+    projections.loc[:, 'FPTS_std_dev_est'] = (
+            projections['FPTS_range'] / norm.ppf(ci))
+    
+    return projections
 
 
 def fpRankingsKeyGen(keyList):
@@ -330,14 +351,15 @@ def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
 
 
 
-#%% LOAD DATA
+#%% SETUP ENVIRONMENT
+## ############################################################################
 
 week = 8
 
 # Working Directory Dictionary
 pcs = {
     'WaterBug' : {'wd':'C:\\Users\\brett\\Documents\\ff',
-                  'repo':'C:\\Users\\brett\\Documents\\march_madness_ml\\march_madness'},
+                  'repo':'C:\\Users\\brett\\Documents\\personal\\ff'},
 
     'WHQPC-L60102' : {'wd':'C:\\Users\\u00bec7\\Desktop\\personal\\ff',
                       'repo':'C:\\Users\\u00bec7\\Desktop\\personal\\ff'},
@@ -378,7 +400,8 @@ for position in positions:
     data.loc[:,position] = (data['Position'] == position) * 1
     
     
-    
+#%% LOAD FANTASY PROS RANKINGS DATA
+## ############################################################################
     
 # Load and concat data for rankings
 fpRankings = pd.concat([fantasyProsRankingsDataLoad(position, week) 
@@ -396,6 +419,8 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
 
     
     
+#%% LOAD FANTASY PROS PROJECTIONS DATA
+## ############################################################################
 
 
 # Load and concat data for projections
@@ -408,6 +433,14 @@ fpAllProjections = pd.concat([fantasyProsAllProjectionsDataLoad(position, week)
                         for position in fantasyProsDict.keys()
                         ], sort = True)       
     
+        
+        
+# Calculate stats
+fpAllProjections = calculateProjectionStats(fpAllProjections)
+
+
+
+        
 # Generate key for projections
 fpProjections.loc[:, 'key'] = list(map(lambda keyList: 
     fpRankingsKeyGen(keyList)
@@ -416,10 +449,33 @@ fpProjections.loc[:, 'key'] = list(map(lambda keyList:
 
     
     
+fpAllProjections.loc[:, 'key'] = list(map(lambda keyList: 
+    fpRankingsKeyGen(keyList)
+    , fpAllProjections[['Player', 'Team', 'position']].values.tolist()
+    ))      
     
     
+#%% PROJECTIONS UNCERTAINTY
     
+
+np.random.seed(1127)
+
+for i in range(7):
+    fpAllProjections.loc[:, 'FPTS_rand_{}'.format(i)] = (
+            fpAllProjections['FPTS'] + (
+                    fpAllProjections['FPTS_std_dev_est'] 
+                    * np.random.randn(fpAllProjections.shape[0])
+                    )
+            )
+
+  
+# Columns for merging
+fpAllProjectionsCols = (
+        ['FPTS', 'FPTS_high', 'FPTS_low']
+        + ['FPTS_rand_{}'.format(i) for i in range(7)] 
+        )
     
+#%% COMBINE DATASETS
     
 # # of players required for each position
 positionLimit = {'QB':1
@@ -449,7 +505,7 @@ dataInput = dataInput.set_index('key').merge(
 
 
 dataInput = dataInput.merge(
-        pd.DataFrame(fpProjections.set_index('key')['FPTS'])
+        fpAllProjections.set_index('key')[fpAllProjectionsCols]
         , how = 'left'
         , left_index = True
         , right_index = True
@@ -457,123 +513,146 @@ dataInput = dataInput.merge(
 
 
 # Fill empty projections with 0
-dataInput['FPTS'].fillna(0, inplace = True)
-dataInput['Proj. Pts'].fillna(0, inplace = True)
+dataInput.fillna(0, inplace = True)
 
 
 #%% INTRODUCING UNCERTAINTY
+## ############################################################################
+
+#
+## Rank projections for each group
+#dataInput.loc[:, 'FPTS_rank_overall'] = (
+#        dataInput.groupby('Position')['FPTS']
+#            .rank(method = 'min'
+#                  , ascending = False)
+#            )
+#            
+#            
+## Rank projections for each group by team
+#dataInput.loc[:, 'FPTS_rank_team'] = (
+#        dataInput.groupby(['Position', 'Team'])['FPTS']
+#            .rank(method = 'min'
+#                  , ascending = False)
+#            )
+#
+#dataInput.groupby('Position').agg(
+#        {'FPTS_rank_overall':np.max
+#         , 'FPTS_rank_team':np.max}
+#        )
+#
+## Max # of players to analyze for each position
+#            # # of players required for each position
+#positionRankCap = {'QB': {'team':1, 'overall':32}
+#                   , 'TE':{'team':3, 'overall':64}
+#                   , 'RB':{'team':3, 'overall':64}
+#                   , 'DEF':{'team':1, 'overall':32}
+#                   , 'WR':{'team':4, 'overall':100}
+#                 }
+#
+#
+#dataInput.loc[:, 'FPTS_team_rank_filter'] = [
+#        p[1] <= positionRankCap[p[0]]['team']
+#        for p in dataInput[['Position','FPTS_rank_team']].values
+#        ]
+#        
+#
+#x = dataInput[dataInput['FPTS_team_rank_filter']].groupby('Position').agg(
+#        {'FPTS':(np.mean, np.std, len)
+#         })
+#    
+#minAdjustment = 0.9
+#maxAdjustment = 1.1
+#
+#dataInput['FPTS_rand'] = (
+#        dataInput['FPTS'] * (minAdjustment + 
+#                np.random.rand(dataInput.shape[0])
+#                *(maxAdjustment - minAdjustment)
+#                )
+#        )
+#
+#
+#dataInput['Proj. Pts_rand'] = (
+#        dataInput['Proj. Pts'] * (minAdjustment + 
+#                np.random.rand(dataInput.shape[0])
+#                *(maxAdjustment - minAdjustment)
+#                )
+#        )
 
 
-
-# Rank projections for each group
-dataInput.loc[:, 'FPTS_rank_overall'] = (
-        dataInput.groupby('Position')['FPTS']
-            .rank(method = 'min'
-                  , ascending = False)
-            )
-            
-            
-# Rank projections for each group by team
-dataInput.loc[:, 'FPTS_rank_team'] = (
-        dataInput.groupby(['Position', 'Team'])['FPTS']
-            .rank(method = 'min'
-                  , ascending = False)
-            )
-
-dataInput.groupby('Position').agg(
-        {'FPTS_rank_overall':np.max
-         , 'FPTS_rank_team':np.max}
-        )
-
-# Max # of players to analyze for each position
-            # # of players required for each position
-positionRankCap = {'QB': {'team':1, 'overall':32}
-                   , 'TE':{'team':3, 'overall':64}
-                   , 'RB':{'team':3, 'overall':64}
-                   , 'DEF':{'team':1, 'overall':32}
-                   , 'WR':{'team':4, 'overall':100}
-                 }
-
-
-dataInput.loc[:, 'FPTS_team_rank_filter'] = [
-        p[1] <= positionRankCap[p[0]]['team']
-        for p in dataInput[['Position','FPTS_rank_team']].values
-        ]
-        
-
-x = dataInput[dataInput['FPTS_team_rank_filter']].groupby('Position').agg(
-        {'FPTS':(np.mean, np.std, len)
-         })
-    
-minAdjustment = 0.9
-maxAdjustment = 1.1
-
-dataInput['FPTS_rand'] = (
-        dataInput['FPTS'] * (minAdjustment + 
-                np.random.rand(dataInput.shape[0])
-                *(maxAdjustment - minAdjustment)
-                )
-        )
-
-
-dataInput['Proj. Pts_rand'] = (
-        dataInput['Proj. Pts'] * (minAdjustment + 
-                np.random.rand(dataInput.shape[0])
-                *(maxAdjustment - minAdjustment)
-                )
-        )
-
-# Convert to dictionary for LP
-dataInputDict = (
-        dataInput.set_index('ID')
-        [['Salary', 'FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand', 'Proj. Pts_rand'] + positions].to_dict('index')
-        )
 
 
 #%% LP SETUP
 ## ############################################################################
 
+
+# Convert to dictionary for LP
+lpTargets = fpAllProjectionsCols + ['FPPG', 'Proj. Pts']
+
+dataInputDict = (
+        dataInput.set_index('ID')
+        [['Salary'] + lpTargets + positions].to_dict('index')
+        )
+
 # Setup LP Problem
 budget = 200
-target = 'FPPG'
 
 
-
-budget = 200
-target = 'FPPG'
-
-
-
-
-
-
-
-#%% FINAL TEAM
+#%% TEAM OPTIMIZATION
 ## ############################################################################
 
 finalTeam = {}
 
-for target in  ['FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand', 'Proj. Pts_rand']:
+# Create optimized team to each points projection
+for target in  lpTargets:
 
-    playerVars = optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit)
+    playerVars = optimizeLineup(dataInput
+                                , dataInputDict
+                                , budget
+                                , target
+                                , positionLimit)
 
     finalTeam[target] = (
             dataInput.set_index('ID')
             .loc[filter(lambda k: playerVars[k].varValue == 1,
                         playerVars.keys()), :][
             ['First Name', 'Last Name', 'Position', 
-             'Team', 'Opponent', 'Salary', 'FPPG', 
-             'Rank', 'FPTS', 'FPTS_rand', 'Proj. Pts_rand']]
+             'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
             )
     
     
     #finalTeam[target][['Salary', 'FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand']].sum()
 
+x = pd.concat(finalTeam.values())
 
+
+x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(10)
 
 #%% DEV
 ## ############################################################################
 
+
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+fpAllProjections.loc[:, 'position_rank'] = (
+        fpAllProjections.groupby('position')['FPTS'].rank(ascending = False)
+        )
+
+
+
+fig, ax = plt.subplots(1, 2, sharey= True, figsize = (10, 6))
+
+sns.scatterplot(x = 'Rank', y = 'Proj. Pts', hue = 'position'
+                , data = fpRankings, ax = ax[0]
+                )
+sns.scatterplot(x = 'position_rank', y = 'FPTS', hue = 'position'
+                , data = fpAllProjections, ax=ax[1]
+                )
+
+np.random.randn(10)
+
+ax[0].grid()
+ax[1].grid()
 
 x = {position : fantasyProsAllProjectionsDataLoad(position, week)
     for position in fantasyProsDict.keys()
