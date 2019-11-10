@@ -354,7 +354,7 @@ def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
 #%% SETUP ENVIRONMENT
 ## ############################################################################
 
-week = 9
+week = 10
 
 # Working Directory Dictionary
 pcs = {
@@ -422,28 +422,28 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
 #%% LOAD FANTASY PROS RANKING DATA BY POSITION EXPERTS
 ## ############################################################################
 
-fpRankingsPosition = pd.concat([
-        fantasyProsRankingsDataLoad(position, week,
-        fileName='data\\FantasyPros_2019_Week_{}_{}_Rankings_position.csv') 
-        for position in fantasyProsDict.keys()
-        ], sort = True)
-
-# Rename JAC to JAX
-fpRankingsPosition.loc[fpRankingsPosition['Team'] == 'JAC', 'Team'] = 'JAX'
-
-# Generate key for rankings data
-fpRankingsPosition.loc[:, 'key'] = list(map(lambda keyList: 
-    fpRankingsKeyGen(keyList)
-    , fpRankingsPosition[['player', 'Team', 'position']].values.tolist()
-    ))
-
-    
-# Rename Proj. Pts Column
-fpRankingsPosition.rename(
-        columns = {k:'{} Position'.format(k) for k in 
-                   ['Avg', 'Best', 'Worst', 'Rank','player', 'Proj. Pts']}
-        , inplace = True
-        )
+#fpRankingsPosition = pd.concat([
+#        fantasyProsRankingsDataLoad(position, week,
+#        fileName='data\\FantasyPros_2019_Week_{}_{}_Rankings_position.csv') 
+#        for position in fantasyProsDict.keys()
+#        ], sort = True)
+#
+## Rename JAC to JAX
+#fpRankingsPosition.loc[fpRankingsPosition['Team'] == 'JAC', 'Team'] = 'JAX'
+#
+## Generate key for rankings data
+#fpRankingsPosition.loc[:, 'key'] = list(map(lambda keyList: 
+#    fpRankingsKeyGen(keyList)
+#    , fpRankingsPosition[['player', 'Team', 'position']].values.tolist()
+#    ))
+#
+#    
+## Rename Proj. Pts Column
+#fpRankingsPosition.rename(
+#        columns = {k:'{} Position'.format(k) for k in 
+#                   ['Avg', 'Best', 'Worst', 'Rank','player', 'Proj. Pts']}
+#        , inplace = True
+#        )
     
 #%% LOAD FANTASY PROS PROJECTIONS DATA
 ## ############################################################################
@@ -530,13 +530,13 @@ dataInput = dataInput.set_index('key').merge(
         )
 
 
-dataInput = dataInput.merge(
-        fpRankingsPosition.set_index('key')[['{} Position'.format(k) for k in 
-                   ['Avg', 'Best', 'Worst', 'Rank','player', 'Proj. Pts']]]
-        , how = 'left'
-        , left_index = True
-        , right_index = True
-        )
+#dataInput = dataInput.merge(
+#        fpRankingsPosition.set_index('key')[['{} Position'.format(k) for k in 
+#                   ['Avg', 'Best', 'Worst', 'Rank','player', 'Proj. Pts']]]
+#        , how = 'left'
+#        , left_index = True
+#        , right_index = True
+#        )
 
 
 dataInput = dataInput.merge(
@@ -631,6 +631,37 @@ x = {position : fantasyProsAllProjectionsDataLoad(position, week)
     for position in fantasyProsDict.keys()
     }
 
+
+
+#%% DEV RANKINGS FANTASY POINT REGESSION MODELING
+## ############################################################################
+
+from sklearn.ensemble import RandomForestRegressor
+
+
+rfRegDict = {}
+
+for position in positions:
+
+    # Random Forest Regressor
+    rfRegDict[position] = RandomForestRegressor(max_depth=2
+                                  , random_state=1127
+                                  , n_estimators=100
+                                  , oob_score = True)
+    
+    
+    # Fit model
+    rfRegDict[position].fit(
+            fpRankings.loc[
+                    fpRankings['position'] == position
+                    , 'Rank'].values.reshape(-1,1)
+            , fpRankings.loc[fpRankings['position'] == position, 'Proj. Pts']
+            )
+
+    # OOB Results
+    print(position, round(rfRegDict[position].oob_score_, 3))
+    
+    
 #%% FANTASY PROS DATA
 ## ############################################################################
 
