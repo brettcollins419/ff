@@ -418,6 +418,35 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
     ))
 
     
+
+#%% RANKINGS FANTASY POINT REGESSION MODELING
+## ############################################################################
+
+from sklearn.ensemble import RandomForestRegressor
+
+
+rfRegDict = {}
+
+for position in positions:
+
+    # Random Forest Regressor
+    rfRegDict[position] = RandomForestRegressor(max_depth=2
+                                  , random_state=1127
+                                  , n_estimators=100
+                                  , oob_score = True)
+    
+    
+    # Fit model
+    rfRegDict[position].fit(
+            fpRankings.loc[
+                    fpRankings['position'] == position
+                    , 'Avg'].values.reshape(-1,1)
+            , fpRankings.loc[fpRankings['position'] == position, 'Proj. Pts']
+            )
+
+    # OOB Results
+    print(position, round(rfRegDict[position].oob_score_, 3))
+    
     
 #%% LOAD FANTASY PROS RANKING DATA BY POSITION EXPERTS
 ## ############################################################################
@@ -482,6 +511,7 @@ fpAllProjections.loc[:, 'key'] = list(map(lambda keyList:
     
     
 #%% PROJECTIONS UNCERTAINTY
+## ############################################################################
     
 
 np.random.seed(1127)
@@ -497,10 +527,46 @@ for i in range(7):
   
 # Columns for merging
 fpAllProjectionsCols = (
-        ['FPTS', 'FPTS_high', 'FPTS_low']
+        ['FPTS']
         + ['FPTS_rand_{}'.format(i) for i in range(7)] 
         )
     
+
+#%% RANKINGS UNCERTAINTY
+## ############################################################################
+
+zScore = norm.ppf(0.95)
+
+np.random.seed(1213)
+
+for i in range(4):
+    
+    # Create uncertainty around rank
+    fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+            fpRankings['Avg'] + (
+                    fpRankings['Std Dev'] 
+                    * zScore
+                    * np.random.randn(fpRankings.shape[0])
+                    )
+            )
+
+    # Estimate projected points based on new ranking
+    #   Call RF model by position
+    fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+        
+        list(map(lambda p: 
+            rfRegDict.get(p[0]).predict(np.array(p[1]).reshape(1,-1))
+            , fpRankings[['position', 'Proj. Pts_rand_{}'.format(i)]].values.tolist()
+            ))
+        )
+
+
+# Columns for merging
+fpRankingsCols = (
+        ['Proj. Pts']
+        + ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
+        )
+
 #%% COMBINE DATASETS
     
 # # of players required for each position
@@ -633,34 +699,6 @@ x = {position : fantasyProsAllProjectionsDataLoad(position, week)
 
 
 
-#%% DEV RANKINGS FANTASY POINT REGESSION MODELING
-## ############################################################################
-
-from sklearn.ensemble import RandomForestRegressor
-
-
-rfRegDict = {}
-
-for position in positions:
-
-    # Random Forest Regressor
-    rfRegDict[position] = RandomForestRegressor(max_depth=2
-                                  , random_state=1127
-                                  , n_estimators=100
-                                  , oob_score = True)
-    
-    
-    # Fit model
-    rfRegDict[position].fit(
-            fpRankings.loc[
-                    fpRankings['position'] == position
-                    , 'Rank'].values.reshape(-1,1)
-            , fpRankings.loc[fpRankings['position'] == position, 'Proj. Pts']
-            )
-
-    # OOB Results
-    print(position, round(rfRegDict[position].oob_score_, 3))
-    
     
 #%% FANTASY PROS DATA
 ## ############################################################################
