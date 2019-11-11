@@ -567,6 +567,7 @@ fpRankingsCols = (
         + ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
         )
 
+
 #%% COMBINE DATASETS
     
 # # of players required for each position
@@ -578,7 +579,11 @@ positionLimit = {'QB':1
                  }
 
 # Player status' to exclude
-statusExclude = ['IR', 'SUSP', 'O', 'Q']
+statusExclude = ['IR'
+                 , 'SUSP'
+                 , 'O'
+#                 , 'Q'
+                 ]
 
 
 # Filter only eligble players
@@ -589,7 +594,7 @@ dataInput = copy.deepcopy(
 
 dataInput = dataInput.set_index('key').merge(
         fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank'
-                            ,'player', 'Proj. Pts']]
+                            ,'player'] + fpRankingsCols]
         , how = 'left'
         , left_index = True
         , right_index = True
@@ -625,7 +630,7 @@ dataInput.fillna(0, inplace = True)
 
 
 # Convert to dictionary for LP
-lpTargets = fpAllProjectionsCols + ['FPPG', 'Proj. Pts']
+lpTargets = fpAllProjectionsCols + fpRankingsCols + ['FPPG']
 
 dataInputDict = (
         dataInput.set_index('ID')
@@ -659,12 +664,17 @@ for target in  lpTargets:
             )
     
     
-    #finalTeam[target][['Salary', 'FPPG', 'FPTS', 'Proj. Pts', 'FPTS_rand']].sum()
+
 
 x = pd.concat(finalTeam.values())
 
 
 x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
+
+
+
+
+
 
 #%% DEV
 ## ############################################################################
