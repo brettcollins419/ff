@@ -28,9 +28,11 @@ def downloadPFF(grade, season, week, savePath
                         'Application/chrome.exe %s')
                 ):
                     
-    '''Download data from premium fantasy football
+    '''Download data from premium fantasy football.  If week is a tuple or list
+        it will download the aggregated data over those weeks.
+        
     
-        Do not have '''
+        '''
     
     # Format week in case multiple weeks are provided
     if type(week) in (list, tuple):
@@ -56,24 +58,6 @@ def downloadPFF(grade, season, week, savePath
     
     # Pause for download
     time.sleep(1)
-#    
-#
-#    # Find downloaded file (most recent file with file name)
-#    fileList = [
-#            (f.stat().st_mtime, f.name) 
-#            for f in os.scandir(savePath)
-#            ]
-#    
-#    fileList.sort(reverse = True)
-#
-#
-#
-#    # Most recent download    
-#    download = list(filter(
-#            lambda f: f[1].find('{grade}_summary'.format(grade=grade)) > -1
-#            , fileList)
-#        )[0]
-    
     
     # Wait for file to download
     while '{grade}_summary.csv'.format(grade=grade) not in os.listdir(savePath):
@@ -107,6 +91,30 @@ def downloadPFF(grade, season, week, savePath
     return
 
 
+def aggregatePffData(grade, csvPath, savePath):
+    
+    dataList = os.listdir(csvPath)
+    
+    # Find all files of the same format
+    dataList = list(filter(
+            lambda f: f.find('{grade}'.format(grade=grade)) > -1
+            , dataList))
+    
+    dataAgg = pd.concat([pd.read_csv('\\'.join([csvPath, f]))
+        for f in dataList]
+        , axis = 0
+        , sort = True)
+    
+    # Ensure deduping
+    dataAgg.drop_duplicates(inplace = True)
+    
+    dataAgg.to_csv('{}\\{}_summary_agg.csv'.format(savePath, grade)
+                    , index = False) 
+    
+    print('file saved to {}\\{}_summary_agg.csv'.format(savePath, grade))
+
+    return
+
 
 def timer(sigDigits = 3):
     '''Timing function'''
@@ -123,12 +131,13 @@ def timer(sigDigits = 3):
         globals()['startTime'] = time.time()
          
 
-#%% DOWNLOAD DATA
+#%% ALL HISTORICAL DATA DOWNLOAD
 ## ############################################################################
 
-
+# Seasons to download
 seasonList = np.arange(2013, 2020).tolist()
 
+# Positions to download
 gradesList = ('rushing'
               , 'passing'
               , 'defense'
@@ -137,7 +146,7 @@ gradesList = ('rushing'
               , 'receiving'
               )
 
-
+# Weeks to download
 weekList = np.arange(1,18).tolist()
 
 
@@ -174,37 +183,74 @@ for season, week, grade in downloadList:
         continue
         
 
+#%% INCREMENTAL DATA DOWNLOAD
+## ############################################################################
+
+# Seasons to download
+seasonList = [2019]
+
+# Positions to download
+gradesList = ('rushing'
+              , 'passing'
+              , 'defense'
+              , 'field_goal'
+              , 'special'
+              , 'receiving'
+              )
+
+# Weeks to download
+weekList = [8, 9]
+
+
+# Generate list for downloading
+downloadList = list(product(seasonList, weekList, gradesList))
+
+downloadList.sort(key = lambda x: (-x[0], -x[1], x[2]))
+
+
+
+
+errorList = []
+
+# Iterate through files
+for season, week, grade in downloadList:
+    try:
+        downloadPFF(grade, season, week
+                    , savePath = 'C:\\Users\\brett\\Downloads'
+#                    , savePath = 'C:\\Users\\u00bec7\\Downloads'
+                    )
+        
+        
+    except:
+        print('Cannot download', season, week, grade)
+        errorList.append((season, week, grade))
+        # Random sleep
+        time.sleep(1)
+        continue
+        
+
 
 
 #%% COMBINE FILES
 ## ############################################################################
-        
-# Merge all files of same format
-    
-for grade in gradesList:
-    
-    savePath = 'C:\\Users\\brett\\Downloads'
-#    savePath = 'C:\\Users\\u00bec7\\Downloads'
-    dataList = os.listdir(savePath)
-    
-    # Find all files of the same format
-    dataList = list(filter(
-            lambda f: f.find('{grade}'.format(grade=grade)) > -1
-            , dataList))
-    
-    dataAgg = pd.concat([pd.read_csv('\\'.join([savePath, f]))
-        for f in dataList]
-        , axis = 0
-        , sort = True)
-    
-    dataAgg.to_csv('pff_data\\{}_summary_agg.csv'.format(grade)
-                    , index = False)
+
+for grade in gradesList: 
+    aggregatePffData(grade
+                     , ('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+                        'pff_data_weeks')
+                     , ('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+                        'pff_data')
+                     )
+
+
+
 
 
 #%% AGGREGATE DEFENSE & SPECIAL TEAMS
 ## ############################################################################
     
-defense = pd.read_csv('pff_data\\defense_summary_agg.csv')
+defense = pd.read_csv('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+                      'pff_data\\defense_summary_agg.csv')
 
 # Dictonary for aggregating metrics
 defAggDict = {
@@ -255,10 +301,12 @@ defense.loc[:, 'all_penalties'] = (
         defense[['penalties', 'declined_penalties']].sum(axis = 1)
         )
 
-defense.to_csv('pff_data//defense_team_summary_agg.csv', index = False)
+defense.to_csv('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+               'pff_data\\defense_team_summary_agg.csv', index = False)
 
 
-specialTeams = pd.read_csv('pff_data//special_summary_agg.csv')
+specialTeams = pd.read_csv('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+                           'pff_data\\special_summary_agg.csv')
 
 specialAggDict = {
         'assists' : np.sum
@@ -286,17 +334,20 @@ specialTeams.loc[:, 'all_penalties'] = (
         specialTeams[['penalties', 'declined_penalties']].sum(axis = 1)
         )
 
-specialTeams.to_csv('pff_data//special_team_summary_agg.csv', index = False)
+specialTeams.to_csv('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\pff_data\\'
+                    'special_team_summary_agg.csv', index = False)
 
 #%% MATCHUPS DATA
 ## ############################################################################
 
 # Load games
-games = pd.read_csv('data\\spreadspoke_scores.csv')
+games = pd.read_csv('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+                    'data\\spreadspoke_scores.csv')
 
 
 # Load team abbreviations
-teams = pd.read_csv('data\\nfl_teams.csv')
+teams = pd.read_csv('C:\\Users\\brett\\Documents\\Gridiron_Gradients\\'
+                    'data\\nfl_teams.csv')
 
 
 # Add team abbreviations to games
