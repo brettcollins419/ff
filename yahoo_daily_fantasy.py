@@ -423,29 +423,38 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
 ## ############################################################################
 
 from sklearn.ensemble import RandomForestRegressor
-
+from sklearn.metrics import r2_score
 
 rfRegDict = {}
 
 for position in positions:
 
     # Random Forest Regressor
-    rfRegDict[position] = RandomForestRegressor(max_depth=2
-                                  , random_state=1127
+    rfRegDict[position] = RandomForestRegressor(
+#            max_depth=2
+                                  random_state=1127
                                   , n_estimators=100
                                   , oob_score = True)
     
+    positionFilter = (fpRankings['position'] == position).values.tolist()
     
     # Fit model
     rfRegDict[position].fit(
-            fpRankings.loc[
-                    fpRankings['position'] == position
-                    , 'Avg'].values.reshape(-1,1)
-            , fpRankings.loc[fpRankings['position'] == position, 'Proj. Pts']
+            fpRankings.loc[positionFilter, 'Avg'].values.reshape(-1,1)
+            , fpRankings.loc[positionFilter, 'Proj. Pts']
             )
 
-    # OOB Results
-    print(position, round(rfRegDict[position].oob_score_, 3))
+    # OOB & r^2 Results
+    print(position
+          , round(r2_score(
+                  fpRankings.loc[positionFilter, 'Proj. Pts']
+                  , rfRegDict[position].predict(
+                          (fpRankings.loc[positionFilter, 'Avg']
+                                     .values
+                                     .reshape(-1,1)))
+                  )
+            , 3)
+          , round(rfRegDict[position].oob_score_, 3))
     
     
 #%% LOAD FANTASY PROS RANKING DATA BY POSITION EXPERTS
