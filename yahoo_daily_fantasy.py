@@ -759,7 +759,7 @@ y = product(
         , dataInputFPTS.loc[[p in ('WR', 'TE', 'RB') for p in dataInputFPTS['Position']], 'ID']
         )
 
-len(set(y))
+yy = list(filter(lambda team: len(set(team)) == 9, y))
 
 list(combinations(['a', 'b', 'c'], 2))
 
