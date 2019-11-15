@@ -17,6 +17,7 @@ import socket
 import copy
 from scipy.stats import norm
 from itertools import combinations, product, chain
+import time
 
 
 #%% FUNCTIONS
@@ -719,12 +720,13 @@ x = {position : fantasyProsAllProjectionsDataLoad(position, week)
     }
 
 
-#%% DEV3
+#%% TEAM OPTIMIZATION DERIVATIVES
 
 finalTeam2 = {}
-
 combinationsList = []
 
+# Create combinations to players to drop from optimum team
+#   Drop all combinations of 1, 2, 3, ..., 8, 9 players and find new team
 for i in range(9):
     combinationsList.append(
             combinations(finalTeam['FPTS'].index.get_level_values(0), i+1)
@@ -733,6 +735,7 @@ for i in range(9):
 combinationsList = list(map(list, chain(*combinationsList)))
 
 
+# Create new optimium teams
 st = time.time()
 
 for i, players in enumerate(combinationsList):
@@ -758,17 +761,32 @@ print(time.time() -st)
 #x = pd.concat(finalTeam.values())
 #x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
 
-y = pd.concat(finalTeam2.values())
-y.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
+# Combine results
+playerList = pd.concat((pd.concat(finalTeam2.values()), finalTeam['FPTS']))
+
+# View player counts
+(playerList.groupby(['Position', 'Last Name', 'First Name'])['Team']
+    .count()
+    .groupby(level=0)
+    .nlargest(20)
+    )
 
 
+playerListDummies = pd.get_dummies(playerList.index.get_level_values(0))
 
 x = [i['FPTS'].sum() for i in finalTeam2.values()]
+x.append(finalTeam['FPTS']['FPTS'].sum())
 
 pd.Series(x).hist()
 
 sns.distplot(x)
 plt.grid()
+plt.show()
+
+
+for i in np.arange(50, 501, 50):
+    print(i, len(list(combinations(range(i), 10))))
+
 
 #%% DEV2
 ## ############################################################################
