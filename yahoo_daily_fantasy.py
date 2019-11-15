@@ -718,7 +718,51 @@ x = {position : fantasyProsAllProjectionsDataLoad(position, week)
 
 
 
+dataInput.groupby('Position')['Team'].count()
+dataInput['FPTS_rnd'] = dataInput['FPTS'].round(0)
+dataInput['Proj. Pts_rnd'] = dataInput['Proj. Pts'].round(0)
+
+
+dataInput.groupby(['Position', 'FPTS_rnd'])['Team'].count()
+
+
+dataInput.groupby(['Position', 'Proj. Pts_rnd'])['Team'].count()
+
+# Take the max of the median and mean
+x = dataInput.groupby(['Position']).agg({
+        'Proj. Pts': lambda x: max(np.mean(x), np.percentile(x, 80))
+        , 'FPTS': lambda x: max(np.mean(x), np.percentile(x, 80))}).to_dict('index')
     
+dataInputFPTS = dataInput.loc[
+        map(lambda p: x[p[0]]['FPTS'] < p[1]
+            , dataInput[['Position', 'FPTS']].values.tolist()
+            )
+        , :]
+
+
+
+dataInputFPTS.groupby(['Position'])['Team'].count()
+
+from itertools import combinations, product
+
+(len(list(combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='WR', 'ID'].values.tolist(), 3)))
+* len(list(combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='RB', 'ID'].values.tolist(), 2)))
+*3*9*15)
+
+
+y = product(
+        combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='WR', 'ID'].values.tolist(), 3)
+        , combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='RB', 'ID'].values.tolist(), 2)
+        , dataInputFPTS.loc[dataInputFPTS['Position']=='QB', 'ID'].values.tolist()
+        , dataInputFPTS.loc[dataInputFPTS['Position']=='TE', 'ID'].values.tolist()
+        , dataInputFPTS.loc[dataInputFPTS['Position']=='DEF', 'ID'].values.tolist()
+        , dataInputFPTS.loc[[p in ('WR', 'TE', 'RB') for p in dataInputFPTS['Position']], 'ID']
+        )
+
+len(set(y))
+
+list(combinations(['a', 'b', 'c'], 2))
+
 #%% FANTASY PROS DATA
 ## ############################################################################
 
