@@ -16,6 +16,8 @@ import re
 import socket
 import copy
 from scipy.stats import norm
+from itertools import combinations, product, chain
+
 
 #%% FUNCTIONS
 
@@ -717,6 +719,64 @@ x = {position : fantasyProsAllProjectionsDataLoad(position, week)
     }
 
 
+#%% DEV3
+
+finalTeam2 = {}
+
+combinationsList = []
+
+for i in range(9):
+    combinationsList.append(
+            combinations(finalTeam['FPTS'].index.get_level_values(0), i+1)
+            )
+    
+combinationsList = list(map(list, chain(*combinationsList)))
+
+
+st = time.time()
+
+for i, players in enumerate(combinationsList):
+    
+    playerVars = optimizeLineup(
+            dataInput.set_index('ID').drop(players).reset_index()
+            , dataInputDict
+            , budget
+            , target
+            , positionLimit)
+
+    finalTeam2[i] = (
+            dataInput.set_index('ID')
+            .loc[filter(lambda k: playerVars[k].varValue == 1,
+                        playerVars.keys()), :][
+            ['First Name', 'Last Name', 'Position', 
+             'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
+            )    
+
+
+print(time.time() -st)
+
+#x = pd.concat(finalTeam.values())
+#x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
+
+y = pd.concat(finalTeam2.values())
+y.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
+
+
+
+x = [i['FPTS'].sum() for i in finalTeam2.values()]
+
+pd.Series(x).hist()
+
+sns.distplot(x)
+plt.grid()
+
+#%% DEV2
+## ############################################################################
+
+
+dataInput['FPTS_per_dollar'] = dataInput['FPTS'] / dataInput['Salary']
+dataInput['pp_per_dollar'] = dataInput['Proj. Pts'] / dataInput['Salary']
+
 
 dataInput.groupby('Position')['Team'].count()
 dataInput['FPTS_rnd'] = dataInput['FPTS'].round(0)
@@ -730,20 +790,43 @@ dataInput.groupby(['Position', 'Proj. Pts_rnd'])['Team'].count()
 
 # Take the max of the median and mean
 x = dataInput.groupby(['Position']).agg({
-        'Proj. Pts': lambda x: max(np.mean(x), np.percentile(x, 80))
-        , 'FPTS': lambda x: max(np.mean(x), np.percentile(x, 80))}).to_dict('index')
+        'pp_per_dollar': lambda x: max(np.mean(x), np.percentile(x, 90))
+        , 'FPTS_per_dollar': lambda x: max(np.mean(x), np.percentile(x, 90))}).to_dict('index')
     
 dataInputFPTS = dataInput.loc[
-        map(lambda p: x[p[0]]['FPTS'] < p[1]
-            , dataInput[['Position', 'FPTS']].values.tolist()
+        map(lambda p: x[p[0]]['FPTS_per_dollar'] < p[1]
+            , dataInput[['Position', 'FPTS_per_dollar']].values.tolist()
             )
         , :]
 
 
 
+(len(list(combinations(range(9), 2)))
+* len(list(combinations(range(12), 3)))
+* 8
+* 5
+* 3
+)
+
 dataInputFPTS.groupby(['Position'])['Team'].count()
 
-from itertools import combinations, product
+
+playerVars = optimizeLineup(dataInputFPTS
+                                , dataInputDict
+                                , budget
+                                , 'FPTS'
+                                , positionLimit)
+
+y = (
+            dataInputFPTS.set_index('ID')
+            .loc[filter(lambda k: playerVars[k].varValue == 1,
+                        playerVars.keys()), :][
+            ['First Name', 'Last Name', 'Position', 
+             'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
+            )
+
+
+
 
 (len(list(combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='WR', 'ID'].values.tolist(), 3)))
 * len(list(combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='RB', 'ID'].values.tolist(), 2)))
@@ -759,7 +842,16 @@ y = product(
         , dataInputFPTS.loc[[p in ('WR', 'TE', 'RB') for p in dataInputFPTS['Position']], 'ID']
         )
 
+len(list(y))
+
 yy = list(filter(lambda team: len(set(team)) == 9, y))
+
+list(
+     product(
+             combinations(range(3), 2)
+             , combinations('abc', 2)
+             )
+     )
 
 list(combinations(['a', 'b', 'c'], 2))
 
