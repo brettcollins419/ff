@@ -20,6 +20,8 @@ from itertools import combinations, product, chain
 import time
 
 
+
+
 #%% FUNCTIONS
 
 
@@ -737,7 +739,7 @@ combinationsList = list(map(list, chain(*combinationsList)))
 
 # Create new optimium teams
 st = time.time()
-
+target = 'FPTS'
 for i, players in enumerate(combinationsList):
     
     playerVars = optimizeLineup(
@@ -755,14 +757,18 @@ for i, players in enumerate(combinationsList):
              'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
             )    
 
+    finalTeam2[i]['finalTeamID'] = i
+    finalTeam2[i]['teamPoints'] = finalTeam2[i]['FPTS'].sum()
 
 print(time.time() -st)
 
-#x = pd.concat(finalTeam.values())
-#x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
+
+finalTeam['FPTS']['finalTeamID'] = -1
+finalTeam['FPTS']['teamPoints'] = finalTeam['FPTS']['FPTS'].sum()
 
 # Combine results
 playerList = pd.concat((pd.concat(finalTeam2.values()), finalTeam['FPTS']))
+
 
 # View player counts
 (playerList.groupby(['Position', 'Last Name', 'First Name'])['Team']
@@ -772,20 +778,80 @@ playerList = pd.concat((pd.concat(finalTeam2.values()), finalTeam['FPTS']))
     )
 
 
-playerListDummies = pd.get_dummies(playerList.index.get_level_values(0))
+# Pivot out players and one hot encode each team
+playerListDummies = pd.get_dummies(
+        playerList.index.get_level_values(0)
+        , dtype = np.int16)
+playerListDummies['finalTeamID'] = playerList['finalTeamID'].values
+playerListDummies = playerListDummies.groupby('finalTeamID').sum()
+
+
+# Create one hot encoding for each team with player points values
+teamList = pd.concat((
+        finalTeam['FPTS']['FPTS'], 
+        pd.concat(
+                map(lambda t: t['FPTS'], 
+                    finalTeam2.values())
+            , axis = 1
+            , sort = True
+            ))
+        , axis = 1
+        , sort = True
+        )
+            
+teamList.columns = np.arange(-1, teamList.shape[1] - 1)
+teamList.fillna(0, inplace = True)
+teamList = teamList.transpose()
+
+
+# Cluster teams
+from sklearn.cluster import KMeans
+
+inertiaList = []
+
+for k in np.arange(10,201,10):
+    
+    km = KMeans(n_clusters = k, random_state=1127)
+    km.fit(teamList)
+    inertiaList.append(km.inertia_)
+
+
+fig, ax = plt.subplots(1)
+sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
+
+
+
+
+# Calculate point differences between clusters
+teamDistances = pd.DataFrame(
+        [[np.linalg.norm(team.values-otherTeam.values) 
+            for io, otherTeam in teamList.iterrows()] 
+        for i, team in teamList.iterrows()]
+        , columns = np.arange(-1, teamList.shape[0] - 1)
+        , index = np.arange(-1, teamList.shape[0] - 1)
+        )
+
+
+playerListDummies.loc[-1, :] - playerListDummies.loc[0, :]
+
+x = [r for i, r in playerListDummies.iterrows()]
+
+np.linalg.norm()
+
+y = x.sum(axis = 1)
 
 x = [i['FPTS'].sum() for i in finalTeam2.values()]
 x.append(finalTeam['FPTS']['FPTS'].sum())
 
-pd.Series(x).hist()
+
 
 sns.distplot(x)
 plt.grid()
 plt.show()
 
 
-for i in np.arange(50, 501, 50):
-    print(i, len(list(combinations(range(i), 10))))
+#for i in np.arange(50, 501, 50):
+#    print(i, len(list(combinations(range(i), 10))))
 
 
 #%% DEV2
