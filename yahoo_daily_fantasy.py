@@ -362,6 +362,181 @@ def optimizeLineup(dataInput, dataInputDict
 
 
 
+def optimizedTeamDerivaties(optimumTeam, dataInput
+                            , dataInputDict, budget
+                            , target, positionLimit
+                            ):
+
+    '''Find all optimized derivatives of the optimum team by excluding all
+        combinations of players in the optimum team (511 combinations)
+        
+        Returns dictionary of optimum teams'''
+    
+    optimumTeamDict = {}
+
+    # Generate all combinations of players for excluding to create alternative
+    # teams
+    combinationsList = [
+            combinations(optimumTeam.index.get_level_values(0), i+1)
+            for i in range(9)
+            ]
+
+    # Combine into single list
+    combinationsList = list(map(list, chain(*combinationsList)))
+    
+    
+    # Create new optimium teams by excluding each player combination from
+    # dataset
+    st = time.time()
+    
+    for i, players in enumerate(combinationsList):
+        
+        # Create optimum team
+        playerVars = optimizeLineup(
+                dataInput.set_index('ID').drop(players).reset_index()
+                , dataInputDict
+                , budget
+                , target
+                , positionLimit)
+    
+        
+        optimumTeamDict[i] = (
+                dataInput.set_index('ID')
+                .loc[filter(lambda k: playerVars[k].varValue == 1,
+                            playerVars.keys()), :][
+                ['First Name', 'Last Name', 'Position', 
+                 'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
+                )    
+    
+        optimumTeamDict[i]['finalTeamID'] = i
+        optimumTeamDict[i]['teamPoints'] = optimumTeamDict[i][target].sum()
+    
+    print(round(time.time() -st, 2))
+    
+    return optimumTeamDict
+
+
+
+
+def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
+    '''Find all unique derivatives of optimum team and return
+        one hot encoded dataframe of each team's players'''
+
+    # Combine results
+    playerList = pd.concat((pd.concat(optimumTeamDict.values()), optimumTeam))
+    
+    
+    # View player counts
+    print(playerList.groupby(['Position', 'Last Name', 'First Name'])
+        .agg({'Team':len
+              , 'teamPoints':np.mean
+              , target:np.mean})
+        .rename(columns = {'Team':'teamCount'
+                           , 'teamPoints':'teamAvgPoints'})
+    .groupby(level = 0)
+    .apply(lambda position: position.sort_values(['teamCount', 'teamAvgPoints']
+                                                   , ascending = False)
+        ))
+    
+    
+    # Pivot out players and one hot encode each team
+    playerListDummies = pd.get_dummies(
+            playerList.index.get_level_values(0)
+            , dtype = np.int16)
+    playerListDummies['finalTeamID'] = playerList['finalTeamID'].values
+    playerListDummies = playerListDummies.groupby('finalTeamID').sum()
+    
+    
+    # Create one hot encoding for each team with player points values
+    teamList = pd.concat((
+            optimumTeam[target], 
+            pd.concat(
+                    map(lambda t: t[target], 
+                        optimumTeamDict.values())
+                , axis = 1
+                , sort = True
+                ))
+            , axis = 1
+            , sort = True
+            )
+      
+    
+    # Rename Columns
+    teamList.columns = (
+            list(set(optimumTeam['finalTeamID'])) 
+            + list(optimumTeamDict.keys())
+            )
+    
+    # Fill empty cells with 0 to complete OHE
+    teamList.fillna(0, inplace = True)
+    
+    # Transpose DF so rows are team observations
+    teamList = teamList.transpose()
+    
+    
+    # Append team point projections
+    teamList[target] = (
+            [optimumTeam[target].sum()] +
+            [i[target].sum() for i in optimumTeamDict.values()]
+            )
+    
+    # Remove duplicate teams
+    teamList.drop_duplicates(inplace = True)
+    
+    
+    # Append team rank based on points
+    teamList['teamRank'] = (
+            teamList[target].rank(method = 'min', ascending = False)
+            )
+    
+    return teamList
+
+
+def calculateTeamDifference(team, otherTeam, method = 'intersection'):
+    '''Caluculate similarity of two teams either by the percent intersection
+    If DF is OHE of player then it'll be a comparison of players overlapped
+    between the two teams. If the DF is OHE with projected points then
+    it'll be a comparison of points overlapped between the two teams.
+        
+    If method is 'intersection' then it's the % different, otherwise
+    the RMSE is calculated between the two teams
+        
+    return scalar of comparison
+    '''
+
+    if method == 'intersection':
+        teamComparison = (
+                np.abs(team.values - otherTeam.values).sum() 
+                / (team.values + otherTeam.values).sum()
+                )
+
+    else:
+        teamComparison = np.linalg.norm(team.values-otherTeam.values) 
+        
+    return teamComparison
+
+
+
+def mapCalculateTeamDifference(teams, method):
+    '''Apply calculateTeamDifferences function by comparing every team
+    to every other team in the supplied dataset
+    
+    return n x n DataFrame where n is the number of teams in the original DF
+    '''
+
+
+    teamComparisons = pd.DataFrame(
+            [[calculateTeamDifference(team, otherTeam, method) 
+                for io, otherTeam in teams.iterrows()] 
+            for i, team in teams.iterrows()]
+            , columns = teams.index.get_level_values(0)
+            , index = teams.index.get_level_values(0)
+            )
+    
+    
+    return teamComparisons
+
+
 #%% SETUP ENVIRONMENT
 ## ############################################################################
 
@@ -701,63 +876,25 @@ finalTeamConcat.to_csv(
         'team_selections\\team_selections_w_uncertainty_w{}.csv'.format(week)
         )
 
+
+(finalTeamConcat.groupby(['Position', 'Last Name', 'First Name'])
+        .agg({'Team':len
+              , 'teamPoints':np.mean
+              , target:np.mean})
+        .rename(columns = {'Team':'teamCount'
+                           , 'teamPoints':'teamAvgPoints'})
+    .groupby(level = 0)
+    .apply(lambda position: position.sort_values(['teamCount', 'teamAvgPoints']
+                                                   , ascending = False)
+        ))
+
 #%% TEAM OPTIMIZATION DERIVATIVES
 
 target = 'Proj. Pts'
 
 
-def optimizedTeamDerivaties(optimumTeam, dataInput
-                            , dataInputDict, budget
-                            , target, positionLimit
-                            ):
 
-    '''Find all optimized derivatives of the optimum team by excluding all
-        combinations of players in the optimum team (511 combinations)
-        
-        Returns dictionary of optimum teams'''
-    
-    optimumTeamDict = {}
 
-    # Generate all combinations of players for excluding to create alternative
-    # teams
-    combinationsList = [
-            combinations(optimumTeam.index.get_level_values(0), i+1)
-            for i in range(9)
-            ]
-
-    # Combine into single list
-    combinationsList = list(map(list, chain(*combinationsList)))
-    
-    
-    # Create new optimium teams by excluding each player combination from
-    # dataset
-    st = time.time()
-    
-    for i, players in enumerate(combinationsList):
-        
-        # Create optimum team
-        playerVars = optimizeLineup(
-                dataInput.set_index('ID').drop(players).reset_index()
-                , dataInputDict
-                , budget
-                , target
-                , positionLimit)
-    
-        
-        optimumTeamDict[i] = (
-                dataInput.set_index('ID')
-                .loc[filter(lambda k: playerVars[k].varValue == 1,
-                            playerVars.keys()), :][
-                ['First Name', 'Last Name', 'Position', 
-                 'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
-                )    
-    
-        optimumTeamDict[i]['finalTeamID'] = i
-        optimumTeamDict[i]['teamPoints'] = optimumTeamDict[i][target].sum()
-    
-    print(round(time.time() -st, 2))
-    
-    return optimumTeamDict
 
 optimumTeamDict = optimizedTeamDerivaties(
         optimumTeam = finalTeam[target]
@@ -768,82 +905,15 @@ optimumTeamDict = optimizedTeamDerivaties(
         , positionLimit =  positionLimit)
 
 
-
-def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
-    '''Find all unique derivatives of optimum team and return
-        one hot encoded dataframe of each team's players'''
-
-    # Combine results
-    playerList = pd.concat((pd.concat(optimumTeamDict.values()), optimumTeam))
-    
-    
-    # View player counts
-    print(playerList.groupby(['Position', 'Last Name', 'First Name'])
-        .agg({'Team':len
-              , 'teamPoints':np.mean}))
-              , target:np.mean}))
-    #    .groupby(level=0)
-    #    .nlargest(20)
-    #    )
-    
-    
-    # Pivot out players and one hot encode each team
-    playerListDummies = pd.get_dummies(
-            playerList.index.get_level_values(0)
-            , dtype = np.int16)
-    playerListDummies['finalTeamID'] = playerList['finalTeamID'].values
-    playerListDummies = playerListDummies.groupby('finalTeamID').sum()
-    
-    
-    # Create one hot encoding for each team with player points values
-    teamList = pd.concat((
-            optimumTeam[target], 
-            pd.concat(
-                    map(lambda t: t[target], 
-                        optimumTeamDict.values())
-                , axis = 1
-                , sort = True
-                ))
-            , axis = 1
-            , sort = True
-            )
-      
-    
-              
-    teamList.columns = (
-            list(set(optimumTeam['finalTeamID'])) 
-            + list(optimumTeamDict.keys())
-            )
-    teamList.fillna(0, inplace = True)
-    teamList = teamList.transpose()
-    
-    
-    # Append team point projections
-    teamList[target] = (
-            [optimumTeam[target].sum()] +
-            [i[target].sum() for i in optimumTeamDict.values()]
-            )
-    
-    # Remove duplicate teams
-    teamList.drop_duplicates(inplace = True)
-    
-    
-    # Append team rank based on points
-    teamList.sort_values(target, ascending = False, inplace = True)
-    teamList['teamRank'] = teamList[target].rank(method = 'min', ascending = False)
-    
-    return teamList
-
 optimumTeamDerivatives = pivotTeamsAndDropDuplicates(
         optimumTeamDict = optimumTeamDict
         , optimumTeam = finalTeam[target]
         , target=target)
 
 
-#%%
-
-
-
+teamPointIntersections = mapCalculateTeamDifference(
+        optimumTeamDerivatives.drop([target, 'teamRank'], axis = 1)
+        , method = 'intersection')
 
 
 # Plot distribution of teams
@@ -851,6 +921,26 @@ fig, ax = plt.subplots(1)
 sns.distplot(optimumTeamDerivatives[target], ax = ax)
 plt.grid()
 plt.show()
+
+
+
+
+
+fig, ax = plt.subplots(1)
+sns.distplot(
+        list(filter(lambda p: p < 1, teamPointIntersections.values.flatten()))
+        , ax = ax)
+
+
+#%% ###########################################################################
+
+
+
+
+
+
+
+
 
 
 # Calculate point difference euclidian distance between teams
@@ -873,10 +963,7 @@ teamPointIntersections = pd.DataFrame(
         )
 
 
-fig, ax = plt.subplots(1)
-sns.distplot(
-        list(filter(lambda p: p < 1, teamPointIntersections.values.flatten()))
-        , ax = ax)
+
 
 
 
