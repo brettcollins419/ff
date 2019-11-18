@@ -19,6 +19,8 @@ from scipy.stats import norm
 from itertools import combinations, product, chain
 import time
 
+from matplotlib import pyplot as plt
+import seaborn as sns
 
 
 
@@ -297,7 +299,9 @@ def salaryKeyGen(keyList):
 
 
 
-def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
+def optimizeLineup(dataInput, dataInputDict
+                   , budget, target, positionLimit
+                   , writeLPProblem = False):
     '''Create linear optimiziation problem to optimize target parameter
         given budget and constraints.
         
@@ -307,9 +311,10 @@ def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
     prob = pulp.LpProblem('The Best Team', pulp.LpMaximize)
     
     # Define player Variables
-    playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys(), cat = 'Binary')
+    playerVars = pulp.LpVariable.dicts('ID', dataInputDict.keys()
+                                        , cat = 'Binary')
     
-    # Add objective of maximizing FPPG
+    # Add objective of maximizing target
     prob += pulp.lpSum(
             [playerVars[i]*dataInputDict[i][target] 
             for i in dataInput['ID']]
@@ -346,8 +351,9 @@ def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
     prob += pulp.lpSum([playerVars[i] for i in list(dataInput['ID'])]) == 9
     
 
-        
-    prob.writeLP('teamOptimization.lp')
+    if writeLPProblem == True:
+        prob.writeLP('teamOptimization.lp')
+    
     prob.solve()
         
     print("Status:", pulp.LpStatus[prob.status])
@@ -359,7 +365,7 @@ def optimizeLineup(dataInput, dataInputDict, budget, target, positionLimit):
 #%% SETUP ENVIRONMENT
 ## ############################################################################
 
-week = 10
+week = 11
 
 # Working Directory Dictionary
 pcs = {
@@ -530,7 +536,7 @@ fpAllProjections.loc[:, 'key'] = list(map(lambda keyList:
 
 np.random.seed(1127)
 
-for i in range(7):
+for i in range(5):
     fpAllProjections.loc[:, 'FPTS_rand_{}'.format(i)] = (
             fpAllProjections['FPTS'] + (
                     fpAllProjections['FPTS_std_dev_est'] 
@@ -542,7 +548,7 @@ for i in range(7):
 # Columns for merging
 fpAllProjectionsCols = (
         ['FPTS']
-        + ['FPTS_rand_{}'.format(i) for i in range(7)] 
+        + ['FPTS_rand_{}'.format(i) for i in range(5)] 
         )
     
 
@@ -553,7 +559,7 @@ zScore = norm.ppf(0.95)
 
 np.random.seed(1213)
 
-for i in range(4):
+for i in range(5):
     
     # Create uncertainty around rank
     fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
@@ -586,7 +592,7 @@ fpRankingsCols = (
     
 # # of players required for each position
 positionLimit = {'QB':1
-                 , 'TE':2
+                 , 'TE':1
                  , 'RB':2
                  , 'DEF':1
                  , 'WR':3
@@ -677,13 +683,248 @@ for target in  lpTargets:
              'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
             )
     
+    finalTeam[target]['finalTeamID'] = target
+    finalTeam[target]['teamPoints'] = finalTeam[target][target].sum()
+
+# View player counts
+finalTeamConcat = pd.concat(finalTeam.values())
+
+finalTeamConcat.sort_values(['finalTeamID', 'Position'], inplace = True)
+
+(finalTeamConcat.groupby(['Position', 'Last Name', 'First Name'])['Team']
+    .count()
+    .groupby(level=0)
+    .nlargest(20)
+    )
+
+finalTeamConcat.to_csv(
+        'team_selections\\team_selections_w_uncertainty_w{}.csv'.format(week)
+        )
+
+#%% TEAM OPTIMIZATION DERIVATIVES
+
+target = 'Proj. Pts'
+
+
+def optimizedTeamDerivaties(optimumTeam, dataInput
+                            , dataInputDict, budget
+                            , target, positionLimit
+                            ):
+
+    '''Find all optimized derivatives of the optimum team by excluding all
+        combinations of players in the optimum team (511 combinations)
+        
+        Returns dictionary of optimum teams'''
     
+    optimumTeamDict = {}
+
+    # Generate all combinations of players for excluding to create alternative
+    # teams
+    combinationsList = [
+            combinations(optimumTeam.index.get_level_values(0), i+1)
+            for i in range(9)
+            ]
+
+    # Combine into single list
+    combinationsList = list(map(list, chain(*combinationsList)))
+    
+    
+    # Create new optimium teams by excluding each player combination from
+    # dataset
+    st = time.time()
+    
+    for i, players in enumerate(combinationsList):
+        
+        # Create optimum team
+        playerVars = optimizeLineup(
+                dataInput.set_index('ID').drop(players).reset_index()
+                , dataInputDict
+                , budget
+                , target
+                , positionLimit)
+    
+        
+        optimumTeamDict[i] = (
+                dataInput.set_index('ID')
+                .loc[filter(lambda k: playerVars[k].varValue == 1,
+                            playerVars.keys()), :][
+                ['First Name', 'Last Name', 'Position', 
+                 'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
+                )    
+    
+        optimumTeamDict[i]['finalTeamID'] = i
+        optimumTeamDict[i]['teamPoints'] = optimumTeamDict[i][target].sum()
+    
+    print(round(time.time() -st, 2))
+    
+    return optimumTeamDict
+
+optimumTeamDict = optimizedTeamDerivaties(
+        optimumTeam = finalTeam[target]
+        , dataInput = dataInput
+        , dataInputDict = dataInputDict
+        , budget = budget
+        , target = target
+        , positionLimit =  positionLimit)
 
 
-x = pd.concat(finalTeam.values())
+
+def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
+    '''Find all unique derivatives of optimum team and return
+        one hot encoded dataframe of each team's players'''
+
+    # Combine results
+    playerList = pd.concat((pd.concat(optimumTeamDict.values()), optimumTeam))
+    
+    
+    # View player counts
+    print(playerList.groupby(['Position', 'Last Name', 'First Name'])
+        .agg({'Team':len
+              , 'teamPoints':np.mean}))
+              , target:np.mean}))
+    #    .groupby(level=0)
+    #    .nlargest(20)
+    #    )
+    
+    
+    # Pivot out players and one hot encode each team
+    playerListDummies = pd.get_dummies(
+            playerList.index.get_level_values(0)
+            , dtype = np.int16)
+    playerListDummies['finalTeamID'] = playerList['finalTeamID'].values
+    playerListDummies = playerListDummies.groupby('finalTeamID').sum()
+    
+    
+    # Create one hot encoding for each team with player points values
+    teamList = pd.concat((
+            optimumTeam[target], 
+            pd.concat(
+                    map(lambda t: t[target], 
+                        optimumTeamDict.values())
+                , axis = 1
+                , sort = True
+                ))
+            , axis = 1
+            , sort = True
+            )
+      
+    
+              
+    teamList.columns = (
+            list(set(optimumTeam['finalTeamID'])) 
+            + list(optimumTeamDict.keys())
+            )
+    teamList.fillna(0, inplace = True)
+    teamList = teamList.transpose()
+    
+    
+    # Append team point projections
+    teamList[target] = (
+            [optimumTeam[target].sum()] +
+            [i[target].sum() for i in optimumTeamDict.values()]
+            )
+    
+    # Remove duplicate teams
+    teamList.drop_duplicates(inplace = True)
+    
+    
+    # Append team rank based on points
+    teamList.sort_values(target, ascending = False, inplace = True)
+    teamList['teamRank'] = teamList[target].rank(method = 'min', ascending = False)
+    
+    return teamList
+
+optimumTeamDerivatives = pivotTeamsAndDropDuplicates(
+        optimumTeamDict = optimumTeamDict
+        , optimumTeam = finalTeam[target]
+        , target=target)
 
 
-x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level=0).nlargest(20)
+#%%
+
+
+
+
+
+# Plot distribution of teams
+fig, ax = plt.subplots(1)
+sns.distplot(optimumTeamDerivatives[target], ax = ax)
+plt.grid()
+plt.show()
+
+
+# Calculate point difference euclidian distance between teams
+teamDistances = pd.DataFrame(
+        [[np.linalg.norm(team.values-otherTeam.values) 
+            for io, otherTeam in teamList.iterrows()] 
+        for i, team in teamList.iterrows()]
+        , columns = np.arange(-1, teamList.shape[0] - 1)
+        , index = np.arange(-1, teamList.shape[0] - 1)
+        )
+
+# Calculate point intersections between teams
+teamPointIntersections = pd.DataFrame(
+        [[(1 - (np.abs(team.values - otherTeam.values).sum() 
+            / (team.values + otherTeam.values).sum()))
+        for io, otherTeam in teamList.drop([target, 'teamRank'], axis = 1).iterrows()]
+            for i, team in teamList.drop([target, 'teamRank'], axis = 1).iterrows()]
+        , columns = teamList.index.get_level_values(0)
+        , index = teamList.index.get_level_values(0)
+        )
+
+
+fig, ax = plt.subplots(1)
+sns.distplot(
+        list(filter(lambda p: p < 1, teamPointIntersections.values.flatten()))
+        , ax = ax)
+
+
+
+# View player counts
+finalTeamConcat2 = pd.concat(finalTeam2.values())
+
+x = (finalTeamConcat2.groupby(['finalTeamID', 'Position'])
+                     .agg({'Team':len})
+                     .rename(columns = {'Team':'positionCount'})
+                     .reset_index()
+                     .groupby(['Position', 'positionCount'])
+                     .agg({'finalTeamID':len})
+                     .rename(columns = {'finalTeamID':'teamCount'})
+                     )
+
+finalTeamConcat2 = finalTeamConcat2.loc[
+        [i in teamList.index.get_level_values(0)[1:11] for i in finalTeamConcat2['finalTeamID'].values], :]
+
+finalTeamConcat2.sort_values(['finalTeamID', 'Position'], inplace = True)
+
+(finalTeamConcat2.groupby(['Position', 'Last Name', 'First Name'])['Team']
+    .count()
+    .groupby(level=0)
+    .nlargest(20)
+    )
+
+finalTeamConcat2.to_csv(
+        'team_selections\\team_selections_w_uncertainty3_w{}.csv'.format(week)
+        )
+
+
+# Cluster teams
+from sklearn.cluster import KMeans
+
+inertiaList = []
+
+for k in np.arange(10,201,10):
+    
+    km = KMeans(n_clusters = k, random_state=1127)
+    km.fit(teamList)
+    inertiaList.append(km.inertia_)
+
+
+fig, ax = plt.subplots(1)
+sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
+
+
+
 
 
 
@@ -694,8 +935,6 @@ x.groupby(['Position', 'Last Name', 'First Name'])['Team'].count().groupby(level
 ## ############################################################################
 
 
-from matplotlib import pyplot as plt
-import seaborn as sns
 
 fpAllProjections.loc[:, 'position_rank'] = (
         fpAllProjections.groupby('position')['FPTS'].rank(ascending = False)
@@ -722,136 +961,6 @@ x = {position : fantasyProsAllProjectionsDataLoad(position, week)
     }
 
 
-#%% TEAM OPTIMIZATION DERIVATIVES
-
-finalTeam2 = {}
-combinationsList = []
-
-# Create combinations to players to drop from optimum team
-#   Drop all combinations of 1, 2, 3, ..., 8, 9 players and find new team
-for i in range(9):
-    combinationsList.append(
-            combinations(finalTeam['FPTS'].index.get_level_values(0), i+1)
-            )
-    
-combinationsList = list(map(list, chain(*combinationsList)))
-
-
-# Create new optimium teams
-st = time.time()
-target = 'FPTS'
-for i, players in enumerate(combinationsList):
-    
-    playerVars = optimizeLineup(
-            dataInput.set_index('ID').drop(players).reset_index()
-            , dataInputDict
-            , budget
-            , target
-            , positionLimit)
-
-    finalTeam2[i] = (
-            dataInput.set_index('ID')
-            .loc[filter(lambda k: playerVars[k].varValue == 1,
-                        playerVars.keys()), :][
-            ['First Name', 'Last Name', 'Position', 
-             'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
-            )    
-
-    finalTeam2[i]['finalTeamID'] = i
-    finalTeam2[i]['teamPoints'] = finalTeam2[i]['FPTS'].sum()
-
-print(time.time() -st)
-
-
-finalTeam['FPTS']['finalTeamID'] = -1
-finalTeam['FPTS']['teamPoints'] = finalTeam['FPTS']['FPTS'].sum()
-
-# Combine results
-playerList = pd.concat((pd.concat(finalTeam2.values()), finalTeam['FPTS']))
-
-
-# View player counts
-(playerList.groupby(['Position', 'Last Name', 'First Name'])['Team']
-    .count()
-    .groupby(level=0)
-    .nlargest(20)
-    )
-
-
-# Pivot out players and one hot encode each team
-playerListDummies = pd.get_dummies(
-        playerList.index.get_level_values(0)
-        , dtype = np.int16)
-playerListDummies['finalTeamID'] = playerList['finalTeamID'].values
-playerListDummies = playerListDummies.groupby('finalTeamID').sum()
-
-
-# Create one hot encoding for each team with player points values
-teamList = pd.concat((
-        finalTeam['FPTS']['FPTS'], 
-        pd.concat(
-                map(lambda t: t['FPTS'], 
-                    finalTeam2.values())
-            , axis = 1
-            , sort = True
-            ))
-        , axis = 1
-        , sort = True
-        )
-            
-teamList.columns = np.arange(-1, teamList.shape[1] - 1)
-teamList.fillna(0, inplace = True)
-teamList = teamList.transpose()
-
-
-# Cluster teams
-from sklearn.cluster import KMeans
-
-inertiaList = []
-
-for k in np.arange(10,201,10):
-    
-    km = KMeans(n_clusters = k, random_state=1127)
-    km.fit(teamList)
-    inertiaList.append(km.inertia_)
-
-
-fig, ax = plt.subplots(1)
-sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
-
-
-
-
-# Calculate point differences between clusters
-teamDistances = pd.DataFrame(
-        [[np.linalg.norm(team.values-otherTeam.values) 
-            for io, otherTeam in teamList.iterrows()] 
-        for i, team in teamList.iterrows()]
-        , columns = np.arange(-1, teamList.shape[0] - 1)
-        , index = np.arange(-1, teamList.shape[0] - 1)
-        )
-
-
-playerListDummies.loc[-1, :] - playerListDummies.loc[0, :]
-
-x = [r for i, r in playerListDummies.iterrows()]
-
-np.linalg.norm()
-
-y = x.sum(axis = 1)
-
-x = [i['FPTS'].sum() for i in finalTeam2.values()]
-x.append(finalTeam['FPTS']['FPTS'].sum())
-
-
-
-sns.distplot(x)
-plt.grid()
-plt.show()
-
-
-#for i in np.arange(50, 501, 50):
-#    print(i, len(list(combinations(range(i), 10))))
 
 
 #%% DEV2
