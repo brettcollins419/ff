@@ -957,12 +957,40 @@ sns.distplot(
         , ax = ax)
 
 
+
+
+optimumTeamDerivatives.loc[optimumTeamDerivatives[target] == teamPointIntersections.iloc[0].max()]
+
+# Get team with highest point projections
+x = []
+
+bestTeam = optimumTeamDerivatives.index.get_level_values(0)[0]
+
+teamPointIntersections.index.get_level_values(0)[0]
+
+# Find most dissimilar team
+bestTeam2 = teamPointIntersections.loc[bestTeam][
+        teamPointIntersections.loc[bestTeam]
+        == teamPointIntersections.loc[bestTeam].max()
+        ].index.get_level_values(0)[0]
+
+
+teamPointIntersections.loc[[bestTeam, bestTeam2]].sum()
+
+type(teamPointIntersections.loc[[bestTeam]])
+# Find next most dissimilar team from previous two
+
+
+teamPointIntersections.iloc[0][teamPointIntersections.iloc[0].round(4) == 0.3974].index.get_level_values(0)[0]
+
 #%% ###########################################################################
 
 
 
 
-
+fig, ax = plt.subplots(1, figsize = (10,6))
+sns.scatterplot(teamPointIntersections.iloc[0], optimumTeamDerivatives['Proj. Pts'], ax = ax)
+plt.show()
 
 
 
@@ -977,11 +1005,11 @@ inertiaList = []
 for k in np.arange(10,201,10):
     
     km = KMeans(n_clusters = k, random_state=1127)
-    km.fit(teamList)
+    km.fit(optimumTeamDerivatives)
     inertiaList.append(km.inertia_)
 
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (10,6))
 sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
 
 
