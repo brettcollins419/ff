@@ -298,6 +298,20 @@ def salaryKeyGen(keyList):
     return key
 
 
+#def optimizeTeamSelections(optimumTeamDerivatives, numTeams = 5):
+#    
+#    prob = pulp.LpProblem('Most Different Teams', pulp.LpMaximize)
+#
+#    teamVars = pulp.LpVariable.dicts('finalTeamID'
+#            , optimumTeamDerivatives.index.get_level_values(0)
+#            , cat = 'Binary')
+#    
+#    
+#     # Add objective of maximizing target
+#    prob += pulp.lpSum(
+#            [teamVars[i]*optimum 
+#            for i in dataInput['ID']]
+#            )           
 
 def optimizeLineup(dataInput, dataInputDict
                    , budget, target, positionLimit
@@ -413,6 +427,9 @@ def optimizedTeamDerivaties(optimumTeam, dataInput
     
     print(round(time.time() -st, 2))
     
+    # Add optimum team to dictionary
+    optimumTeamDict[optimumTeam['finalTeamID'].iloc[0]] = optimumTeam
+    
     return optimumTeamDict
 
 
@@ -423,7 +440,8 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
         one hot encoded dataframe of each team's players'''
 
     # Combine results
-    playerList = pd.concat((pd.concat(optimumTeamDict.values()), optimumTeam))
+#    playerList = pd.concat((pd.concat(optimumTeamDict.values()), optimumTeam))
+    playerList = pd.concat(optimumTeamDict.values())
     
     
     # View player counts
@@ -892,10 +910,7 @@ finalTeamConcat.to_csv(
 
 target = 'Proj. Pts'
 
-
-
-
-
+# Generate all optimum team derivatives from base optimized team
 optimumTeamDict = optimizedTeamDerivaties(
         optimumTeam = finalTeam[target]
         , dataInput = dataInput
@@ -904,31 +919,41 @@ optimumTeamDict = optimizedTeamDerivaties(
         , target = target
         , positionLimit =  positionLimit)
 
-
+# Remove duplicates and convert to OHE dataframe 
 optimumTeamDerivatives = pivotTeamsAndDropDuplicates(
         optimumTeamDict = optimumTeamDict
         , optimumTeam = finalTeam[target]
         , target=target)
 
+# Drop duplicates from optimumTeamDict
+optimumTeamDict = {
+        k : optimumTeamDict[k] 
+        for k in optimumTeamDerivatives.index.get_level_values(0)
+        }
 
+# Sort teams by projected points
+optimumTeamDerivatives.sort_values(target, ascending = False, inplace = True)
+
+# Calculate team point comparisons
 teamPointIntersections = mapCalculateTeamDifference(
         optimumTeamDerivatives.drop([target, 'teamRank'], axis = 1)
         , method = 'intersection')
 
 
 # Plot distribution of teams
-fig, ax = plt.subplots(1)
+sns.set_context("poster")
+
+fig, ax = plt.subplots(1, figsize = (20,12))
 sns.distplot(optimumTeamDerivatives[target], ax = ax)
-plt.grid()
+ax.grid()
+ax.set_title('Distribution of Team {}'.format(target), fontsize = 24)
 plt.show()
-
-
 
 
 
 fig, ax = plt.subplots(1)
 sns.distplot(
-        list(filter(lambda p: p < 1, teamPointIntersections.values.flatten()))
+        list(filter(lambda p: p > 0 , teamPointIntersections.values.flatten()))
         , ax = ax)
 
 
@@ -942,57 +967,6 @@ sns.distplot(
 
 
 
-
-# Calculate point difference euclidian distance between teams
-teamDistances = pd.DataFrame(
-        [[np.linalg.norm(team.values-otherTeam.values) 
-            for io, otherTeam in teamList.iterrows()] 
-        for i, team in teamList.iterrows()]
-        , columns = np.arange(-1, teamList.shape[0] - 1)
-        , index = np.arange(-1, teamList.shape[0] - 1)
-        )
-
-# Calculate point intersections between teams
-teamPointIntersections = pd.DataFrame(
-        [[(1 - (np.abs(team.values - otherTeam.values).sum() 
-            / (team.values + otherTeam.values).sum()))
-        for io, otherTeam in teamList.drop([target, 'teamRank'], axis = 1).iterrows()]
-            for i, team in teamList.drop([target, 'teamRank'], axis = 1).iterrows()]
-        , columns = teamList.index.get_level_values(0)
-        , index = teamList.index.get_level_values(0)
-        )
-
-
-
-
-
-
-# View player counts
-finalTeamConcat2 = pd.concat(finalTeam2.values())
-
-x = (finalTeamConcat2.groupby(['finalTeamID', 'Position'])
-                     .agg({'Team':len})
-                     .rename(columns = {'Team':'positionCount'})
-                     .reset_index()
-                     .groupby(['Position', 'positionCount'])
-                     .agg({'finalTeamID':len})
-                     .rename(columns = {'finalTeamID':'teamCount'})
-                     )
-
-finalTeamConcat2 = finalTeamConcat2.loc[
-        [i in teamList.index.get_level_values(0)[1:11] for i in finalTeamConcat2['finalTeamID'].values], :]
-
-finalTeamConcat2.sort_values(['finalTeamID', 'Position'], inplace = True)
-
-(finalTeamConcat2.groupby(['Position', 'Last Name', 'First Name'])['Team']
-    .count()
-    .groupby(level=0)
-    .nlargest(20)
-    )
-
-finalTeamConcat2.to_csv(
-        'team_selections\\team_selections_w_uncertainty3_w{}.csv'.format(week)
-        )
 
 
 # Cluster teams
