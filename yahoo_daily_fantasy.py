@@ -375,6 +375,45 @@ def optimizeLineup(dataInput, dataInputDict
     return playerVars
 
 
+def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = False):
+    
+    
+    prob = pulp.LpProblem('The Best Team Combinations', pulp.LpMaximize)
+    
+    # Define team variables
+    teamVars = pulp.LpVariable.dicts('ID', teamPointInteractionsDict.keys()
+                                        , cat = 'Binary')
+
+
+    # Add objective of maximizing team differences
+    prob += pulp.lpSum(
+        list(chain(*[[teamVars[i]*teamPointInteractionsDict[i][j] 
+        for j in teamPointInteractionsDict.keys()]
+            for i in teamPointInteractionsDict.keys()]
+            ))
+        )
+    
+    # Number of teams limit
+    prob += pulp.lpSum([teamVars[i] 
+        for i in teamPointInteractionsDict.keys()]) == numTeams
+        
+    if writeLPProblem == True:
+        prob.writeLP('teamOptimization.lp')
+    
+    prob.solve()
+        
+    print("Status:", pulp.LpStatus[prob.status])
+    
+    
+    return teamVars
+    
+
+
+teamPointInteractionsDict = teamPointIntersections.iloc[:10,:10].to_dict('index')
+
+teamVars = optimumTeamCombinations(teamPointInteractionsDict, 2)
+
+[teamVars[t].varValue for t in teamVars.keys()]
 
 def optimizedTeamDerivaties(optimumTeam, dataInput
                             , dataInputDict, budget
@@ -852,6 +891,8 @@ dataInputDict = (
 
 # Setup LP Problem
 budget = 200
+
+
 
 
 #%% TEAM OPTIMIZATION
