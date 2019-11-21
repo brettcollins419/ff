@@ -15,10 +15,10 @@ import pulp
 import re
 import socket
 import copy
-from scipy.stats import norm
-from scipy.optimize import minimize
-from itertools import combinations, product, chain, repeat
-import time
+    from scipy.stats import norm
+    from scipy.optimize import minimize
+    from itertools import combinations, product, chain, repeat
+    import time
 
 from matplotlib import pyplot as plt
 import seaborn as sns
@@ -425,9 +425,12 @@ optimumTeamComboObjective = lambda teamVars: (
             ))
         )
 
-bounds = repeat((0.0,1.0), len(teamPointInteractionsDict.keys()))
+bounds = list(repeat((0.0,1.0), len(teamPointInteractionsDict.keys())))
 
-constraints = {'type', 'eq', 'fun', lambda x: sum(x) - 3}
+constraints = {'type': 'eq', 'fun': lambda x: sum(x) - 3}
+
+
+res = minimize(optimumTeamComboObjective, (1,1,1,0,0,0,0,0,0,0), bounds = bounds, constraints = constraints)
 
 def optimizedTeamDerivaties(optimumTeam, dataInput
                             , dataInputDict, budget
