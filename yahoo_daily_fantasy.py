@@ -16,7 +16,8 @@ import re
 import socket
 import copy
 from scipy.stats import norm
-from itertools import combinations, product, chain
+from scipy.optimize import minimize
+from itertools import combinations, product, chain, repeat
 import time
 
 from matplotlib import pyplot as plt
@@ -395,7 +396,7 @@ def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = Fal
     
     # Number of teams limit
     prob += pulp.lpSum([teamVars[i] 
-        for i in teamPointInteractionsDict.keys()]) == numTeams
+        for i in teamInteractionsDict.keys()]) == numTeams
         
     if writeLPProblem == True:
         prob.writeLP('teamOptimization.lp')
@@ -408,12 +409,25 @@ def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = Fal
     return teamVars
     
 
+def optimumTeamComboObjective(teamVars, teamPointInteractionsDict = teamPointInteractionsDict):
+    func = list(chain(*[[teamVars[i]*teamPointInteractionsDict[i][j] 
+        for j in teamPointInteractionsDict.keys()]
+            for i in teamPointInteractionsDict.keys()]
+            ))
+            
+    return func
 
-teamPointInteractionsDict = teamPointIntersections.iloc[:10,:10].to_dict('index')
 
-teamVars = optimumTeamCombinations(teamPointInteractionsDict, 2)
+optimumTeamComboObjective = lambda teamVars: (
+        list(chain(*[[teamVars[i]*teamPointInteractionsDict[i][j] 
+        for j in teamPointInteractionsDict.keys()]
+            for i in teamPointInteractionsDict.keys()]
+            ))
+        )
 
-[teamVars[t].varValue for t in teamVars.keys()]
+bounds = repeat((0.0,1.0), len(teamPointInteractionsDict.keys()))
+
+constraints = {'type', 'eq', 'fun', lambda x: sum(x) - 3}
 
 def optimizedTeamDerivaties(optimumTeam, dataInput
                             , dataInputDict, budget
@@ -1029,6 +1043,8 @@ teamPointIntersections.iloc[0][teamPointIntersections.iloc[0].round(4) == 0.3974
 
 
 
+
+
 fig, ax = plt.subplots(1, figsize = (10,6))
 sns.scatterplot(teamPointIntersections.iloc[0], optimumTeamDerivatives['Proj. Pts'], ax = ax)
 plt.show()
@@ -1063,6 +1079,14 @@ sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
 
 #%% DEV
 ## ############################################################################
+
+
+
+teamPointInteractionsDict = teamPointIntersections.iloc[:10,:10].to_dict('index')
+
+teamVars = optimumTeamCombinations(teamPointInteractionsDict, 2)
+
+[teamVars[t].varValue for t in teamVars.keys()]
 
 
 
