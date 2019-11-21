@@ -15,10 +15,10 @@ import pulp
 import re
 import socket
 import copy
-    from scipy.stats import norm
-    from scipy.optimize import minimize
-    from itertools import combinations, product, chain, repeat
-    import time
+from scipy.stats import norm
+from scipy.optimize import minimize
+from itertools import combinations, product, chain, repeat
+import time
 
 from matplotlib import pyplot as plt
 import seaborn as sns
@@ -409,28 +409,6 @@ def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = Fal
     return teamVars
     
 
-def optimumTeamComboObjective(teamVars, teamPointInteractionsDict = teamPointInteractionsDict):
-    func = list(chain(*[[teamVars[i]*teamPointInteractionsDict[i][j] 
-        for j in teamPointInteractionsDict.keys()]
-            for i in teamPointInteractionsDict.keys()]
-            ))
-            
-    return func
-
-
-optimumTeamComboObjective = lambda teamVars: (
-        list(chain(*[[teamVars[i]*teamPointInteractionsDict[i][j] 
-        for j in teamPointInteractionsDict.keys()]
-            for i in teamPointInteractionsDict.keys()]
-            ))
-        )
-
-bounds = list(repeat((0.0,1.0), len(teamPointInteractionsDict.keys())))
-
-constraints = {'type': 'eq', 'fun': lambda x: sum(x) - 3}
-
-
-res = minimize(optimumTeamComboObjective, (1,1,1,0,0,0,0,0,0,0), bounds = bounds, constraints = constraints)
 
 def optimizedTeamDerivaties(optimumTeam, dataInput
                             , dataInputDict, budget
@@ -1085,7 +1063,78 @@ sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
 
 
 
-teamPointInteractionsDict = teamPointIntersections.iloc[:10,:10].to_dict('index')
+
+
+def optimumTeamComboObjective(x):
+
+    func = sum(chain(*[
+            [x[i]*x[j]*c.iloc[j, i] for i in range(c.shape[1])] 
+                for j in range(c.shape[0])]
+        ))
+    
+    return func
+
+
+def numOfTeams(x):
+    return sum(x) - 3
+
+def binaryConstraint(x):
+    return sum([x[i]*(1-x[i]) for i in range(10)])
+
+optimumTeamComboObjective(x0)
+
+
+
+c = teamPointIntersections.iloc[:10,:10]
+numTeams = 3
+x0 = np.zeros(c.shape[0])
+x0[:numTeams] = 0.5
+bounds = list(repeat((0.0,1.0), c.shape[0]))
+
+res = minimize(
+        fun = optimumTeamComboObjective
+        , x0 = x0
+        , bounds = bounds
+        , constraints = (
+                {'type': 'eq', 'fun': lambda x: sum([x[i]*(1-x[i]) for i in range(10)])}
+                , {'type': 'eq', 'fun': lambda x: sum(x) - 3}
+                )
+        , method = 'SLSQP'
+        , tol = 1e-6)
+
+
+list(map(lambda x: round(x,3),res.x))
+
+sum(res.x)
+
+sum(x0)
+
+
+
+#%% pymo
+
+from pyomo import environ as pe
+
+from pyomo.environ import *
+
+d = teamPointIntersections.iloc[:5, :5].to_dict('index')
+
+
+model = pe.ConcreteModel()
+
+model.x = pe.Var(d.keys(), within = pe.Binary)
+
+model.value = pe.Objective(expr = sum([model.x[i]*model.x[j]*d[i][j] for i, j in combinations(d.keys(), 2)])
+    , sense = pe.maximize)
+
+model.teams = pe.Constraint(expr = sum([model.x[i] for i in d]) == 3)
+
+opt = pe.SolverFactory('glpk')
+result_obj = opt.solve(model, tee = True)
+
+#%%
+
+
 
 teamVars = optimumTeamCombinations(teamPointInteractionsDict, 2)
 
