@@ -382,16 +382,14 @@ def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = Fal
     prob = pulp.LpProblem('The Best Team Combinations', pulp.LpMaximize)
     
     # Define team variables
-    teamVars = pulp.LpVariable.dicts('ID', teamPointInteractionsDict.keys()
+    teamVars = pulp.LpVariable.dicts('ID', teamInteractionsDict.keys()
                                         , cat = 'Binary')
 
 
     # Add objective of maximizing team differences
     prob += pulp.lpSum(
-        list(chain(*[[teamVars[i]*teamPointInteractionsDict[i][j] 
-        for j in teamPointInteractionsDict.keys()]
-            for i in teamPointInteractionsDict.keys()]
-            ))
+        [teamVars[i]*teamVars[j]*teamInteractionsDict[i][j] 
+        for i, j in combinations(teamInteractionsDict.keys(), 2)]
         )
     
     # Number of teams limit
@@ -401,7 +399,7 @@ def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = Fal
     if writeLPProblem == True:
         prob.writeLP('teamOptimization.lp')
     
-    prob.solve()
+    prob.solve(GLPK(msg = 0))
         
     print("Status:", pulp.LpStatus[prob.status])
     
@@ -1118,22 +1116,96 @@ from pyomo import environ as pe
 from pyomo.environ import *
 
 d = teamPointIntersections.iloc[:5, :5].to_dict('index')
+teamPointIntersections.columns = range(212)
+teamPointIntersections.index = range(212)
 
+d = (teamPointIntersections
+     .reset_index()
+     .iloc[:5, :5]
+     .melt(id_vars = 'index')
+     .set_index(['index', 'variable'])
+     .to_dict('index')
+     )
 
-model = pe.ConcreteModel()
+model = ConcreteModel()
 
-model.x = pe.Var(d.keys(), within = pe.Binary)
+model.x = Var(list(d.keys()), domain = Binary)
 
-model.value = pe.Objective(expr = sum([model.x[i]*model.x[j]*d[i][j] for i, j in combinations(d.keys(), 2)])
-    , sense = pe.maximize)
+model.value = Objective(expr = sum(model.x[i]*model.x[j]*d[i][j] for i in list(d.keys()) for j in list(d.keys()))
+    , sense = maximize)
 
-model.teams = pe.Constraint(expr = sum([model.x[i] for i in d]) == 3)
+model.teams = Constraint(expr = sum(model.x[i] for i in list(d.keys())) == 3)
 
-opt = pe.SolverFactory('glpk')
-result_obj = opt.solve(model, tee = True)
+opt = SolverFactory('glpk').solve(model)
+
+opt.write()
 
 #%%
 
+Demand = {
+   'Lon':   125,        # London
+   'Ber':   175,        # Berlin
+   'Maa':   225,        # Maastricht
+   'Ams':   250,        # Amsterdam
+   'Utr':   225,        # Utrecht
+   'Hag':   200         # The Hague
+}
+
+Supply = {
+   'Arn':   600,        # Arnhem
+   'Gou':   650         # Gouda
+}
+
+T = {
+    ('Lon','Arn'): 1000,
+    ('Lon','Gou'): 2.5,
+    ('Ber','Arn'): 2.5,
+    ('Ber','Gou'): 1000,
+    ('Maa','Arn'): 1.6,
+    ('Maa','Gou'): 2.0,
+    ('Ams','Arn'): 1.4,
+    ('Ams','Gou'): 1.0,
+    ('Utr','Arn'): 0.8,
+    ('Utr','Gou'): 1.0,
+    ('Hag','Arn'): 1.4,
+    ('Hag','Gou'): 0.8
+}
+
+
+# Step 0: Create an instance of the model
+model = ConcreteModel()
+model.dual = Suffix(direction=Suffix.IMPORT)
+
+# Step 1: Define index sets
+CUS = list(Demand.keys())
+SRC = list(Supply.keys())
+
+# Step 2: Define the decision 
+model.x = Var(CUS, SRC, domain = NonNegativeReals)
+
+# Step 3: Define Objective
+model.Cost = Objective(
+    expr = sum([T[c,s]*model.x[c,s] for c in CUS for s in SRC]),
+    sense = minimize)
+
+# Step 4: Constraints
+model.src = ConstraintList()
+for s in SRC:
+    model.src.add(sum([model.x[c,s] for c in CUS]) <= Supply[s])
+        
+model.dmd = ConstraintList()
+for c in CUS:
+    model.dmd.add(sum([model.x[c,s] for s in SRC]) == Demand[c])
+    
+results = SolverFactory('glpk').solve(model)
+results.write()
+
+#%%
+
+sum(d[i][j] for i, j in combinations(d.keys(), 2))
+
+
+[print(i,j) for i,j in combinations(range(3),2)]
 
 
 teamVars = optimumTeamCombinations(teamPointInteractionsDict, 2)
