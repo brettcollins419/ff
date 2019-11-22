@@ -991,6 +991,68 @@ sns.distplot(
         , ax = ax)
 
 
+#%% FIND MOST DISSIMILAR TEAMS
+
+
+teamPlayerDF = (optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts', 'selectedTeams', 'dilutedPoints'], axis = 1)
+                / optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts', 'selectedTeams', 'dilutedPoints'], axis = 1).sum(axis = 0)
+                )
+
+
+
+def maximizePlayerPointSpread(teamPlayerDF, numTeams, writeLPProblem = False):
+    
+    
+    prob = pulp.LpProblem('The Best Team Combinations', pulp.LpMaximize)
+    
+    # Define team variables
+    teamVars = pulp.LpVariable.dicts('ID'
+                                     , teamPlayerDF.index.get_level_values(0)
+                                     , cat = 'Binary')
+
+
+    # Add objective of maximizing team differences
+    prob += pulp.lpSum(
+        [teamVars[i]*p for p in teamPlayerDF.loc[i,:].values.tolist() 
+        for i in teamVars.keys()]
+        )
+    
+    # Number of teams limit
+    prob += pulp.lpSum([teamVars[i] 
+        for i in teamVars.keys()]) == numTeams
+        
+    if writeLPProblem == True:
+        prob.writeLP('teamOptimization.lp')
+    
+    prob.solve()
+        
+    print("Status:", pulp.LpStatus[prob.status])
+    
+    
+    return teamVars
+
+
+[teamVars[k].varValue for k in teamVars.keys()]
+
+optimumTeamDerivatives['dilutedPoints'] = (
+        (optimumTeamDerivatives 
+         / optimumTeamDerivatives.sum(axis = 0)
+         ).drop(['teamRank', 'Proj. Pts'], axis = 1)
+        .sum(axis = 1)
+        )
+
+
+for k in teamVars.keys():
+    optimumTeamDerivatives.loc[k, 'selectedTeams'] = teamVars[k].varValue
+     
+fig, ax = plt.subplots(1, figsize = (10,6))
+sns.scatterplot(x = 'dilutedPoints'
+                , y = 'Proj. Pts'
+                , hue = 'selectedTeams'
+                , data = optimumTeamDerivatives
+                , ax = ax)
+ax.grid()
+
 
 
 optimumTeamDerivatives.loc[optimumTeamDerivatives[target] == teamPointIntersections.iloc[0].max()]
