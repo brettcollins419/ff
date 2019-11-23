@@ -977,7 +977,7 @@ teamPointIntersections = mapCalculateTeamDifference(
 # Plot distribution of teams
 sns.set_context("poster")
 
-fig, ax = plt.subplots(1, figsize = (20,12))
+fig, ax = plt.subplots(1, figsize = (10,6))
 sns.distplot(optimumTeamDerivatives[target], ax = ax)
 ax.grid()
 ax.set_title('Distribution of Team {}'.format(target), fontsize = 24)
@@ -994,8 +994,8 @@ sns.distplot(
 #%% FIND MOST DISSIMILAR TEAMS
 
 
-teamPlayerDF = (optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts', 'selectedTeams', 'dilutedPoints'], axis = 1)
-                / optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts', 'selectedTeams', 'dilutedPoints'], axis = 1).sum(axis = 0)
+teamPlayerDF = (optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts'], axis = 1)
+                / optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts'], axis = 1).sum(axis = 0)
                 )
 
 
@@ -1012,10 +1012,10 @@ def maximizePlayerPointSpread(teamPlayerDF, numTeams, writeLPProblem = False):
 
 
     # Add objective of maximizing team differences
-    prob += pulp.lpSum(
-        [teamVars[i]*p for p in teamPlayerDF.loc[i,:].values.tolist() 
+    prob += pulp.lpSum(list(chain(*
+        [[teamVars[i]*p for p in teamPlayerDF.loc[i,:].values.tolist()]
         for i in teamVars.keys()]
-        )
+        )))
     
     # Number of teams limit
     prob += pulp.lpSum([teamVars[i] 
@@ -1100,23 +1100,39 @@ from sklearn.cluster import KMeans
 
 inertiaList = []
 
-for k in np.arange(10,201,10):
+for k in np.arange(5,51,5):
     
     km = KMeans(n_clusters = k, random_state=1127)
-    km.fit(optimumTeamDerivatives)
+    km.fit(teamPointIntersections)
     inertiaList.append(km.inertia_)
 
 
 fig, ax = plt.subplots(1, figsize = (10,6))
-sns.barplot(np.arange(10,201,10), inertiaList, ax = ax)
+sns.barplot(np.arange(5,51,5), inertiaList, ax = ax)
+
+    km2 = KMeans(n_clusters = k, random_state=1127)
+    km2.fit(teamPointIntersections)
 
 
+optimumTeamDerivatives['cluster'] = [str(l) for l in km.labels_]
 
+fig, ax = plt.subplots(1, figsize = (10,6))
+sns.lmplot(x = 'dilutedPoints'
+                , y = 'Proj. Pts'
+                , hue = 'cluster'
+                , data = optimumTeamDerivatives
+                , fit_reg= False
+                )
+ax.grid()
 
-
-
-
-
+numTeams = 5
+topTeams = (optimumTeamDerivatives.groupby('cluster')[target]
+                .nlargest(1)
+                .nlargest(numTeams)
+                .reset_index()
+                .drop('cluster', axis = 1)
+                .rename(columns = {'level_1':'finalTeamID'})
+                )
 
 #%% DEV
 ## ############################################################################
