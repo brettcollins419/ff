@@ -590,7 +590,7 @@ def mapCalculateTeamDifference(teams, method):
 #%% SETUP ENVIRONMENT
 ## ############################################################################
 
-week = 11
+week = 12
 
 # Working Directory Dictionary
 pcs = {
@@ -621,6 +621,26 @@ os.chdir(pc['repo'])
 # Load salary data
 data = pd.read_csv('data\\Yahoo_DF_player_export_w{}.csv'.format(week))
 
+# Load csv file for loading team selections
+data = pd.read_csv(
+        'data\\Yahoo_DF_contest_lineups_insert_template_w{}.csv'.format(week)
+        , usecols = ['ID',
+                 'First Name',
+                 'Last Name',
+                 'ID + Name',
+                 'Position',
+                 'Team',
+                 'Opponent',
+                 'Game',
+                 'Time',
+                 'Salary',
+                 'FPPG',
+                 'Injury Status',
+                 'Starting']
+        , skiprows = range(1,6))
+
+
+# Create key for merging with other data file
 
 # Generate Key for salary data
 data.loc[:, 'key'] = list(map(lambda keyList: 
@@ -974,29 +994,114 @@ teamPointIntersections = mapCalculateTeamDifference(
         , method = 'intersection')
 
 
-# Plot distribution of teams
+# Plot distribution of teams & intersections
 sns.set_context("poster")
 
-fig, ax = plt.subplots(1, figsize = (10,6))
-sns.distplot(optimumTeamDerivatives[target], ax = ax)
-ax.grid()
-ax.set_title('Distribution of Team {}'.format(target), fontsize = 24)
-plt.show()
+fig, ax = plt.subplots(nrows = 1, ncols= 2, figsize = (10,6))
+sns.distplot(optimumTeamDerivatives[target], ax = ax[0])
+ax[0].grid()
+ax[0].set_title('Distribution of Team {}'.format(target), fontsize = 24)
+
+sns.distplot(list(filter(
+        lambda p: p > 0 , teamPointIntersections.values.flatten()
+        ))
+    , ax = ax[1])
+ax[1].grid()
+ax[1].set_title('Distribution of Team Intersections', fontsize = 24)
 
 
 
-fig, ax = plt.subplots(1)
-sns.distplot(
-        list(filter(lambda p: p > 0 , teamPointIntersections.values.flatten()))
-        , ax = ax)
 
 
 #%% FIND MOST DISSIMILAR TEAMS
 
+# Calculate clusters
+k = 10
 
-teamPlayerDF = (optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts'], axis = 1)
-                / optimumTeamDerivatives.drop(['teamRank', 'Proj. Pts'], axis = 1).sum(axis = 0)
+km = KMeans(n_clusters = k, random_state=1127)
+km.fit(teamPointIntersections)
+
+# Assign labels
+optimumTeamDerivatives['cluster'] = km.labels_
+
+# Swarm plot of clusters and target
+fig, ax = plt.subplots(1)
+sns.swarmplot(x = 'cluster', y = target, data = optimumTeamDerivatives, ax = ax)
+
+
+optimumTeamDerivatives['dilutedPoints'] = (
+        (optimumTeamDerivatives 
+         / optimumTeamDerivatives.sum(axis = 0)
+         ).drop(['teamRank', target], axis = 1)
+        .sum(axis = 1)
+        )
+
+
+
+     
+fig, ax = plt.subplots(1, figsize = (10,6))
+sns.scatterplot(x = 'dilutedPoints'
+                , y = 'Proj. Pts'
+                , hue = 'cluster'
+                , data = optimumTeamDerivatives
+                , ax = ax)
+ax.grid()
+
+
+
+# Select top team in each cluster and best n teams overall
+numTeams = 5
+topTeams = (optimumTeamDerivatives.groupby('cluster')[target]
+                .nlargest(1)
+                .nlargest(numTeams)
+                .reset_index()
+                .drop('cluster', axis = 1)
+                .rename(columns = {'level_1':'finalTeamID'})
                 )
+
+topTeams = optimumTeamDerivatives.loc[topTeams['finalTeamID'],:]
+
+
+from itertools import compress
+
+playerCols = list(filter(lambda col: col.startswith('nfl'), topTeams.columns))
+
+
+topTeamsDict = {
+        team : dataInput.set_index('ID').loc[
+                list(compress(
+                    playerCols, [p > 0  for p in topTeams.loc[team,playerCols]]
+                    ))
+                , : # data.drop('ID', axis = 1).columns
+                ].reset_index()
+        for team in topTeams.index.get_level_values(0)
+        }
+
+topTeamsDict[0].groupby('Position')[target].rank(ascending = False)
+    
+
+def assignPositionLabels(df):
+    
+    labelDict = {
+            'WR': ['WR1', 'WR2', 'WR3', 'FLEX']
+            , 'RB':['RB1', 'RB2', 'FLEX']
+            , 'TE':['TE1', 'FELX']
+            }
+    
+    labels = [labelDict.get(p, [p]).pop(0) for p in df['Position']]
+    
+    return labels
+
+for key in topTeamsDict:
+    topTeamsDict[key]['labels'] = assignPositionLabels(topTeamsDict[key])
+
+topTeamsSubmit = pd.concat(
+        [pd.DataFrame(df.set_index('labels')['ID']) 
+        for df in topTeamsDict.values()]
+        , axis = 1, sort = True).transpose()
+
+#%% ###########################################################################
+
 
 
 
@@ -1032,60 +1137,6 @@ def maximizePlayerPointSpread(teamPlayerDF, numTeams, writeLPProblem = False):
     return teamVars
 
 
-[teamVars[k].varValue for k in teamVars.keys()]
-
-optimumTeamDerivatives['dilutedPoints'] = (
-        (optimumTeamDerivatives 
-         / optimumTeamDerivatives.sum(axis = 0)
-         ).drop(['teamRank', 'Proj. Pts'], axis = 1)
-        .sum(axis = 1)
-        )
-
-
-for k in teamVars.keys():
-    optimumTeamDerivatives.loc[k, 'selectedTeams'] = teamVars[k].varValue
-     
-fig, ax = plt.subplots(1, figsize = (10,6))
-sns.scatterplot(x = 'dilutedPoints'
-                , y = 'Proj. Pts'
-                , hue = 'selectedTeams'
-                , data = optimumTeamDerivatives
-                , ax = ax)
-ax.grid()
-
-
-
-optimumTeamDerivatives.loc[optimumTeamDerivatives[target] == teamPointIntersections.iloc[0].max()]
-
-# Get team with highest point projections
-x = []
-
-bestTeam = optimumTeamDerivatives.index.get_level_values(0)[0]
-
-teamPointIntersections.index.get_level_values(0)[0]
-
-# Find most dissimilar team
-bestTeam2 = teamPointIntersections.loc[bestTeam][
-        teamPointIntersections.loc[bestTeam]
-        == teamPointIntersections.loc[bestTeam].max()
-        ].index.get_level_values(0)[0]
-
-
-teamPointIntersections.loc[[bestTeam, bestTeam2]].sum()
-
-type(teamPointIntersections.loc[[bestTeam]])
-# Find next most dissimilar team from previous two
-
-
-teamPointIntersections.iloc[0][teamPointIntersections.iloc[0].round(4) == 0.3974].index.get_level_values(0)[0]
-
-#%% ###########################################################################
-
-
-
-
-
-
 fig, ax = plt.subplots(1, figsize = (10,6))
 sns.scatterplot(teamPointIntersections.iloc[0], optimumTeamDerivatives['Proj. Pts'], ax = ax)
 plt.show()
@@ -1102,8 +1153,7 @@ inertiaList = []
 
 for k in np.arange(5,51,5):
     
-    km = KMeans(n_clusters = k, random_state=1127)
-    km.fit(teamPointIntersections)
+    
     inertiaList.append(km.inertia_)
 
 
@@ -1114,7 +1164,7 @@ sns.barplot(np.arange(5,51,5), inertiaList, ax = ax)
     km2.fit(teamPointIntersections)
 
 
-optimumTeamDerivatives['cluster'] = [str(l) for l in km.labels_]
+
 
 fig, ax = plt.subplots(1, figsize = (10,6))
 sns.lmplot(x = 'dilutedPoints'
@@ -1125,14 +1175,7 @@ sns.lmplot(x = 'dilutedPoints'
                 )
 ax.grid()
 
-numTeams = 5
-topTeams = (optimumTeamDerivatives.groupby('cluster')[target]
-                .nlargest(1)
-                .nlargest(numTeams)
-                .reset_index()
-                .drop('cluster', axis = 1)
-                .rename(columns = {'level_1':'finalTeamID'})
-                )
+
 
 #%% DEV
 ## ############################################################################
