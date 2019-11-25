@@ -15,6 +15,9 @@ import pulp
 import re
 import socket
 import copy
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score
+from sklearn.cluster import KMeans
 from scipy.stats import norm
 from scipy.optimize import minimize
 from itertools import combinations, product, chain, repeat, compress
@@ -316,7 +319,8 @@ def salaryKeyGen(keyList):
 
 def optimizeLineup(dataInput, dataInputDict
                    , budget, target, positionLimit
-                   , writeLPProblem = False):
+                   , writeLPProblem = False
+                   , printOutput = False):
     '''Create linear optimiziation problem to optimize target parameter
         given budget and constraints.
         
@@ -370,8 +374,9 @@ def optimizeLineup(dataInput, dataInputDict
         prob.writeLP('teamOptimization.lp')
     
     prob.solve()
-        
-    print("Status:", pulp.LpStatus[prob.status])
+       
+    if printOutput == True:
+        print("Status:", pulp.LpStatus[prob.status])
 
     return playerVars
 
@@ -465,7 +470,7 @@ def optimizedTeamDerivaties(optimumTeam, dataInput
     return optimumTeamDict
 
 
-def teamPlayerStats(playerList, target
+def calcTeamPlayerStats(playerList, target
                     , groupbyList = ['Position', 'Last Name', 'First Name']):
     
     '''Count player appearances and stats in multiple team sections
@@ -498,7 +503,7 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
     
     
     # View player counts
-    print(teamPlayerStats(playerList, target))
+    print(calcTeamPlayerStats(playerList, target))
     
     
     # Pivot out players and one hot encode each team
@@ -659,7 +664,7 @@ def clusterTeamsAndPlot(teamRelationships, teams, target, k = 10):
 def selectClusterBestTeams(teams, teamsDict, target, numTeams = 10):
 
     # Select top team in each cluster and best n teams overall
-    topTeams = (optimumTeamDerivatives.groupby('cluster')[target]
+    topTeams = (teams.groupby('cluster')[target]
                     .nlargest(1)
                     .nlargest(numTeams)
                     .reset_index()
@@ -727,7 +732,7 @@ def writeTeamSubmissions(topTeamsDict, target, week):
                     )
             
     topTeamsSubmit = pd.concat(
-        [pd.DataFrame(df.set_index('labels')['ID']) 
+        [pd.DataFrame(df.reset_index().set_index('labels')['ID']) 
         for df in topTeamsDict.values()]
         , axis = 1, sort = True).transpose()
     
@@ -767,6 +772,7 @@ pc = pcs.get(socket.gethostname())
 del(pcs)
 
 
+calculateUncertainty = False
 
 # Set up environment
 os.chdir(pc['repo'])
@@ -827,13 +833,12 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
     , fpRankings[['player', 'Team', 'position']].values.tolist()
     ))
 
-    
+  
+fpRankingsCols = ['Proj. Pts', 'Std Dev']
 
 #%% RANKINGS FANTASY POINT REGESSION MODELING
 ## ############################################################################
 
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score
 
 rfRegDict = {}
 
@@ -975,12 +980,10 @@ if calculateUncertainty == True:
     
     
     # Columns for merging
-    fpRankingsCols = (
-            ['Proj. Pts']
-            + ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
-            )
+    fpRankingsCols += ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
 
 
+    
 #%% COMBINE DATASETS
     
 # # of players required for each position
@@ -1084,7 +1087,7 @@ for target in  lpTargets:
 
 
 # View player counts
-print(teamPlayerStats(pd.concat(finalTeam.values()), target))
+print(calcTeamPlayerStats(pd.concat(finalTeam.values()), target))
 
 
 
@@ -1180,7 +1183,7 @@ for target in ['FPTS', 'Proj. Pts']:
     
     
     teamPlayerStats[target] = (
-            teamPlayerStats(pd.concat(topTeamsDict.values()), target)
+            calcTeamPlayerStats(pd.concat(topTeamsDict[target].values()), target)
             )
     
     print(teamPlayerStats[target])
@@ -1189,101 +1192,7 @@ for target in ['FPTS', 'Proj. Pts']:
     writeTeamSubmissions(topTeamsDict[target], target, week)
 
 
-#%% TEAM SUBMISSIONS
 
-for target in ['FPTS', 'Proj. Pts']:
-    for key in topTeamsDict:
-        topTeamsDict[target][key]['labels'] = (
-                assignPositionLabels(topTeamsDict[target][key])
-                )
-    
-    topTeamsSubmit = pd.concat(
-            [pd.DataFrame(df.set_index('labels')['ID']) 
-            for df in topTeamsDict.values()]
-            , axis = 1, sort = True).transpose()
-    
-    # column sort
-    sortedColumns = ['QB', 'RB1', 'RB2', 'WR1', 'WR2', 'WR3', 'TE', 'FLEX', 'DEF']
-    
-    topTeamsSubmit[sortedColumns].to_csv('data\\team_submission_{}_w{}.csv'.format(target, week), index = False)
-
-
-
-
-#%% ###########################################################################
-
-
-
-
-def maximizePlayerPointSpread(teamPlayerDF, numTeams, writeLPProblem = False):
-    
-    
-    prob = pulp.LpProblem('The Best Team Combinations', pulp.LpMaximize)
-    
-    # Define team variables
-    teamVars = pulp.LpVariable.dicts('ID'
-                                     , teamPlayerDF.index.get_level_values(0)
-                                     , cat = 'Binary')
-
-
-    # Add objective of maximizing team differences
-    prob += pulp.lpSum(list(chain(*
-        [[teamVars[i]*p for p in teamPlayerDF.loc[i,:].values.tolist()]
-        for i in teamVars.keys()]
-        )))
-    
-    # Number of teams limit
-    prob += pulp.lpSum([teamVars[i] 
-        for i in teamVars.keys()]) == numTeams
-        
-    if writeLPProblem == True:
-        prob.writeLP('teamOptimization.lp')
-    
-    prob.solve()
-        
-    print("Status:", pulp.LpStatus[prob.status])
-    
-    
-    return teamVars
-
-
-fig, ax = plt.subplots(1, figsize = (10,6))
-sns.scatterplot(teamPointIntersections.iloc[0], optimumTeamDerivatives['Proj. Pts'], ax = ax)
-plt.show()
-
-
-
-
-
-
-# Cluster teams
-from sklearn.cluster import KMeans
-
-inertiaList = []
-
-for k in np.arange(5,51,5):
-    
-    
-    inertiaList.append(km.inertia_)
-
-
-fig, ax = plt.subplots(1, figsize = (10,6))
-sns.barplot(np.arange(5,51,5), inertiaList, ax = ax)
-
-    km2 = KMeans(n_clusters = k, random_state=1127)
-    km2.fit(teamPointIntersections)
-
-
-
-
-fig, ax = plt.subplots(1, figsize = (10,6))
-sns.lmplot(x = 'dilutedPoints'
-                , y = 'Proj. Pts'
-                , hue = 'cluster'
-                , data = optimumTeamDerivatives
-                , fit_reg= False
-                )
-ax.grid()
 
 
 
@@ -1371,191 +1280,7 @@ opt = SolverFactory('glpk').solve(model)
 
 opt.write()
 
-#%%
 
-Demand = {
-   'Lon':   125,        # London
-   'Ber':   175,        # Berlin
-   'Maa':   225,        # Maastricht
-   'Ams':   250,        # Amsterdam
-   'Utr':   225,        # Utrecht
-   'Hag':   200         # The Hague
-}
-
-Supply = {
-   'Arn':   600,        # Arnhem
-   'Gou':   650         # Gouda
-}
-
-T = {
-    ('Lon','Arn'): 1000,
-    ('Lon','Gou'): 2.5,
-    ('Ber','Arn'): 2.5,
-    ('Ber','Gou'): 1000,
-    ('Maa','Arn'): 1.6,
-    ('Maa','Gou'): 2.0,
-    ('Ams','Arn'): 1.4,
-    ('Ams','Gou'): 1.0,
-    ('Utr','Arn'): 0.8,
-    ('Utr','Gou'): 1.0,
-    ('Hag','Arn'): 1.4,
-    ('Hag','Gou'): 0.8
-}
-
-
-# Step 0: Create an instance of the model
-model = ConcreteModel()
-model.dual = Suffix(direction=Suffix.IMPORT)
-
-# Step 1: Define index sets
-CUS = list(Demand.keys())
-SRC = list(Supply.keys())
-
-# Step 2: Define the decision 
-model.x = Var(CUS, SRC, domain = NonNegativeReals)
-
-# Step 3: Define Objective
-model.Cost = Objective(
-    expr = sum([T[c,s]*model.x[c,s] for c in CUS for s in SRC]),
-    sense = minimize)
-
-# Step 4: Constraints
-model.src = ConstraintList()
-for s in SRC:
-    model.src.add(sum([model.x[c,s] for c in CUS]) <= Supply[s])
-        
-model.dmd = ConstraintList()
-for c in CUS:
-    model.dmd.add(sum([model.x[c,s] for s in SRC]) == Demand[c])
-    
-results = SolverFactory('glpk').solve(model)
-results.write()
-
-#%%
-
-sum(d[i][j] for i, j in combinations(d.keys(), 2))
-
-
-[print(i,j) for i,j in combinations(range(3),2)]
-
-
-teamVars = optimumTeamCombinations(teamPointInteractionsDict, 2)
-
-[teamVars[t].varValue for t in teamVars.keys()]
-
-
-
-fpAllProjections.loc[:, 'position_rank'] = (
-        fpAllProjections.groupby('position')['FPTS'].rank(ascending = False)
-        )
-
-
-
-fig, ax = plt.subplots(1, 2, sharey= True, figsize = (10, 6))
-
-sns.scatterplot(x = 'Rank', y = 'Proj. Pts', hue = 'position'
-                , data = fpRankings, ax = ax[0]
-                )
-sns.scatterplot(x = 'position_rank', y = 'FPTS', hue = 'position'
-                , data = fpAllProjections, ax=ax[1]
-                )
-
-np.random.randn(10)
-
-ax[0].grid()
-ax[1].grid()
-
-x = {position : fantasyProsAllProjectionsDataLoad(position, week)
-    for position in fantasyProsDict.keys()
-    }
-
-
-
-
-#%% DEV2
-## ############################################################################
-
-
-dataInput['FPTS_per_dollar'] = dataInput['FPTS'] / dataInput['Salary']
-dataInput['pp_per_dollar'] = dataInput['Proj. Pts'] / dataInput['Salary']
-
-
-dataInput.groupby('Position')['Team'].count()
-dataInput['FPTS_rnd'] = dataInput['FPTS'].round(0)
-dataInput['Proj. Pts_rnd'] = dataInput['Proj. Pts'].round(0)
-
-
-dataInput.groupby(['Position', 'FPTS_rnd'])['Team'].count()
-
-
-dataInput.groupby(['Position', 'Proj. Pts_rnd'])['Team'].count()
-
-# Take the max of the median and mean
-x = dataInput.groupby(['Position']).agg({
-        'pp_per_dollar': lambda x: max(np.mean(x), np.percentile(x, 90))
-        , 'FPTS_per_dollar': lambda x: max(np.mean(x), np.percentile(x, 90))}).to_dict('index')
-    
-dataInputFPTS = dataInput.loc[
-        map(lambda p: x[p[0]]['FPTS_per_dollar'] < p[1]
-            , dataInput[['Position', 'FPTS_per_dollar']].values.tolist()
-            )
-        , :]
-
-
-
-(len(list(combinations(range(9), 2)))
-* len(list(combinations(range(12), 3)))
-* 8
-* 5
-* 3
-)
-
-dataInputFPTS.groupby(['Position'])['Team'].count()
-
-
-playerVars = optimizeLineup(dataInputFPTS
-                                , dataInputDict
-                                , budget
-                                , 'FPTS'
-                                , positionLimit)
-
-y = (
-            dataInputFPTS.set_index('ID')
-            .loc[filter(lambda k: playerVars[k].varValue == 1,
-                        playerVars.keys()), :][
-            ['First Name', 'Last Name', 'Position', 
-             'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
-            )
-
-
-
-
-(len(list(combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='WR', 'ID'].values.tolist(), 3)))
-* len(list(combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='RB', 'ID'].values.tolist(), 2)))
-*3*9*15)
-
-
-y = product(
-        combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='WR', 'ID'].values.tolist(), 3)
-        , combinations(dataInputFPTS.loc[dataInputFPTS['Position']=='RB', 'ID'].values.tolist(), 2)
-        , dataInputFPTS.loc[dataInputFPTS['Position']=='QB', 'ID'].values.tolist()
-        , dataInputFPTS.loc[dataInputFPTS['Position']=='TE', 'ID'].values.tolist()
-        , dataInputFPTS.loc[dataInputFPTS['Position']=='DEF', 'ID'].values.tolist()
-        , dataInputFPTS.loc[[p in ('WR', 'TE', 'RB') for p in dataInputFPTS['Position']], 'ID']
-        )
-
-len(list(y))
-
-yy = list(filter(lambda team: len(set(team)) == 9, y))
-
-list(
-     product(
-             combinations(range(3), 2)
-             , combinations('abc', 2)
-             )
-     )
-
-list(combinations(['a', 'b', 'c'], 2))
 
 #%% FANTASY PROS DATA
 ## ############################################################################
