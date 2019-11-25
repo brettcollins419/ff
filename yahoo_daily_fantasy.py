@@ -17,12 +17,12 @@ import socket
 import copy
 from scipy.stats import norm
 from scipy.optimize import minimize
-from itertools import combinations, product, chain, repeat
+from itertools import combinations, product, chain, repeat, compress
 import time
 
 from matplotlib import pyplot as plt
 import seaborn as sns
-
+sns.set_context("poster")
 
 
 #%% FUNCTIONS
@@ -465,6 +465,27 @@ def optimizedTeamDerivaties(optimumTeam, dataInput
     return optimumTeamDict
 
 
+def teamPlayerStats(playerList, target
+                    , groupbyList = ['Position', 'Last Name', 'First Name']):
+    
+    '''Count player appearances and stats in multiple team sections
+    
+    Return grouped dataframe by groupbyList'''
+    
+    
+    teamPlayerStats = (playerList.groupby(groupbyList)
+        .agg({'Team':len
+              , 'teamPoints':np.mean
+              , target:np.mean})
+        .rename(columns = {'Team':'teamCount'
+                           , 'teamPoints':'teamAvgPoints'})
+    .groupby(level = 0)
+    .apply(lambda position: position.sort_values(['teamCount', 'teamAvgPoints']
+                                                   , ascending = False)
+        ))
+        
+    return teamPlayerStats
+    
 
 
 def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
@@ -477,16 +498,7 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
     
     
     # View player counts
-    print(playerList.groupby(['Position', 'Last Name', 'First Name'])
-        .agg({'Team':len
-              , 'teamPoints':np.mean
-              , target:np.mean})
-        .rename(columns = {'Team':'teamCount'
-                           , 'teamPoints':'teamAvgPoints'})
-    .groupby(level = 0)
-    .apply(lambda position: position.sort_values(['teamCount', 'teamAvgPoints']
-                                                   , ascending = False)
-        ))
+    print(teamPlayerStats(playerList, target))
     
     
     # Pivot out players and one hot encode each team
@@ -539,6 +551,19 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
             teamList[target].rank(method = 'min', ascending = False)
             )
     
+    
+    # Dilute player points across all teams
+    teamList['dilutedPoints'] = (
+        (teamList 
+         / teamList.sum(axis = 0)
+         ).drop(['teamRank', target], axis = 1)
+        .sum(axis = 1)
+        )
+
+    
+    # Sort teams by projected points
+    teamList.sort_values(target, ascending = False, inplace = True)
+    
     return teamList
 
 
@@ -586,6 +611,135 @@ def mapCalculateTeamDifference(teams, method):
     
     return teamComparisons
 
+
+
+def clusterTeamsAndPlot(teamRelationships, teams, target, k = 10):
+    '''Cluster teams using KMeans based on team relationship to otherteams
+    
+    Return dataframe with cluster labels appended and cluster model'''
+    
+    
+    # Calculate clusters    
+    km = KMeans(n_clusters = k, random_state=1127)
+    km.fit(teamRelationships)
+    
+    # Assign labels
+    teams['cluster'] = km.labels_
+    
+
+    
+    # Swarm plot of clusters and target
+    fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize = (10,6))
+    sns.swarmplot(x = 'cluster'
+                  , y = target
+                  , data = teams
+                  , ax = ax[0])
+    
+    
+    # Plot distributed points and total points and color by cluster #
+    sns.scatterplot(x = 'dilutedPoints'
+                    , y = target
+                    , hue = 'cluster'
+                    , data = teams
+                    , ax = ax[1])
+    
+    # Turn on Grid
+    ax[0].grid()
+    ax[1].grid()
+    
+    ax[0].set_title('{} Swarm Plots by Cluster'.format(target), fontsize = 20)
+    ax[1].set_title('Team Diluted vs Total {}'.format(target), fontsize = 20)
+    
+    fig.show()
+    
+    return teams, km
+
+
+
+def selectClusterBestTeams(teams, teamsDict, target, numTeams = 10):
+
+    # Select top team in each cluster and best n teams overall
+    topTeams = (optimumTeamDerivatives.groupby('cluster')[target]
+                    .nlargest(1)
+                    .nlargest(numTeams)
+                    .reset_index()
+                    .drop('cluster', axis = 1)
+                    .rename(columns = {'level_1':'finalTeamID'})
+                    )
+    
+    # Get team selections from dataframe with details 
+    topTeams = teams.loc[topTeams['finalTeamID'],:]
+
+
+    # Identify player columns 
+    playerCols = list(filter(lambda col: col.startswith('nfl')
+                            , topTeams.columns))
+
+    
+    # Create dictionary for each selected team
+    topTeamsDict = {team : teamsDict[team] 
+        for team in topTeams.index.get_level_values(0)
+        }
+    
+#    topTeamsDict = {
+#            team : players.set_index('ID').loc[
+#                    list(compress(
+#                        playerCols, [p > 0  for p in topTeams.loc[team,playerCols]]
+#                        ))
+#                    , : # data.drop('ID', axis = 1).columns
+#                    ].reset_index()
+#            for team in topTeams.index.get_level_values(0)
+#            }
+
+    
+    return topTeams, topTeamsDict
+
+
+def assignPositionLabels(df):
+    '''Position labels for importing into Yahoo'''
+    
+    labelDict = {
+            'WR': ['WR1', 'WR2', 'WR3', 'FLEX']
+            , 'RB':['RB1', 'RB2', 'FLEX']
+            , 'TE':['TE', 'FELX']
+            }
+    
+    labels = [labelDict.get(p, [p]).pop(0) for p in df['Position']]
+    
+    return labels
+
+
+def writeTeamSubmissions(topTeamsDict, target, week):
+    '''Convert team selections into correct format for yahoo csv submission.'''
+    
+    # Correct column order
+    sortedColumns = ['QB'
+                     , 'RB1', 'RB2'
+                     , 'WR1', 'WR2', 'WR3'
+                     , 'TE'
+                     , 'FLEX'
+                     , 'DEF'
+                     ]
+
+    for key in topTeamsDict:
+            topTeamsDict[key]['labels'] = (
+                    assignPositionLabels(topTeamsDict[key])
+                    )
+            
+    topTeamsSubmit = pd.concat(
+        [pd.DataFrame(df.set_index('labels')['ID']) 
+        for df in topTeamsDict.values()]
+        , axis = 1, sort = True).transpose()
+    
+    
+    topTeamsSubmit[sortedColumns].to_csv(
+            'data\\team_submission_{}_w{}.csv'.format(target, week)
+            , index = False)
+    
+    print('file written: data\\'
+          'team_submission_{}_w{}.csv'.format(target, week))
+    
+    return
 
 #%% SETUP ENVIRONMENT
 ## ############################################################################
@@ -760,77 +914,71 @@ fpAllProjections = calculateProjectionStats(fpAllProjections)
 
 
 
-        
-# Generate key for projections
-#fpProjections.loc[:, 'key'] = list(map(lambda keyList: 
-#    fpRankingsKeyGen(keyList)
-#    , fpProjections[['Player', 'Team', 'position']].values.tolist()
-#    ))           
-#
-#    
-    
+# Generate key for merging  
 fpAllProjections.loc[:, 'key'] = list(map(lambda keyList: 
     fpRankingsKeyGen(keyList)
     , fpAllProjections[['Player', 'Team', 'position']].values.tolist()
     ))      
     
+fpAllProjectionsCols = ['FPTS', 'FPTS_std_dev_est']
     
 #%% PROJECTIONS UNCERTAINTY
 ## ############################################################################
+
+if calculateUncertainty == True:    
+
+    np.random.seed(1127)
     
-
-np.random.seed(1127)
-
-for i in range(5):
-    fpAllProjections.loc[:, 'FPTS_rand_{}'.format(i)] = (
-            fpAllProjections['FPTS'] + (
-                    fpAllProjections['FPTS_std_dev_est'] 
-                    * np.random.randn(fpAllProjections.shape[0])
-                    )
-            )
-
-  
-# Columns for merging
-fpAllProjectionsCols = (
-        ['FPTS']
-        + ['FPTS_rand_{}'.format(i) for i in range(5)] 
-        )
+    for i in range(5):
+        fpAllProjections.loc[:, 'FPTS_rand_{}'.format(i)] = (
+                fpAllProjections['FPTS'] + (
+                        fpAllProjections['FPTS_std_dev_est'] 
+                        * np.random.randn(fpAllProjections.shape[0])
+                        )
+                )
+    
+      
+    # Columns for merging
+    fpAllProjectionsCols += ['FPTS_rand_{}'.format(i) for i in range(5)] 
+            
     
 
 #%% RANKINGS UNCERTAINTY
 ## ############################################################################
 
-zScore = norm.ppf(0.95)
-
-np.random.seed(1213)
-
-for i in range(5):
+if calculateUncertainty == True:    
     
-    # Create uncertainty around rank
-    fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
-            fpRankings['Avg'] + (
-                    fpRankings['Std Dev'] 
-                    * zScore
-                    * np.random.randn(fpRankings.shape[0])
-                    )
-            )
-
-    # Estimate projected points based on new ranking
-    #   Call RF model by position
-    fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+    zScore = norm.ppf(0.95)
+    
+    np.random.seed(1213)
+    
+    for i in range(5):
         
-        list(map(lambda p: 
-            rfRegDict.get(p[0]).predict(np.array(p[1]).reshape(1,-1))
-            , fpRankings[['position', 'Proj. Pts_rand_{}'.format(i)]].values.tolist()
-            ))
-        )
-
-
-# Columns for merging
-fpRankingsCols = (
-        ['Proj. Pts']
-        + ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
-        )
+        # Create uncertainty around rank
+        fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+                fpRankings['Avg'] + (
+                        fpRankings['Std Dev'] 
+                        * zScore
+                        * np.random.randn(fpRankings.shape[0])
+                        )
+                )
+    
+        # Estimate projected points based on new ranking
+        #   Call RF model by position
+        fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+            
+            list(map(lambda p: 
+                rfRegDict.get(p[0]).predict(np.array(p[1]).reshape(1,-1))
+                , fpRankings[['position', 'Proj. Pts_rand_{}'.format(i)]].values.tolist()
+                ))
+            )
+    
+    
+    # Columns for merging
+    fpRankingsCols = (
+            ['Proj. Pts']
+            + ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
+            )
 
 
 #%% COMBINE DATASETS
@@ -933,172 +1081,134 @@ for target in  lpTargets:
     finalTeam[target]['finalTeamID'] = target
     finalTeam[target]['teamPoints'] = finalTeam[target][target].sum()
 
+
+
 # View player counts
-finalTeamConcat = pd.concat(finalTeam.values())
-
-finalTeamConcat.sort_values(['finalTeamID', 'Position'], inplace = True)
-
-(finalTeamConcat.groupby(['Position', 'Last Name', 'First Name'])['Team']
-    .count()
-    .groupby(level=0)
-    .nlargest(20)
-    )
-
-finalTeamConcat.to_csv(
-        'team_selections\\team_selections_w_uncertainty_w{}.csv'.format(week)
-        )
+print(teamPlayerStats(pd.concat(finalTeam.values()), target))
 
 
-(finalTeamConcat.groupby(['Position', 'Last Name', 'First Name'])
-        .agg({'Team':len
-              , 'teamPoints':np.mean
-              , target:np.mean})
-        .rename(columns = {'Team':'teamCount'
-                           , 'teamPoints':'teamAvgPoints'})
-    .groupby(level = 0)
-    .apply(lambda position: position.sort_values(['teamCount', 'teamAvgPoints']
-                                                   , ascending = False)
-        ))
 
 #%% TEAM OPTIMIZATION DERIVATIVES
 
-target = 'Proj. Pts'
+#target = 'FPTS'
 
-# Generate all optimum team derivatives from base optimized team
-optimumTeamDict = optimizedTeamDerivaties(
-        optimumTeam = finalTeam[target]
-        , dataInput = dataInput
-        , dataInputDict = dataInputDict
-        , budget = budget
-        , target = target
-        , positionLimit =  positionLimit)
+optimumTeamDict = {}
+optimumTeamDerivatives = {}
+teamPointIntersections = {}
 
-# Remove duplicates and convert to OHE dataframe 
-optimumTeamDerivatives = pivotTeamsAndDropDuplicates(
-        optimumTeamDict = optimumTeamDict
-        , optimumTeam = finalTeam[target]
-        , target=target)
+for target in ['FPTS', 'Proj. Pts']:
 
-# Drop duplicates from optimumTeamDict
-optimumTeamDict = {
-        k : optimumTeamDict[k] 
-        for k in optimumTeamDerivatives.index.get_level_values(0)
-        }
+    # Generate all optimum team derivatives from base optimized team
+    optimumTeamDict[target] = optimizedTeamDerivaties(
+            optimumTeam = finalTeam[target]
+            , dataInput = dataInput
+            , dataInputDict = dataInputDict
+            , budget = budget
+            , target = target
+            , positionLimit =  positionLimit)
 
-# Sort teams by projected points
-optimumTeamDerivatives.sort_values(target, ascending = False, inplace = True)
-
-# Calculate team point comparisons
-teamPointIntersections = mapCalculateTeamDifference(
-        optimumTeamDerivatives.drop([target, 'teamRank'], axis = 1)
-        , method = 'intersection')
-
-
-# Plot distribution of teams & intersections
-sns.set_context("poster")
-
-fig, ax = plt.subplots(nrows = 1, ncols= 2, figsize = (10,6))
-sns.distplot(optimumTeamDerivatives[target], ax = ax[0])
-ax[0].grid()
-ax[0].set_title('Distribution of Team {}'.format(target), fontsize = 24)
-
-sns.distplot(list(filter(
-        lambda p: p > 0 , teamPointIntersections.values.flatten()
-        ))
-    , ax = ax[1])
-ax[1].grid()
-ax[1].set_title('Distribution of Team Intersections', fontsize = 24)
+    # Remove duplicates and convert to OHE dataframe 
+    optimumTeamDerivatives[target] = pivotTeamsAndDropDuplicates(
+            optimumTeamDict = optimumTeamDict[target]
+            , optimumTeam = finalTeam[target]
+            , target=target)
 
 
 
 
-
-#%% FIND MOST DISSIMILAR TEAMS
-
-# Calculate clusters
-k = 10
-
-km = KMeans(n_clusters = k, random_state=1127)
-km.fit(teamPointIntersections)
-
-# Assign labels
-optimumTeamDerivatives['cluster'] = km.labels_
-
-# Swarm plot of clusters and target
-fig, ax = plt.subplots(1)
-sns.swarmplot(x = 'cluster', y = target, data = optimumTeamDerivatives, ax = ax)
-
-
-optimumTeamDerivatives['dilutedPoints'] = (
-        (optimumTeamDerivatives 
-         / optimumTeamDerivatives.sum(axis = 0)
-         ).drop(['teamRank', target], axis = 1)
-        .sum(axis = 1)
-        )
-
-
-
-     
-fig, ax = plt.subplots(1, figsize = (10,6))
-sns.scatterplot(x = 'dilutedPoints'
-                , y = 'Proj. Pts'
-                , hue = 'cluster'
-                , data = optimumTeamDerivatives
-                , ax = ax)
-ax.grid()
-
-
-
-# Select top team in each cluster and best n teams overall
-numTeams = 5
-topTeams = (optimumTeamDerivatives.groupby('cluster')[target]
-                .nlargest(1)
-                .nlargest(numTeams)
-                .reset_index()
-                .drop('cluster', axis = 1)
-                .rename(columns = {'level_1':'finalTeamID'})
-                )
-
-topTeams = optimumTeamDerivatives.loc[topTeams['finalTeamID'],:]
-
-
-from itertools import compress
-
-playerCols = list(filter(lambda col: col.startswith('nfl'), topTeams.columns))
-
-
-topTeamsDict = {
-        team : dataInput.set_index('ID').loc[
-                list(compress(
-                    playerCols, [p > 0  for p in topTeams.loc[team,playerCols]]
-                    ))
-                , : # data.drop('ID', axis = 1).columns
-                ].reset_index()
-        for team in topTeams.index.get_level_values(0)
-        }
-
-topTeamsDict[0].groupby('Position')[target].rank(ascending = False)
-    
-
-def assignPositionLabels(df):
-    
-    labelDict = {
-            'WR': ['WR1', 'WR2', 'WR3', 'FLEX']
-            , 'RB':['RB1', 'RB2', 'FLEX']
-            , 'TE':['TE1', 'FELX']
+    # Drop duplicates from optimumTeamDict
+    optimumTeamDict[target] = {
+            k : optimumTeamDict[target][k] 
+            for k in optimumTeamDerivatives[target].index.get_level_values(0)
             }
-    
-    labels = [labelDict.get(p, [p]).pop(0) for p in df['Position']]
-    
-    return labels
 
-for key in topTeamsDict:
-    topTeamsDict[key]['labels'] = assignPositionLabels(topTeamsDict[key])
 
-topTeamsSubmit = pd.concat(
-        [pd.DataFrame(df.set_index('labels')['ID']) 
-        for df in topTeamsDict.values()]
-        , axis = 1, sort = True).transpose()
+    # Identify player OHE columns
+    playerCols = list(filter(lambda col: col.startswith('nfl')
+                            , optimumTeamDerivatives[target].columns))
+    
+    
+    # Calculate team point comparisons
+    teamPointIntersections[target] = mapCalculateTeamDifference(
+            optimumTeamDerivatives[target][playerCols]
+            , method = 'intersection')
+    
+    
+    # Plot distribution of teams & intersections
+    fig, ax = plt.subplots(nrows = 1, ncols= 2, figsize = (10,6))
+    sns.distplot(optimumTeamDerivatives[target][target], ax = ax[0])
+    ax[0].grid()
+    ax[0].set_title('Distribution of Team {}'.format(target), fontsize = 24)
+    
+    sns.distplot(list(filter(
+            lambda p: p > 0 , teamPointIntersections[target].values.flatten()
+            ))
+        , ax = ax[1])
+    ax[1].grid()
+    ax[1].set_title('Distribution of Team Intersections', fontsize = 24)
+    
+    
+
+
+
+#%% TEAM SELECTIONS
+
+topTeams = {}
+topTeamsDict = {}
+teamPlayerStats = {}
+clusterModels = {}
+
+for target in ['FPTS', 'Proj. Pts']:
+        
+    # Cluster teams by their relationship to other teams
+    optimumTeamDerivatives[target], clusterModels[target] = (
+            clusterTeamsAndPlot(teamPointIntersections[target]
+                                , optimumTeamDerivatives[target]
+                                , target
+                                 , k = 10)
+            )
+    
+    
+    
+    # Get top teams from each cluster
+    topTeams[target], topTeamsDict[target] = (
+            selectClusterBestTeams(optimumTeamDerivatives[target]
+                                   , optimumTeamDict[target]
+                                   , target
+                                   , numTeams = 10)
+            )
+    
+    
+    teamPlayerStats[target] = (
+            teamPlayerStats(pd.concat(topTeamsDict.values()), target)
+            )
+    
+    print(teamPlayerStats[target])
+
+    # Write submissions
+    writeTeamSubmissions(topTeamsDict[target], target, week)
+
+
+#%% TEAM SUBMISSIONS
+
+for target in ['FPTS', 'Proj. Pts']:
+    for key in topTeamsDict:
+        topTeamsDict[target][key]['labels'] = (
+                assignPositionLabels(topTeamsDict[target][key])
+                )
+    
+    topTeamsSubmit = pd.concat(
+            [pd.DataFrame(df.set_index('labels')['ID']) 
+            for df in topTeamsDict.values()]
+            , axis = 1, sort = True).transpose()
+    
+    # column sort
+    sortedColumns = ['QB', 'RB1', 'RB2', 'WR1', 'WR2', 'WR3', 'TE', 'FLEX', 'DEF']
+    
+    topTeamsSubmit[sortedColumns].to_csv('data\\team_submission_{}_w{}.csv'.format(target, week), index = False)
+
+
+
 
 #%% ###########################################################################
 
