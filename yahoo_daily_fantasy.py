@@ -5,15 +5,48 @@ Created on Thu Sep  5 13:00:42 2019
 @author: u00bec7
 """
 
-## PACKAGES
 
+#%% SETUP ENVIRONMENT
+## ############################################################################
+
+import socket
+import os
+
+# Working Directory Dictionary
+pcs = {
+    'WaterBug' : {'wd':'C:\\Users\\brett\\Documents\\ff',
+                  'repo':'C:\\Users\\brett\\Documents\\personal\\ff'},
+
+    'WHQPC-L60102' : {'wd':'C:\\Users\\u00bec7\\Desktop\\personal\\ff',
+                      'repo':'C:\\Users\\u00bec7\\Desktop\\personal\\ff'},
+                      
+    'raspberrypi' : {'wd':'/home/pi/Documents/ff',
+                     'repo':'/home/pi/Documents/ff'},
+                     
+    'jeebs' : {'wd': 'C:\\Users\\brett\\Documents\\ff\\',
+               'repo' : 'C:\\Users\\brett\\Documents\\ff\\'}
+    }
+
+# Set working directory & load functions
+pc = pcs.get(socket.gethostname())
+
+del(pcs)
+
+
+# Update code from gitHub
+#os.system('git -C {} pull'.format(pc['repo']))
+
+# Set up environment
+os.chdir(pc['repo'])
+
+
+#%% PACKAGES
+## ############################################################################
 
 import pandas as pd
-import os
 import numpy as np
 import pulp
 import re
-import socket
 import copy
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
@@ -470,13 +503,20 @@ def optimizedTeamDerivaties(optimumTeam, dataInput
         optimumTeamDict[i] = (
                 dataInput.set_index('ID')
                 .loc[filter(lambda k: playerVars[k].varValue == 1,
-                            playerVars.keys()), :][
-                ['First Name', 'Last Name', 'Position', 
-                 'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
+                            playerVars.keys())
+                    , :][['First Name', 'Last Name', 'Position' 
+                       , 'Team', 'Opponent', 'Salary', 'Rank'
+                       , target, '{}_std_dev_est'.format(target)]
+                    ]
                 )    
     
         optimumTeamDict[i]['finalTeamID'] = i
         optimumTeamDict[i]['teamPoints'] = optimumTeamDict[i][target].sum()
+        optimumTeamDict[i]['teamPointsStdDev'] = (
+                np.sqrt(np.square(optimumTeamDict[i][
+                        '{}_std_dev_est'.format(target)
+                        ].values).sum())
+                )
     
     print(round(time.time() -st, 2))
     
@@ -484,6 +524,7 @@ def optimizedTeamDerivaties(optimumTeam, dataInput
     optimumTeamDict[optimumTeam['finalTeamID'].iloc[0]] = optimumTeam
     
     return optimumTeamDict
+
 
 
 def calcTeamPlayerStats(playerList, target
@@ -515,11 +556,11 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
 
     # Combine results
 #    playerList = pd.concat((pd.concat(optimumTeamDict.values()), optimumTeam))
-    playerList = pd.concat(optimumTeamDict.values())
+    playerList = pd.concat(optimumTeamDict.values(), sort = True)
     
     
     # View player counts
-    print(calcTeamPlayerStats(playerList, target))
+#    print(calcTeamPlayerStats(playerList, target))
     
     
     # Pivot out players and one hot encode each team
@@ -557,15 +598,26 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
     teamList = teamList.transpose()
     
     
+
+
+    
     # Append team point projections
     teamList[target] = (
             [optimumTeam[target].sum()] +
             [i[target].sum() for i in optimumTeamDict.values()]
             )
     
+    
+    # Apppend team point standard deviations
+    teamList['teamPointsStdDev'] = (
+            [optimumTeam['teamPointsStdDev'].mean()] +
+            [i['teamPointsStdDev'].mean() 
+                for i in optimumTeamDict.values()]
+            )
+    
+    
     # Remove duplicate teams
     teamList.drop_duplicates(inplace = True)
-    
     
     # Append team rank based on points
     teamList['teamRank'] = (
@@ -586,6 +638,8 @@ def pivotTeamsAndDropDuplicates(optimumTeamDict, optimumTeam, target):
     teamList.sort_values(target, ascending = False, inplace = True)
     
     return teamList
+
+
 
 
 def calculateTeamDifference(team, otherTeam, method = 'intersection'):
@@ -762,36 +816,11 @@ def writeTeamSubmissions(topTeamsDict, target, week):
     
     return
 
-#%% SETUP ENVIRONMENT
+#%% LOAD YAHOO DATA
 ## ############################################################################
 
 week = 12
-
-# Working Directory Dictionary
-pcs = {
-    'WaterBug' : {'wd':'C:\\Users\\brett\\Documents\\ff',
-                  'repo':'C:\\Users\\brett\\Documents\\personal\\ff'},
-
-    'WHQPC-L60102' : {'wd':'C:\\Users\\u00bec7\\Desktop\\personal\\ff',
-                      'repo':'C:\\Users\\u00bec7\\Desktop\\personal\\ff'},
-                      
-    'raspberrypi' : {'wd':'/home/pi/Documents/ff',
-                     'repo':'/home/pi/Documents/ff'},
-                     
-    'jeebs' : {'wd': 'C:\\Users\\brett\\Documents\\ff\\',
-               'repo' : 'C:\\Users\\brett\\Documents\\ff\\'}
-    }
-
-# Set working directory & load functions
-pc = pcs.get(socket.gethostname())
-
-del(pcs)
-
-
 calculateUncertainty = False
-
-# Set up environment
-os.chdir(pc['repo'])
 
 
 # Load salary data
@@ -832,6 +861,7 @@ for position in positions:
     data.loc[:,position] = (data['Position'] == position) * 1
     
     
+    
 #%% LOAD FANTASY PROS RANKINGS DATA
 ## ############################################################################
     
@@ -850,7 +880,8 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
     ))
 
   
-fpRankingsCols = ['Proj. Pts', 'Proj. Pts_stddev_est']
+fpRankingsCols = ['Proj. Pts', 'Proj. Pts_std_dev_est']
+
 
 #%% RANKINGS FANTASY POINT REGESSION MODELING
 ## ############################################################################
@@ -884,7 +915,7 @@ for position in positions:
             )
 
     # Calculate std. dev points estimate
-    fpRankings.loc[positionFilter, 'Proj. Pts_stddev_est'] = (
+    fpRankings.loc[positionFilter, 'Proj. Pts_std_dev_est'] = (
             rankingsStdDevPointEstimate(
                     rfRegDict[position]
                     , fpRankings.loc[positionFilter, 'Avg']
@@ -1119,12 +1150,27 @@ for target in  lpTargets:
             .loc[filter(lambda k: playerVars[k].varValue == 1,
                         playerVars.keys()), :][
             ['First Name', 'Last Name', 'Position', 
-             'Team', 'Opponent', 'Salary', 'Rank'] + lpTargets]
+             'Team', 'Opponent', 'Salary', 'Rank'] 
+            + lpTargets 
+            + ['FPTS_std_dev_est', 'Proj. Pts_std_dev_est']
+            ]
             )
+    
+    
     
     finalTeam[target]['finalTeamID'] = target
     finalTeam[target]['teamPoints'] = finalTeam[target][target].sum()
-
+    
+    # Calculate team overall projection std dev
+    if target in ['FPTS', 'Proj. Pts']:
+        stdDev = '{}_std_dev_est'.format(target)
+    
+        finalTeam[target]['teamPointsStdDev'] = (
+                np.sqrt(np.square(finalTeam[target][stdDev].values).sum())
+                )
+        
+    else:
+        finalTeam[target]['teamPointsStdDev'] = 0
 
 
 # View player counts
@@ -1192,6 +1238,9 @@ for target in ['FPTS', 'Proj. Pts']:
     ax[1].set_title('Distribution of Team Intersections', fontsize = 24)
     
     
+    sns.jointplot(x = 'teamPointsStdDev'
+                , y = target
+                , data = optimumTeamDerivatives[target])
 
 
 
