@@ -317,6 +317,22 @@ def salaryKeyGen(keyList):
 #            for i in dataInput['ID']]
 #            )           
 
+def rankingsStdDevPointEstimate(model, rankingCol, stdDevCol):
+    '''Estimate point projections std dev using ranking model and ranking stddev
+    '''
+    
+    # Perform predictions 1 std above and below ranking
+    lower = model.predict((rankingCol + stdDevCol).values.reshape(-1,1))
+    upper = model.predict((rankingCol - stdDevCol).values.reshape(-1,1))
+    mean = model.predict(rankingCol.values.reshape(-1,1))
+    
+    # Find max variance
+    std = np.vstack(((upper - mean), (mean - lower))).max(axis = 0)
+    
+    return std
+
+
+
 def optimizeLineup(dataInput, dataInputDict
                    , budget, target, positionLimit
                    , writeLPProblem = False
@@ -834,7 +850,7 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
     ))
 
   
-fpRankingsCols = ['Proj. Pts', 'Std Dev']
+fpRankingsCols = ['Proj. Pts', 'Proj. Pts_stddev_est']
 
 #%% RANKINGS FANTASY POINT REGESSION MODELING
 ## ############################################################################
@@ -859,6 +875,22 @@ for position in positions:
             , fpRankings.loc[positionFilter, 'Proj. Pts']
             )
 
+    # Add model predictions to dataframe
+    fpRankings.loc[positionFilter, 'Proj. Pts_model_est'] = (
+            rfRegDict[position].predict(
+                          (fpRankings.loc[positionFilter, 'Avg']
+                                     .values
+                                     .reshape(-1,1)))
+            )
+
+    # Calculate std. dev points estimate
+    fpRankings.loc[positionFilter, 'Proj. Pts_stddev_est'] = (
+            rankingsStdDevPointEstimate(
+                    rfRegDict[position]
+                    , fpRankings.loc[positionFilter, 'Avg']
+                    , fpRankings.loc[positionFilter, 'Std Dev'])
+            )
+
     # OOB & r^2 Results
     print(position
           , round(r2_score(
@@ -871,7 +903,16 @@ for position in positions:
             , 3)
           , round(rfRegDict[position].oob_score_, 3))
     
-    
+  
+fig, ax = plt.subplots(nrows = 1, ncols = 1)
+sns.scatterplot(x = 'Avg', y = 'Proj. Pts', hue = 'position'
+                , data = fpRankings, ax = ax)
+ax.grid()
+
+sns.lineplot(x = 'Avg', y = 'Proj. Pts_model_est', hue = 'position'
+                , data = fpRankings, ax = ax)
+
+
 #%% LOAD FANTASY PROS RANKING DATA BY POSITION EXPERTS
 ## ############################################################################
 
@@ -1046,7 +1087,7 @@ dataInput.fillna(0, inplace = True)
 
 
 # Convert to dictionary for LP
-lpTargets = fpAllProjectionsCols + fpRankingsCols + ['FPPG']
+lpTargets = ['Proj. Pts', 'FPTS', 'FPPG']
 
 dataInputDict = (
         dataInput.set_index('ID')
