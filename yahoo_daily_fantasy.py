@@ -62,7 +62,7 @@ sns.set_context("poster")
 
 
 #%% FUNCTIONS
-
+## ############################################################################
 
 fantasyProsDict = {
         'QB' : {'label' : 'QB', 'column' : 'Quarterbacks'}
@@ -109,17 +109,16 @@ defenseDict = {
         }
 
 
-def fantasyProsRankingsDataLoad(position
-                                , week
-                                , fantasyProsDict = fantasyProsDict
-                                , fileName = 'data\\FantasyPros_2019_Week_{}_{}_Rankings.csv'
-                                ):
+def fantasyProsRankingsDataLoad(
+        position, week, fantasyProsDict = fantasyProsDict
+        , fileName = 'data\\FantasyPros_2019_Week_{}_{}_Rankings.csv'):
     
-    '''Read data into a dataframe and append column labeling the player position'''
+    '''Read data into a dataframe and append 
+    column labeling the player position'''
     
     data = pd.read_csv(fileName.format(week, position))
     
-
+    
     # Filter empy Rows
     data = data[data['Rank'] > 0]
 
@@ -1204,13 +1203,18 @@ for target in ['FPTS', 'Proj. Pts']:
             , target=target)
 
 
-
-
     # Drop duplicates from optimumTeamDict
     optimumTeamDict[target] = {
             k : optimumTeamDict[target][k] 
             for k in optimumTeamDerivatives[target].index.get_level_values(0)
             }
+
+    print(calcTeamPlayerStats(
+            pd.concat(optimumTeamDict[target].values())
+            , target
+            , groupbyList=['Position', 'Team', 'Last Name', 'First Name'])
+            )
+    
 
 
     # Identify player OHE columns
