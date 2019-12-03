@@ -368,7 +368,22 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
     , fpRankings[['player', 'Team', 'position']].values.tolist()
     ))
 
+ 
+    
+#%% CREATE WEEKLY MATCHUPS DATASET
+    
+# Clean opp column
+fpRankings['Opp'] = [
+        opp.split(' ')[-1] if type(opp) == str 
+          else 'NA' 
+          for opp in fpRankings['Opp'].values.tolist()
+        ]
   
+# Get weekly matchups  
+matchups = (fpRankings.groupby(['Team', 'Opp', 'week'])
+                    .agg({'player':len})
+                    .reset_index()
+                    )
     
 #%% LOAD FANTASY PROS PROJECTIONS DATA
 ## ############################################################################
@@ -388,7 +403,8 @@ fpAllProjections = pd.concat([fantasyProsAllProjectionsDataLoad(position, week)
                         ], sort = True)       
     
         
-        
+ 
+     
 # Calculate stats
 fpAllProjections = calculateProjectionStats(fpAllProjections)
 
@@ -412,7 +428,11 @@ fpProjections = pd.concat(
         (fpProjections, 
          fpAllProjections[['FPTS', 'Player', 'Team', 'position', 'key', 'week']])
         , axis = 0)
-        
+  
+
+# Rename JAC to JAX
+fpProjections.loc[fpProjections['Team'] == 'JAC', 'Team'] = 'JAX'  
+      
 #%% LOAD PFF DATA
 ## ############################################################################
 
@@ -455,7 +475,7 @@ pffData.loc[:, 'key'] = list(map(lambda keyList:
 
  
 #%% MERGE DATA SETS
-    
+## ############################################################################
     
 x = (fpRankings
      .set_index(['key', 'week', 'player', 'Team', 'position'])[['Avg', 'Opp', 'Proj. Pts']]
@@ -482,23 +502,23 @@ x = (fpRankings
    
     
     
-x = (fpRankings.set_index(['key', 'week'])
-                .merge(pd.DataFrame(
-                pffData[pffData['season']==2019].set_index(['key', 'week'])['fantasy_points'])
-        , left_index = True
-        , right_index = True
-        , how = 'right'
-        ))
-    
-x = x.merge(fpProjections.set_index(['key', 'week'])
-            , left_index = True
-            , right_index = True
-            , how = 'left'
-            )
-    
-x = (pffData[pffData['season'] == 2019].groupby(['player', 'position'])['player_id']
-            .count()
-            .reset_index('position')
-            .groupby(level = 0)['position']
-            .count()
-            )
+#x = (fpRankings.set_index(['key', 'week'])
+#                .merge(pd.DataFrame(
+#                pffData[pffData['season']==2019].set_index(['key', 'week'])['fantasy_points'])
+#        , left_index = True
+#        , right_index = True
+#        , how = 'right'
+#        ))
+#    
+#x = x.merge(fpProjections.set_index(['key', 'week'])
+#            , left_index = True
+#            , right_index = True
+#            , how = 'left'
+#            )
+#    
+#x = (pffData[pffData['season'] == 2019].groupby(['player', 'position'])['player_id']
+#            .count()
+#            .reset_index('position')
+#            .groupby(level = 0)['position']
+#            .count()
+#            )
