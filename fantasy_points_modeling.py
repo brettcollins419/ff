@@ -456,6 +456,32 @@ pffData.loc[:, 'key'] = list(map(lambda keyList:
  
 #%% MERGE DATA SETS
     
+    
+x = (fpRankings
+     .set_index(['key', 'week', 'player', 'Team', 'position'])[['Avg', 'Opp', 'Proj. Pts']]
+     .merge(pd.DataFrame(
+             fpProjections
+                 .rename(columns = {'Player':'player'})
+                 .set_index(['key', 'week', 'player', 'Team', 'position'])['FPTS']
+             )
+            , left_index = True
+            , right_index = True
+            , how = 'outer'
+                )
+    .merge(pd.DataFrame(
+        pffData[pffData['season']==2019]
+            .rename(columns = {'team_name_games':'Team'})
+        .set_index(['key', 'week', 'player', 'Team', 'position'])['fantasy_points']
+        )
+        , left_index = True
+        , right_index = True
+        , how = 'left'
+        )
+    .reset_index(['player', 'Team', 'position', 'week'])
+    )
+   
+    
+    
 x = (fpRankings.set_index(['key', 'week'])
                 .merge(pd.DataFrame(
                 pffData[pffData['season']==2019].set_index(['key', 'week'])['fantasy_points'])
