@@ -50,6 +50,7 @@ import copy
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
 from scipy.stats import norm
 from scipy.optimize import minimize
 from itertools import combinations, product, chain, repeat, compress
@@ -514,31 +515,139 @@ mergedPoints = (fpRankings
 # Clean Team Name
 mergedPoints['Team'] = mergedPoints['Team'].map(lambda team: team.strip())
     
+
+
+
+
 #%% MODELING DATASET
+## ############################################################################
+
+# Filling missing projections
+projectionMeans = (
+        mergedPoints.groupby(['position', 'week'])
+            .agg({'Proj. Pts' : np.nanmean
+                  , 'FPTS' : np.nanmean})
+            .to_dict('dict')
+        )
+
+    
+projectionMeans['FPTS'][tuple(mergedPoints.iloc[0][['position', 'week']])]
+    
+def fillMissingDatawMeans(data
+                          , levelOfDetail = ['position', 'week']
+                          , columns = ['Proj. Pts', 'FPTS']):
+     
+    
+    meanDict = (
+            data.groupby(levelOfDetail)
+                .agg({column:np.nanmean for column in columns})
+                .to_dict('dict')
+                )
+    
+    # Group at coarsest level of detail for error handling
+    meanDict2 = (
+            data.groupby(levelOfDetail[0])
+                .agg({column:np.nanmean for column in columns})
+                .to_dict('dict')
+                )
+    
+    # Fill missing data with means
+    for column in columns:
+        data['{}_filled'.format(column)] = [
+                meanDict.get(column, 0).get(tuple(r[1][levelOfDetail]), 0)
+                if np.isnan(r[1][column]) else r[1][column]
+                for r in data.iterrows()
+                ]
+
+        # Fill any remaining NAs
+        data['{}_filled'.format(column)] = [
+                (meanDict2.get(column, 
+                               data[column].mean())
+                        .get(r[1][levelOfDetail[0]], 
+                             data[column].mean())
+                        )
+                if np.isnan(r[1]['{}_filled'.format(column)]) 
+                else r[1]['{}_filled'.format(column)]
+                for r in data.iterrows()
+                ]
+
+    return data
+
+
+modelData = fillMissingDatawMeans(mergedPoints)
+
+
 
 # OHE position, team, and opponent
 modelData = pd.get_dummies(
-        mergedPoints.set_index(['week', 'key', 'player'])
-        , columns = ['Team', 'Opp', 'position']
+        modelData.set_index(['week', 'key', 'player', 'position', 'FPTS', 'Proj. Pts'])
+        , columns = ['Team', 'Opp']
         )
 
-modelData = modelData[modelData.apply(lambda r: np.any(np.isnan(r)) == False, axis = 1)]
+
+# Filter na's
+modelData = modelData[modelData.apply(
+        lambda r: np.any(np.isnan(r)) == False, axis = 1)]
 
 
+    
+    
+    
+
+for position in positions:
 
 
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
+    train, test = train_test_split(
+            modelData[modelData.index.get_level_values('position') == position]
+            , test_size = 0.2)
+    
+    rf = RandomForestRegressor(random_state=1127)
+    
 
-train, test = train_test_split(modelData, test_size = 0.2)
+    rf.fit(train.drop('fantasy_points', axis = 1).values
+           , train['fantasy_points'].values)
+          
+    
+    # Train Results
+    print(position
+          , 'train model'
+          , r2_score(train['fantasy_points'].values,
+                     rf.predict(train.drop('fantasy_points', axis = 1).values)
+                     )
+         )
+          
 
-rf = RandomForestRegressor(random_state=1127)
+    print(position
+          , 'train Proj. Pts'
+          , r2_score(train['fantasy_points'].values,
+                     train['Proj. Pts_filled'].values)
+                     
+         )
+  
+    print(position
+          , 'train FPTS'
+          , r2_score(train['fantasy_points'].values,
+                     train['FPTS_filled'].values)
+         )
+        
+        
+    # Test Results
+    print(position
+          , 'test model'
+          , rf.score(test.drop('fantasy_points', axis = 1).values
+           , test['fantasy_points'].values)
+          )
 
-rf.fit(train.drop('fantasy_points', axis = 1).values
-       , train['fantasy_points'].values)
 
-
-rf.score(test.drop('fantasy_points', axis = 1).values
-       , test['fantasy_points'].values)
-
-
+    print(position
+          , 'test Proj. Pts'
+          , r2_score(test['fantasy_points'].values,
+                     test['Proj. Pts_filled'].values)
+                     
+         )
+  
+    print(position
+          , 'test FPTS'
+          , r2_score(test['fantasy_points'].values,
+                     test['FPTS_filled'].values)
+         )
