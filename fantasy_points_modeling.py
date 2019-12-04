@@ -372,6 +372,12 @@ fpRankings.loc[:, 'key'] = list(map(lambda keyList:
     
 #%% CREATE WEEKLY MATCHUPS DATASET
     
+fpRankings['home'] = [
+        (opp.split(' ')[0] == 'vs.') * 1 if type(opp) == str 
+          else False
+          for opp in fpRankings['Opp'].values.tolist()
+        ]
+    
 # Clean opp column
 fpRankings['Opp'] = [
         opp.split(' ')[-1] if type(opp) == str 
@@ -380,7 +386,7 @@ fpRankings['Opp'] = [
         ]
   
 # Get weekly matchups  
-matchups = (fpRankings.groupby(['Team', 'Opp', 'week'])
+matchups = (fpRankings.groupby(['Team', 'Opp', 'week', 'home'])
                     .agg({'player':len})
                     .reset_index()
                     )
@@ -477,8 +483,8 @@ pffData.loc[:, 'key'] = list(map(lambda keyList:
 #%% MERGE DATA SETS
 ## ############################################################################
     
-x = (fpRankings
-     .set_index(['key', 'week', 'player', 'Team', 'position'])[['Avg', 'Opp', 'Proj. Pts']]
+mergedPoints = (fpRankings
+     .set_index(['key', 'week', 'player', 'Team', 'position'])[['Avg', 'Proj. Pts']]
      .merge(pd.DataFrame(
              fpProjections
                  .rename(columns = {'Player':'player'})
@@ -497,28 +503,42 @@ x = (fpRankings
         , right_index = True
         , how = 'left'
         )
-    .reset_index(['player', 'Team', 'position', 'week'])
+    .reset_index(['player', 'position',])
+    .merge(matchups.set_index(['week', 'Team']).drop('player', axis = 1)
+            , left_index = True
+            , right_index = True
+            , how = 'inner')
+    .reset_index()
     )
    
+# Clean Team Name
+mergedPoints['Team'] = mergedPoints['Team'].map(lambda team: team.strip())
     
-    
-#x = (fpRankings.set_index(['key', 'week'])
-#                .merge(pd.DataFrame(
-#                pffData[pffData['season']==2019].set_index(['key', 'week'])['fantasy_points'])
-#        , left_index = True
-#        , right_index = True
-#        , how = 'right'
-#        ))
-#    
-#x = x.merge(fpProjections.set_index(['key', 'week'])
-#            , left_index = True
-#            , right_index = True
-#            , how = 'left'
-#            )
-#    
-#x = (pffData[pffData['season'] == 2019].groupby(['player', 'position'])['player_id']
-#            .count()
-#            .reset_index('position')
-#            .groupby(level = 0)['position']
-#            .count()
-#            )
+#%% MODELING DATASET
+
+# OHE position, team, and opponent
+modelData = pd.get_dummies(
+        mergedPoints.set_index(['week', 'key', 'player'])
+        , columns = ['Team', 'Opp', 'position']
+        )
+
+modelData = modelData[modelData.apply(lambda r: np.any(np.isnan(r)) == False, axis = 1)]
+
+
+
+
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+
+train, test = train_test_split(modelData, test_size = 0.2)
+
+rf = RandomForestRegressor(random_state=1127)
+
+rf.fit(train.drop('fantasy_points', axis = 1).values
+       , train['fantasy_points'].values)
+
+
+rf.score(test.drop('fantasy_points', axis = 1).values
+       , test['fantasy_points'].values)
+
+
