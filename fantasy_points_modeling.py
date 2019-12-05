@@ -651,3 +651,20 @@ for position in positions:
           , r2_score(test['fantasy_points'].values,
                      test['FPTS_filled'].values)
          )
+
+
+#%% DEV
+## ############################################################################
+          
+x = pd.DataFrame((list(repeat('a', 5)) + list(repeat('b',5))
+                , list(range(1,10))), columns = ['x', 'y'])   
+
+list(repeat(('a', 'b'), 4))
+
+x = pd.DataFrame(list(zip(range(10)
+        , list(repeat('a', 5)) + list(repeat('b',5))))
+, columns = ['x', 'y'])
+
+x.cumsum()       
+
+x.groupby('y').apply(lambda x: x.shift(1).ewm(alpha = .8, ignore_na = True).mean())
