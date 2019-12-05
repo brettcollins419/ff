@@ -33,7 +33,11 @@ del(pcs)
 
 
 # Update code from gitHub
-#os.system('git -C {} pull'.format(pc['repo']))
+
+gitPull = input('Update Repo from GitHub [Y/N]? ')
+
+if gitPull.strip().lower()[0] == 'y':
+    os.system('git -C {} pull'.format(pc['repo']))
 
 # Set up environment
 os.chdir(pc['repo'])
@@ -443,24 +447,25 @@ fpProjections.loc[fpProjections['Team'] == 'JAC', 'Team'] = 'JAX'
 #%% LOAD PFF DATA
 ## ############################################################################
 
+# Load offense data
 pffData = {f : pd.read_csv(
         '{}\\pff_data\\{}_summary_agg.csv'.format(pc['wd'], f))
-        for f in ('passing', 'receiving', 'rushing', 'defense_special_team')
+        for f in ('passing', 'receiving', 'rushing')
             }
         
 
+# Load defense data
+pffDataDef = pd.read_csv(
+        '{}\\pff_data\\'
+        '{}_summary_agg.csv'.format(pc['wd'], 'defense_special_team')
+        )
+
 # Add columns to defense data for merging
-pffData['defense_special_team']['player'] = (
-        pffData['defense_special_team']['team_name']) 
+pffDataDef['player'] = pffDataDef['team_name']
+pffDataDef['position'] = 'DEF'
 
 
-pffData['defense_special_team']['player_id'] = (
-        pffData['defense_special_team']['team_name'])
-
-
-pffData['defense_special_team']['position'] = 'DEF'
-
-pffDataCols = ['player', 'player_id', 'team_name', 'team_name_games'
+pffDataCols = ['player', 'player_id', 'team_name'
                , 'position', 'season', 'week', 'fantasy_points']
 
 pffData = pd.concat([data[pffDataCols] for data in pffData.values()])
@@ -476,10 +481,15 @@ pffData.loc[[p in ('HB', 'FB') for p in pffData['position']], 'position'] = 'RB'
 # Create key for mapping
 pffData.loc[:, 'key'] = list(map(lambda keyList: 
     fpRankingsKeyGen(keyList)
-    , pffData[['player', 'team_name_games', 'position']].values.tolist()
+    , pffData[['player', 'team_name', 'position']].values.tolist()
     ))   
 
+pffDataDef.loc[:, 'key'] = list(map(lambda keyList: 
+    fpRankingsKeyGen(keyList)
+    , pffDataDef[['player', 'team_name', 'position']].values.tolist()
+    ))   
 
+    
  
 #%% MERGE DATA SETS
 ## ############################################################################
