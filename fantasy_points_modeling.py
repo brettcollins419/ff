@@ -485,8 +485,17 @@ offensePoints['fantasy_points_offense'] = (
 
 
 # Combine rushing, receiving and passing files
-pffDataCols = ['player', 'player_id', 'team_name'
+pffDataCols = ['player', 'player_id', 'team_name', 'opponent'
                , 'position', 'season', 'week', 'fantasy_points']
+
+
+# Calculate Matchups from passing data
+matchups = (
+        pffData['passing'].groupby(['season', 'week', 'team_name', 'opponent'])
+                        .agg({'player_id':len})
+                        .reset_index()
+                        .drop('player_id', axis = 1)
+        )
 
 
 pffData = pd.concat([data[pffDataCols] for data in pffData.values()])
@@ -515,7 +524,8 @@ pffDataDef.loc[:, 'key'] = list(map(lambda keyList:
     
 # Calculate EWMA by player_id and season
 pffDataEWMA = (pffData.set_index([
-        'player_id', 'season', 'player', 'team_name', 'key', 'position', 'week'])
+        'player_id', 'season', 'player', 'team_name', 'opponent'
+        , 'key', 'position', 'week'])
                     .sort_values(['player_id', 'season', 'week'])
                     .groupby(level = ['player_id', 'season'])
                     .apply(lambda points: 
@@ -529,7 +539,8 @@ pffDataEWMA = (pffData.set_index([
  
                         
 pffDataDefEWMA = (pffDataDef.set_index([
-        'player_id', 'season', 'player', 'team_name', 'key', 'position', 'week'])
+        'player_id', 'season', 'player', 'team_name', 'opponent'
+        , 'team_name_games', 'key', 'position', 'week'])
                     .sort_values(['player_id', 'season', 'week'])
                     .groupby(level = ['player_id', 'season'])
                     .apply(lambda points: 
@@ -548,8 +559,46 @@ pffDataDefEWMA = (pffDataDef.set_index([
                                  'points_allowed_total',
                                  'points_scored']})
                 )
-                        
+              
 
+# Add opponent EWMA stats
+
+defMergeCols = ['{}_ewma'.format(c) 
+    for c in ['fantasy_points',
+             'points_allowed_passing',
+             'points_allowed_receiving',
+             'points_allowed_return_team',
+             'points_allowed_rushing',
+             'points_allowed_total',
+             'points_scored']
+    ]
+    
+
+
+pffDataEWMA = (pffDataEWMA.set_index(['season', 'week', 'opponent'])
+    .merge((pffDataDefEWMA.drop('opponent', axis = 1)
+                .rename(columns = {'team_name_games':'opponent'})
+                .set_index(['season', 'week', 'opponent'])[defMergeCols]
+                .rename(columns = {'fantasy_points_ewma': 'fantasy_points_ewma_opp'})
+                )
+            , left_index = True
+            , right_index = True
+            , how = 'inner')
+    .reset_index()
+    )          
+
+    
+# Add actual points for the week
+pffDataEWMA = (
+        pffDataEWMA.set_index(['season', 'week', 'team_name'])
+            .merge(pd.DataFrame(
+                pffData.set_index(['season', 'week', 'team_name'])['fantasy_points']
+                ),
+                left_index = True,
+                right_index = True
+        )
+        .reset_index()
+    )
     
 #%% MERGE DATA SETS
 ## ############################################################################
