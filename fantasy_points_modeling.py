@@ -463,12 +463,34 @@ pffDataDef = pd.read_csv(
 # Add columns to defense data for merging
 pffDataDef['player'] = pffDataDef['team_name']
 pffDataDef['position'] = 'DEF'
+pffDataDef['player_id'] = pffDataDef['team_name']
 
 
+# Calculate team total offensive points
+offensePoints = pd.concat([
+        (data.groupby(['team_name', 'season', 'week'])
+            .agg({'fantasy_points':np.sum})
+            .rename(columns = {'fantasy_points':'fantasy_points_{}'.format(f)})
+        ) for f, data in pffData.items()
+        ]
+        , axis = 1
+        , sort = True
+        ).reset_index()
+
+
+offensePoints['fantasy_points_offense'] = (
+        offensePoints[['fantasy_points_{}'.format(f) for f in pffData.keys()]
+        ].sum(axis = 1)
+        )
+
+
+# Combine rushing, receiving and passing files
 pffDataCols = ['player', 'player_id', 'team_name'
                , 'position', 'season', 'week', 'fantasy_points']
 
+
 pffData = pd.concat([data[pffDataCols] for data in pffData.values()])
+
 
 # Combine player stats
 pffData = pffData.groupby(pffDataCols[:-1]).sum().reset_index()
@@ -490,10 +512,50 @@ pffDataDef.loc[:, 'key'] = list(map(lambda keyList:
     ))   
 
     
+    
+# Calculate EWMA by player_id and season
+pffDataEWMA = (pffData.set_index([
+        'player_id', 'season', 'player', 'team_name', 'key', 'position', 'week'])
+                    .sort_values(['player_id', 'season', 'week'])
+                    .groupby(level = ['player_id', 'season'])
+                    .apply(lambda points: 
+                        points.shift(1)
+                            .ewm(alpha = 0.8, ignore_na = True)
+                            .mean()
+                    )
+                .reset_index()
+                .rename(columns = {'fantasy_points':'fantasy_points_ewma'})
+                )
  
+                        
+pffDataDefEWMA = (pffDataDef.set_index([
+        'player_id', 'season', 'player', 'team_name', 'key', 'position', 'week'])
+                    .sort_values(['player_id', 'season', 'week'])
+                    .groupby(level = ['player_id', 'season'])
+                    .apply(lambda points: 
+                        points.shift(1)
+                            .ewm(alpha = 0.8, ignore_na = True)
+                            .mean()
+                    )
+                .reset_index()
+                .rename(columns = {
+                        c : '{}_ewma'.format(c)
+                        for c in ['fantasy_points',
+                                 'points_allowed_passing',
+                                 'points_allowed_receiving',
+                                 'points_allowed_return_team',
+                                 'points_allowed_rushing',
+                                 'points_allowed_total',
+                                 'points_scored']})
+                )
+                        
+
+    
 #%% MERGE DATA SETS
 ## ############################################################################
     
+    
+# Outer join FPTS and Proj. Pts and then inner join actuals
 mergedPoints = (fpRankings
      .set_index(['key', 'week', 'player', 'Team', 'position'])[['Avg', 'Proj. Pts']]
      .merge(pd.DataFrame(
