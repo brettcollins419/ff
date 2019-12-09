@@ -468,7 +468,7 @@ pffDataDef['player_id'] = pffDataDef['team_name']
 
 # Calculate team total offensive points
 offensePoints = pd.concat([
-        (data.groupby(['team_name', 'season', 'week'])
+        (data.groupby(['team_name', 'season', 'week', 'opponent'])
             .agg({'fantasy_points':np.sum})
             .rename(columns = {'fantasy_points':'fantasy_points_{}'.format(f)})
         ) for f, data in pffData.items()
@@ -520,7 +520,9 @@ pffDataDef.loc[:, 'key'] = list(map(lambda keyList:
     , pffDataDef[['player', 'team_name', 'position']].values.tolist()
     ))   
 
-    
+ 
+#%% EWMA PFF DATA
+## ############################################################################
     
 # Calculate EWMA by player_id and season
 pffDataEWMA = (pffData.set_index([
@@ -561,6 +563,18 @@ pffDataDefEWMA = (pffDataDef.set_index([
                 )
               
 
+offensePointsEWMA = (
+        offensePoints.set_index(['season', 'week', 'team_name', 'opponent'])
+            .sort_values(['team_name', 'season', 'week'])
+            .groupby(['season', 'team_name'])
+            .apply(lambda points: 
+                        points.shift(1)
+                            .ewm(alpha = 0.8, ignore_na = True)
+                            .mean()
+                    )
+                .reset_index()
+                )
+    
 # Add opponent EWMA stats
 
 defMergeCols = ['{}_ewma'.format(c) 
@@ -590,16 +604,115 @@ pffDataEWMA = (pffDataEWMA.set_index(['season', 'week', 'opponent'])
     
 # Add actual points for the week
 pffDataEWMA = (
-        pffDataEWMA.set_index(['season', 'week', 'team_name'])
+        pffDataEWMA.set_index(['season', 'week', 'player_id'])
             .merge(pd.DataFrame(
-                pffData.set_index(['season', 'week', 'team_name'])['fantasy_points']
+                pffData.set_index(['season', 'week', 'player_id'])['fantasy_points']
                 ),
                 left_index = True,
                 right_index = True
         )
         .reset_index()
     )
+  
+#%% MODEL FANTASY POINTS
+## ############################################################################
+
+# Filter to only data after week 2 and no nans
+pointsCols = [
+        'fantasy_points_ewma',
+         'fantasy_points_ewma_opp',
+         'points_allowed_passing_ewma',
+         'points_allowed_receiving_ewma',
+         'points_allowed_return_team_ewma',
+         'points_allowed_rushing_ewma',
+         'points_allowed_total_ewma',
+         'points_scored_ewma',
+         'fantasy_points'
+         ]
+
+
+pointsNanFilter = [not(np.any(np.isnan(points)))
+                    for i, points in pffDataEWMA[pointsCols].iterrows()]
     
+ 
+modelData = (pffDataEWMA.set_index(
+        ['season',
+         'week',
+         'player_id',
+         'opponent',
+         'player',
+         'team_name',
+         'key',
+         'position'])
+        .loc[pointsNanFilter, :]
+        )
+    
+
+#modelData = modelData[modelData.index.get_level_values('season') >= 2016]
+    
+# Filter players with a minimum number of points
+pointsMinDict = (modelData.groupby(['position'])['fantasy_points_ewma']
+        .apply(lambda x: np.percentile(x, 50))
+        .to_dict()
+        )
+    
+pointsMinFilter = [r['fantasy_points_ewma'] > pointsMinDict.get(r['position'])
+    for i,r in modelData.reset_index('position').iterrows()]
+    
+
+modelData = modelData.loc[pointsMinFilter, :]
+
+rfDict = {}
+
+# Create model for each position
+for position in ('QB', 'RB', 'TE', 'WR'):
+
+
+    train, test = train_test_split(
+            modelData[modelData.index.get_level_values('position') == position]
+            , test_size = 0.2)
+    
+    rfDict[position] = RandomForestRegressor(random_state=1127, n_estimators = 25)
+    
+
+    rfDict[position].fit(train.drop('fantasy_points', axis = 1).values
+           , train['fantasy_points'].values)
+    
+#    modelData.loc[
+#            modelData.index.get_level_values('position') == position
+#            , 'fantasy_points_prediction'
+#            ] = rf.predict(
+#                modelData[modelData.index.get_level_values('position') == position
+#                          ].drop(['fantasy_points', 'fantasy_points_predict'], axis = 1, errors = 'ignore').values)
+
+
+    # Train Results
+    print(position
+          , 'train model'
+          , round(r2_score(train['fantasy_points'].values,
+                     rfDict[position].predict(train.drop('fantasy_points', axis = 1).values)
+                     ), 3)
+         )  
+
+    # Test Results
+    print(position
+          , 'test model'
+          , round(r2_score(test['fantasy_points'].values,
+                     rfDict[position].predict(test.drop('fantasy_points', axis = 1).values)
+                     ), 3)
+         )  
+  
+
+for position in ('QB', 'RB', 'TE', 'WR'): 
+    modelData.loc[
+            modelData.index.get_level_values('position') == position
+            , 'fantasy_points_prediction'
+            ] = rfDict[position].predict(
+                modelData.loc[modelData.index.get_level_values('position') == position
+                          , pointsCols[:-1]].values)
+
+    
+r2_score(modelData['fantasy_points'].fillna(0), modelData['fantasy_points_prediction'].fillna(0))
 #%% MERGE DATA SETS
 ## ############################################################################
     
