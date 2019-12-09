@@ -51,7 +51,7 @@ import numpy as np
 import pulp
 import re
 import copy
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import r2_score
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
@@ -602,6 +602,13 @@ pffDataEWMA = (pffDataEWMA.set_index(['season', 'week', 'opponent'])
     )          
 
     
+# Calculate deltas between player and opponent points allowed EWMA
+for points in ('rushing', 'receiving', 'passing', 'total'):
+    pffDataEWMA['points_delta_{}'.format(points)] = (
+        pffDataEWMA['fantasy_points_ewma'] 
+        - pffDataEWMA['points_allowed_{}_ewma'.format(points)]
+        )
+    
 # Add actual points for the week
 pffDataEWMA = (
         pffDataEWMA.set_index(['season', 'week', 'player_id'])
@@ -627,6 +634,10 @@ pointsCols = [
          'points_allowed_rushing_ewma',
          'points_allowed_total_ewma',
          'points_scored_ewma',
+         'points_delta_passing',
+         'points_delta_rushing',
+         'points_delta_receiving',
+         'points_delta_total',
          'fantasy_points'
          ]
 
@@ -672,7 +683,8 @@ for position in ('QB', 'RB', 'TE', 'WR'):
             modelData[modelData.index.get_level_values('position') == position]
             , test_size = 0.2)
     
-    rfDict[position] = RandomForestRegressor(random_state=1127, n_estimators = 25)
+    rfDict[position] = RandomForestRegressor(random_state=1127, n_estimators = 50)
+    rfDict[position] = GradientBoostingRegressor(random_state=1127)
     
 
     rfDict[position].fit(train.drop('fantasy_points', axis = 1).values
@@ -687,19 +699,29 @@ for position in ('QB', 'RB', 'TE', 'WR'):
 
 
     # Train Results
+    train['fantasy_point_prediction'] = (
+            rfDict[position].predict(
+                    train.drop('fantasy_points', axis = 1).values)
+            )
+
     print(position
           , 'train model'
           , round(r2_score(train['fantasy_points'].values,
-                     rfDict[position].predict(train.drop('fantasy_points', axis = 1).values)
-                     ), 3)
+                           train['fantasy_point_prediction'].values)
+                , 3)
          )  
 
     # Test Results
+    test['fantasy_point_prediction'] = (
+            rfDict[position].predict(
+                    test.drop('fantasy_points', axis = 1).values)
+            )
+            
     print(position
           , 'test model'
           , round(r2_score(test['fantasy_points'].values,
-                     rfDict[position].predict(test.drop('fantasy_points', axis = 1).values)
-                     ), 3)
+                           test['fantasy_point_prediction'].values)
+                , 3)
          )  
   
 
@@ -835,8 +857,8 @@ for position in positions:
             modelData[modelData.index.get_level_values('position') == position]
             , test_size = 0.2)
     
-    rf = RandomForestRegressor(random_state=1127)
-    
+#    rf = RandomForestRegressor(random_state=1127)
+    rf = GradientBoostingRegressor(random_state=1127)
 
     rf.fit(train.drop('fantasy_points', axis = 1).values
            , train['fantasy_points'].values)
