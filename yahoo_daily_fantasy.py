@@ -818,7 +818,7 @@ def writeTeamSubmissions(topTeamsDict, target, week):
 #%% LOAD YAHOO DATA
 ## ############################################################################
 
-week = 13
+week = 14
 calculateUncertainty = False
 
 
