@@ -521,6 +521,43 @@ pffDataDef.loc[:, 'key'] = list(map(lambda keyList:
     ))   
 
  
+
+# Apply points ranking
+pffData['points_rank'] = (
+        pffData.groupby(['season'
+                         , 'week'
+                         , 'position']
+            )['fantasy_points'].rank(ascending = False
+            , method = 'min'
+            , pct = True)
+        )
+    
+    
+  
+sns.violinplot(x = 'position', y = 'fantasy_points'
+               , data = pffData[[position in ('QB', 'RB', 'WR', 'TE') for position in pffData['position']]]
+               , cut = 0
+               )
+    
+plt.grid()
+
+fig, ax = plt.subplots(1, figsize = (10,6))
+
+for position in ('QB', 'RB', 'WR', 'TE'):
+    sns.distplot(pffData[pffData['position']==position]['fantasy_points'], norm_hist = True, ax = ax, label = position)
+
+ax.grid()
+
+ax.legend()
+  
+ax.set_xlim((-10,50), auto = True)
+ 
+sns.distplot(pffDataDef['fantasy_points'], norm_hist = True, ax = ax, label = 'DEF')
+
+    
+
+ax.legend()
+    
 #%% EWMA PFF DATA
 ## ############################################################################
     
@@ -684,7 +721,7 @@ for position in ('QB', 'RB', 'TE', 'WR'):
             , test_size = 0.2)
     
     rfDict[position] = RandomForestRegressor(random_state=1127, n_estimators = 50)
-    rfDict[position] = GradientBoostingRegressor(random_state=1127)
+    #rfDict[position] = GradientBoostingRegressor(random_state=1127)
     
 
     rfDict[position].fit(train.drop('fantasy_points', axis = 1).values
