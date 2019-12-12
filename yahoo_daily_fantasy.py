@@ -109,6 +109,18 @@ defenseDict = {
         }
 
 
+# Dictionary for team abbreviations
+teamAbrvsDict = {
+        'ARZ' : 'ARI'
+        , 'BLT' : 'BAL'
+        , 'CLV' : 'CLE'
+        , 'HST' : 'HOU'
+        , 'LA' : 'LAR'
+        , 'SD' : 'LAC'
+        , 'SL' : 'LAR'
+        }
+
+
 def fantasyProsRankingsDataLoad(
         position, week, fantasyProsDict = fantasyProsDict
         , fileName = 'data\\FantasyPros_2019_Week_{}_{}_Rankings.csv'):
@@ -942,6 +954,25 @@ ax.grid()
 sns.lineplot(x = 'Avg', y = 'Proj. Pts_model_est', hue = 'position'
                 , data = fpRankings, ax = ax)
 
+
+
+#%% PRO FOOTBALL FOCUS PROJECTIONS
+## ############################################################################
+
+# Load data
+pffProjections = pd.read_csv('{}\\data\\projections_pff_w{}'
+                             '.csv'.format(pc['repo'], week))
+
+# Convert to upper case
+pffProjections['position'] = [
+        p.upper() for p in pffProjections['position'].values
+        ]
+
+
+pffProjections['key'] = [
+        fpRankingsKeyGen(keyList) for keyList in 
+        pffProjections[['playerName', 'teamName', 'position']].values.tolist()
+        ]
 
 #%% LOAD FANTASY PROS RANKING DATA BY POSITION EXPERTS
 ## ############################################################################
