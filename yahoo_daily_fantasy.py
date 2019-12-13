@@ -830,7 +830,7 @@ def writeTeamSubmissions(topTeamsDict, target, week):
 #%% LOAD YAHOO DATA
 ## ############################################################################
 
-week = 14
+week = 15
 calculateUncertainty = False
 
 
@@ -965,10 +965,26 @@ pffProjections = pd.read_csv('{}\\data\\projections_pff_w{}'
 
 # Convert to upper case
 pffProjections['position'] = [
-        p.upper() for p in pffProjections['position'].values
+        'DEF' if p.upper() == 'DST' else p.upper() 
+        for p in pffProjections['position'].values
+        ]
+
+# Rename teams for merging
+pffProjections['teamName'] = [
+        teamAbrvsDict.get(team, team)
+        for team in pffProjections['teamName'].values.tolist()
         ]
 
 
+# Change team name for defense
+pffProjections['playerName'] = [
+        p[1] if p[2] == 'DEF' else p[0] 
+        for p in pffProjections[
+                ['playerName', 'teamName', 'position']
+                ].values.tolist()
+        ]
+
+# Create key for merging
 pffProjections['key'] = [
         fpRankingsKeyGen(keyList) for keyList in 
         pffProjections[['playerName', 'teamName', 'position']].values.tolist()
@@ -1100,6 +1116,7 @@ positionLimit = {'QB':1
 statusExclude = ['IR'
                  , 'SUSP'
                  , 'O'
+                 , 'D'
 #                 , 'Q'
                  ]
 
@@ -1136,6 +1153,13 @@ dataInput = dataInput.merge(
         )
 
 
+dataInput = dataInput.merge(
+        pd.DataFrame(pffProjections.set_index('key')['fantasyPoints'])
+        , how = 'left'
+        , left_index = True
+        , right_index = True
+        )
+
 # Fill empty projections with 0
 dataInput.fillna(0, inplace = True)
 
@@ -1148,7 +1172,12 @@ dataInput.fillna(0, inplace = True)
 
 
 # Convert to dictionary for LP
-lpTargets = ['Proj. Pts', 'FPTS', 'FPPG']
+lpTargets = [
+        'Proj. Pts', 
+        'FPTS', 
+        'FPPG', 
+        'fantasyPoints'
+        ]
 
 dataInputDict = (
         dataInput.set_index('ID')
@@ -1216,7 +1245,7 @@ optimumTeamDict = {}
 optimumTeamDerivatives = {}
 teamPointIntersections = {}
 
-for target in ['FPTS', 'Proj. Pts']:
+for target in ['FPTS', 'Proj. Pts', 'fantasyPoints']:
 
     # Generate all optimum team derivatives from base optimized team
     optimumTeamDict[target] = optimizedTeamDerivaties(
