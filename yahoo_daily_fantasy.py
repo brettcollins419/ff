@@ -6,11 +6,14 @@ Created on Thu Sep  5 13:00:42 2019
 """
 
 
+
+
+
 #%% SETUP ENVIRONMENT
 ## ############################################################################
 
-import socket
 import os
+import socket
 
 # Working Directory Dictionary
 pcs = {
@@ -40,6 +43,28 @@ del(pcs)
 os.chdir(pc['repo'])
 
 
+### WEEK RUN
+yr = 2020
+week = 3
+calculateUncertainty = False
+
+
+# Which projections to use
+dataDict = {
+    'fpRankings': True,
+    'fpProjections': True,
+    'pffProjections': False,
+    }
+
+
+salaryFile = os.path.join(
+    'data',
+    'Yahoo_DF_contest_lineups_insert_template_'
+    '{}_w{}.csv'.format(yr, week)
+    )
+
+
+
 #%% PACKAGES
 ## ############################################################################
 
@@ -59,7 +84,6 @@ import time
 from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_context("poster")
-
 
 #%% FUNCTIONS
 ## ############################################################################
@@ -122,13 +146,13 @@ teamAbrvsDict = {
 
 
 def fantasyProsRankingsDataLoad(
-        position, week, fantasyProsDict = fantasyProsDict
-        , fileName = 'data\\FantasyPros_2019_Week_{}_{}_Rankings.csv'):
+        position, yr, week, fantasyProsDict = fantasyProsDict
+        , fileName = 'data\\FantasyPros_{}_Week_{}_{}_Rankings.csv'):
     
     '''Read data into a dataframe and append 
     column labeling the player position'''
     
-    data = pd.read_csv(fileName.format(week, position))
+    data = pd.read_csv(fileName.format(yr, week, position))
     
     
     # Filter empy Rows
@@ -153,16 +177,19 @@ def fantasyProsRankingsDataLoad(
     return data
 
 
-def fantasyProsProjectionsDataLoad(position
-                                , week
-                                , fantasyProsDict = fantasyProsDict
-                                , defenseDict = defenseDict
-                                , fileName = 'data\\FantasyPros_Fantasy_Football_Projections_{}_w{}.csv'
-                                ):
+
+def fantasyProsProjectionsDataLoad(
+        position
+        , yr
+        , week
+        , fantasyProsDict = fantasyProsDict
+        , defenseDict = defenseDict
+        , fileName = 'data\\FantasyPros_Fantasy_Football_Projections_{}_{}_w{}.csv'
+        ):
     
     '''Read data into a dataframe and append column labeling the player position'''
     
-    data = pd.read_csv(fileName.format(position, week))
+    data = pd.read_csv(fileName.format(position, yr, week))
     
 
     # Filter empy Rows
@@ -187,15 +214,17 @@ def fantasyProsProjectionsDataLoad(position
 
 
 
-def fantasyProsAllProjectionsDataLoad(position
-                                , week
-                                , fantasyProsDict = fantasyProsDict
-                                , defenseDict = defenseDict
-                                , fileName = ('data\\FantasyPros_Fantasy_'
-                                              'Football_Projections_{}_'
-                                              'high_low_w{}.csv'
-                                              )
-                                ):
+def fantasyProsAllProjectionsDataLoad(
+        position
+        , yr
+        , week
+        , fantasyProsDict = fantasyProsDict
+        , defenseDict = defenseDict
+        , fileName = ('data\\FantasyPros_Fantasy_'
+                      'Football_Projections_{}_'
+                      'high_low_{}_w{}.csv'
+                      )
+        ):
     
     '''Load fantansy pros projections with high, low, and averages.
         Pivot high, low, and avg into single record for each player
@@ -205,7 +234,7 @@ def fantasyProsAllProjectionsDataLoad(position
     '''
     
     # Load data
-    data = pd.read_csv(fileName.format(position, week))
+    data = pd.read_csv(fileName.format(position, yr, week))
     
     # Filter empy Rows
     data = data[[not i for i in np.isnan(data['FPTS'])]]
@@ -285,7 +314,10 @@ def fantasyProsAllProjectionsDataLoad(position
                          , right_index = True)               
                    )
 
+    data.index.name = 'index'
+
     return data[['Player', 'Team', 'position', 'FPTS', 'FPTS_low', 'FPTS_high']]
+
 
 
 def calculateProjectionStats(projections, ci = 0.95):
@@ -310,6 +342,7 @@ def calculateProjectionStats(projections, ci = 0.95):
     return projections
 
 
+
 def fpRankingsKeyGen(keyList):
     '''Generate key for fpRankings using first three letters of first name, 
     full last name, team, and position except defense is defense.'''
@@ -326,6 +359,7 @@ def fpRankingsKeyGen(keyList):
               )
               
     return key
+
 
 
 def salaryKeyGen(keyList):
@@ -360,6 +394,7 @@ def salaryKeyGen(keyList):
 #            [teamVars[i]*optimum 
 #            for i in dataInput['ID']]
 #            )           
+
 
 def rankingsStdDevPointEstimate(model, rankingCol, stdDevCol):
     '''Estimate point projections std dev using ranking model and ranking stddev
@@ -441,7 +476,12 @@ def optimizeLineup(dataInput, dataInputDict
     return playerVars
 
 
-def optimumTeamCombinations(teamInteractionsDict, numTeams, writeLPProblem = False):
+
+def optimumTeamCombinations(
+        teamInteractionsDict, 
+        numTeams, 
+        writeLPProblem = False
+        ):
     
     
     prob = pulp.LpProblem('The Best Team Combinations', pulp.LpMaximize)
@@ -517,7 +557,9 @@ def optimizedTeamDerivaties(optimumTeam, dataInput
                             playerVars.keys())
                     , :][['First Name', 'Last Name', 'Position' 
                        , 'Team', 'Opponent', 'Salary', 'Rank'
-                       , target, '{}_std_dev_est'.format(target)]
+                       , target
+                       , '{}_std_dev_est'.format(target)
+                       ]
                     ]
                 )    
     
@@ -781,18 +823,20 @@ def selectClusterBestTeams(teams, teamsDict, target, numTeams = 10):
     return topTeams, topTeamsDict
 
 
+
 def assignPositionLabels(df):
     '''Position labels for importing into Yahoo'''
     
     labelDict = {
             'WR': ['WR1', 'WR2', 'WR3', 'FLEX']
             , 'RB':['RB1', 'RB2', 'FLEX']
-            , 'TE':['TE', 'FELX']
+            , 'TE':['TE', 'FLEX']
             }
     
     labels = [labelDict.get(p, [p]).pop(0) for p in df['Position']]
     
     return labels
+
 
 
 def writeTeamSubmissions(topTeamsDict, target, week):
@@ -827,33 +871,29 @@ def writeTeamSubmissions(topTeamsDict, target, week):
     
     return
 
-#%% LOAD YAHOO DATA
+#%% LOAD YAHOO SALARY DATA & LINEUP TEMPLATE
 ## ############################################################################
 
-week = 15
-calculateUncertainty = False
-
-
 # Load salary data
-data = pd.read_csv('data\\Yahoo_DF_player_export_w{}.csv'.format(week))
+# data = pd.read_csv('data\\Yahoo_DF_player_export_{}_w{}.csv'.format(yr, week))
 
 # Load csv file for loading team selections
 data = pd.read_csv(
-        'data\\Yahoo_DF_contest_lineups_insert_template_w{}.csv'.format(week)
-        , usecols = ['ID',
-                 'First Name',
-                 'Last Name',
-                 'ID + Name',
-                 'Position',
-                 'Team',
-                 'Opponent',
-                 'Game',
-                 'Time',
-                 'Salary',
-                 'FPPG',
-                 'Injury Status',
-                 'Starting']
-        , skiprows = range(1,6))
+    salaryFile  
+    , usecols = ['ID',
+             'First Name',
+             'Last Name',
+             'ID + Name',
+             'Position',
+             'Team',
+             'Opponent',
+             'Game',
+             'Time',
+             'Salary',
+             'FPPG',
+             'Injury Status',
+             'Starting']
+    , skiprows = range(1,6))
 
 
 # Create key for merging with other data file
@@ -875,175 +915,192 @@ for position in positions:
     
 #%% LOAD FANTASY PROS RANKINGS DATA
 ## ############################################################################
+if dataDict.get('fpRankings', False) == True:
     
-# Load and concat data for rankings
-fpRankings = pd.concat([fantasyProsRankingsDataLoad(position, week) 
-                        for position in fantasyProsDict.keys()
-                        ], sort = True)
+    # Load and concat data for rankings
+    fpRankings = pd.concat([fantasyProsRankingsDataLoad(position, yr, week) 
+                            for position in fantasyProsDict.keys()
+                            ], sort = True)
+    
+    # Rename JAC to JAX
+    fpRankings.loc[fpRankings['Team'] == 'JAC', 'Team'] = 'JAX'
+    
+    # Generate key for rankings data
+    fpRankings.loc[:, 'key'] = list(map(lambda keyList: 
+        fpRankingsKeyGen(keyList)
+        , fpRankings[['player', 'Team', 'position']].values.tolist()
+        ))
+    
+    # Column name alignment
+    fpRankings.rename(columns = {
+        'Proj. Pts': 'pts', 
+        'Proj. Pts_std_dev_est': 'pts_stddev'
+        },
+        inplace = True
+        )
+        
+    # fpRankingsCols = ['Proj. Pts', 'Proj. Pts_std_dev_est']
 
-# Rename JAC to JAX
-fpRankings.loc[fpRankings['Team'] == 'JAC', 'Team'] = 'JAX'
-
-# Generate key for rankings data
-fpRankings.loc[:, 'key'] = list(map(lambda keyList: 
-    fpRankingsKeyGen(keyList)
-    , fpRankings[['player', 'Team', 'position']].values.tolist()
-    ))
-
-  
-fpRankingsCols = ['Proj. Pts', 'Proj. Pts_std_dev_est']
 
 
 #%% RANKINGS FANTASY POINT REGESSION MODELING
 ## ############################################################################
 
-
-rfRegDict = {}
-
-for position in positions:
-
-    # Random Forest Regressor
-    rfRegDict[position] = RandomForestRegressor(
-#            max_depth=2
-                                  random_state=1127
-                                  , n_estimators=100
-                                  , oob_score = True)
+if dataDict.get('fpRankings', False) == True:
     
-    positionFilter = (fpRankings['position'] == position).values.tolist()
+    rfRegDict = {}
     
-    # Fit model
-    rfRegDict[position].fit(
-            fpRankings.loc[positionFilter, 'Avg'].values.reshape(-1,1)
-            , fpRankings.loc[positionFilter, 'Proj. Pts']
-            )
-
-    # Add model predictions to dataframe
-    fpRankings.loc[positionFilter, 'Proj. Pts_model_est'] = (
-            rfRegDict[position].predict(
-                          (fpRankings.loc[positionFilter, 'Avg']
-                                     .values
-                                     .reshape(-1,1)))
-            )
-
-    # Calculate std. dev points estimate
-    fpRankings.loc[positionFilter, 'Proj. Pts_std_dev_est'] = (
-            rankingsStdDevPointEstimate(
-                    rfRegDict[position]
-                    , fpRankings.loc[positionFilter, 'Avg']
-                    , fpRankings.loc[positionFilter, 'Std Dev'])
-            )
-
-    # OOB & r^2 Results
-    print(position
-          , round(r2_score(
-                  fpRankings.loc[positionFilter, 'Proj. Pts']
-                  , rfRegDict[position].predict(
-                          (fpRankings.loc[positionFilter, 'Avg']
-                                     .values
-                                     .reshape(-1,1)))
-                  )
-            , 3)
-          , round(rfRegDict[position].oob_score_, 3))
+    for position in positions:
     
-  
-fig, ax = plt.subplots(nrows = 1, ncols = 1)
-sns.scatterplot(x = 'Avg', y = 'Proj. Pts', hue = 'position'
-                , data = fpRankings, ax = ax)
-ax.grid()
-
-sns.lineplot(x = 'Avg', y = 'Proj. Pts_model_est', hue = 'position'
-                , data = fpRankings, ax = ax)
-
-
+        # Random Forest Regressor
+        rfRegDict[position] = RandomForestRegressor(
+    #            max_depth=2
+                                      random_state=1127
+                                      , n_estimators=100
+                                      , oob_score = True)
+        
+        positionFilter = (fpRankings['position'] == position).values.tolist()
+        
+        # Fit model
+        rfRegDict[position].fit(
+                fpRankings.loc[positionFilter, 'Avg'].values.reshape(-1,1)
+                , fpRankings.loc[positionFilter, 'pts']
+                )
+    
+        # Add model predictions to dataframe
+        fpRankings.loc[positionFilter, 'pts_model_est'] = (
+                rfRegDict[position].predict(
+                              (fpRankings.loc[positionFilter, 'Avg']
+                                         .values
+                                         .reshape(-1,1)))
+                )
+    
+        # Calculate std. dev points estimate
+        fpRankings.loc[positionFilter, 'pts_stddev'] = (
+                rankingsStdDevPointEstimate(
+                        rfRegDict[position]
+                        , fpRankings.loc[positionFilter, 'Avg']
+                        , fpRankings.loc[positionFilter, 'Std Dev'])
+                )
+    
+        # OOB & r^2 Results
+        print(position
+              , round(r2_score(
+                      fpRankings.loc[positionFilter, 'pts']
+                      , rfRegDict[position].predict(
+                              (fpRankings.loc[positionFilter, 'Avg']
+                                         .values
+                                         .reshape(-1,1)))
+                      )
+                , 3)
+              , round(rfRegDict[position].oob_score_, 3))
+        
+      
+    fig, ax = plt.subplots(nrows = 1, ncols = 1)
+    sns.scatterplot(x = 'Avg', y = 'pts', hue = 'position'
+                    , data = fpRankings, ax = ax)
+    ax.grid()
+    
+    sns.lineplot(x = 'Avg', y = 'pts_model_est', hue = 'position'
+                    , data = fpRankings, ax = ax)
+    
+    # Store results
+    dataDict.update({'fpRankings' : fpRankings})
+    
+    ### del(fpRankings)
 
 #%% PRO FOOTBALL FOCUS PROJECTIONS
 ## ############################################################################
 
-# Load data
-pffProjections = pd.read_csv('{}\\data\\projections_pff_w{}'
-                             '.csv'.format(pc['repo'], week))
+if dataDict.get('pffProjections', False) == True:
+        
+    
+    # Load data
+    pffProjections = pd.read_csv(
+        os.path.join(
+                'data',
+                'projections_pff_{}_w{}.csv'.format(yr, week)
+                )
+        )
+    
+    # Convert to upper case
+    pffProjections['position'] = [
+            'DEF' if p.upper() == 'DST' else p.upper() 
+            for p in pffProjections['position'].values
+            ]
+    
+    # Rename teams for merging
+    pffProjections['teamName'] = [
+            teamAbrvsDict.get(team, team)
+            for team in pffProjections['teamName'].values.tolist()
+            ]
+    
+    
+    # Change team name for defense
+    pffProjections['playerName'] = [
+            p[1] if p[2] == 'DEF' else p[0] 
+            for p in pffProjections[
+                    ['playerName', 'teamName', 'position']
+                    ].values.tolist()
+            ]
+    
+    # Create key for merging
+    pffProjections['key'] = [
+            fpRankingsKeyGen(keyList) for keyList in 
+            pffProjections[['playerName', 'teamName', 'position']].values.tolist()
+            ]
+    
 
-# Convert to upper case
-pffProjections['position'] = [
-        'DEF' if p.upper() == 'DST' else p.upper() 
-        for p in pffProjections['position'].values
-        ]
-
-# Rename teams for merging
-pffProjections['teamName'] = [
-        teamAbrvsDict.get(team, team)
-        for team in pffProjections['teamName'].values.tolist()
-        ]
+    pffProjections.rename(columns = {'fantasyPoints': 'pts'}, inplace = True)
+    pffProjections['pts_stddev'] = 0
 
 
-# Change team name for defense
-pffProjections['playerName'] = [
-        p[1] if p[2] == 'DEF' else p[0] 
-        for p in pffProjections[
-                ['playerName', 'teamName', 'position']
-                ].values.tolist()
-        ]
+    dataDict.update({'pffProjections': pffProjections})
+    
+    ### del(pffProjections)
 
-# Create key for merging
-pffProjections['key'] = [
-        fpRankingsKeyGen(keyList) for keyList in 
-        pffProjections[['playerName', 'teamName', 'position']].values.tolist()
-        ]
-
-#%% LOAD FANTASY PROS RANKING DATA BY POSITION EXPERTS
-## ############################################################################
-
-#fpRankingsPosition = pd.concat([
-#        fantasyProsRankingsDataLoad(position, week,
-#        fileName='data\\FantasyPros_2019_Week_{}_{}_Rankings_position.csv') 
-#        for position in fantasyProsDict.keys()
-#        ], sort = True)
-#
-## Rename JAC to JAX
-#fpRankingsPosition.loc[fpRankingsPosition['Team'] == 'JAC', 'Team'] = 'JAX'
-#
-## Generate key for rankings data
-#fpRankingsPosition.loc[:, 'key'] = list(map(lambda keyList: 
-#    fpRankingsKeyGen(keyList)
-#    , fpRankingsPosition[['player', 'Team', 'position']].values.tolist()
-#    ))
-#
-#    
-## Rename Proj. Pts Column
-#fpRankingsPosition.rename(
-#        columns = {k:'{} Position'.format(k) for k in 
-#                   ['Avg', 'Best', 'Worst', 'Rank','player', 'Proj. Pts']}
-#        , inplace = True
-#        )
     
 #%% LOAD FANTASY PROS PROJECTIONS DATA
 ## ############################################################################
 
-
-# Load and concat data for projections
-#fpProjections = pd.concat([fantasyProsProjectionsDataLoad(position, week) 
-#                        for position in fantasyProsDict.keys()
-#                        ], sort = True)
- 
-# Load and concat data for projections
-fpAllProjections = pd.concat([fantasyProsAllProjectionsDataLoad(position, week) 
-                        for position in fantasyProsDict.keys()
-                        ], sort = True)       
+if dataDict.get('fpProjections', False) == True:
     
+
+    # Load and concat data for projections
+    fpAllProjections = pd.concat([
+        fantasyProsAllProjectionsDataLoad(position, yr, week) 
+        for position in fantasyProsDict.keys()
+        ], 
+        sort = True
+        )       
+        
+            
+            
+    # Calculate stats
+    fpAllProjections = calculateProjectionStats(fpAllProjections)
+    
+    
+    
+    # Generate key for merging  
+    fpAllProjections.loc[:, 'key'] = list(map(lambda keyList: 
+        fpRankingsKeyGen(keyList)
+        , fpAllProjections[['Player', 'Team', 'position']].values.tolist()
+        ))      
         
         
-# Calculate stats
-fpAllProjections = calculateProjectionStats(fpAllProjections)
-
-
-
-# Generate key for merging  
-fpAllProjections.loc[:, 'key'] = list(map(lambda keyList: 
-    fpRankingsKeyGen(keyList)
-    , fpAllProjections[['Player', 'Team', 'position']].values.tolist()
-    ))      
+    # fpAllProjectionsCols = ['FPTS', 'FPTS_std_dev_est']
     
-fpAllProjectionsCols = ['FPTS', 'FPTS_std_dev_est']
+    fpAllProjections.rename(
+        columns =  {
+            'FPTS': 'pts', 
+            'FPTS_std_dev_est': 'pts_stddev'
+            },
+        inplace = True
+        )
+    
+    dataDict['fpProjections'] = fpAllProjections
+    
+    ### del(fpAllProjectionsCols)
     
 #%% PROJECTIONS UNCERTAINTY
 ## ############################################################################
@@ -1053,16 +1110,16 @@ if calculateUncertainty == True:
     np.random.seed(1127)
     
     for i in range(5):
-        fpAllProjections.loc[:, 'FPTS_rand_{}'.format(i)] = (
-                fpAllProjections['FPTS'] + (
-                        fpAllProjections['FPTS_std_dev_est'] 
-                        * np.random.randn(fpAllProjections.shape[0])
+        dataDict['fpProjections'].loc[:, 'FPTS_rand_{}'.format(i)] = (
+                dataDict['fpProjections']['FPTS'] + (
+                        dataDict['fpProjections']['FPTS_std_dev_est'] 
+                        * np.random.randn(dataDict['fpProjections'].shape[0])
                         )
                 )
     
       
     # Columns for merging
-    fpAllProjectionsCols += ['FPTS_rand_{}'.format(i) for i in range(5)] 
+    # fpAllProjectionsCols += ['FPTS_rand_{}'.format(i) for i in range(5)] 
             
     
 
@@ -1078,32 +1135,46 @@ if calculateUncertainty == True:
     for i in range(5):
         
         # Create uncertainty around rank
-        fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
-                fpRankings['Avg'] + (
-                        fpRankings['Std Dev'] 
+        dataDict['fpRankings'].loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+                dataDict['fpRankings']['Avg'] + (
+                        dataDict['fpRankings']['Std Dev'] 
                         * zScore
-                        * np.random.randn(fpRankings.shape[0])
+                        * np.random.randn(dataDict['fpRankings'].shape[0])
                         )
                 )
     
         # Estimate projected points based on new ranking
         #   Call RF model by position
-        fpRankings.loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
+        dataDict['fpRankings'].loc[:, 'Proj. Pts_rand_{}'.format(i)] = (
             
             list(map(lambda p: 
                 rfRegDict.get(p[0]).predict(np.array(p[1]).reshape(1,-1))
-                , fpRankings[['position', 'Proj. Pts_rand_{}'.format(i)]].values.tolist()
+                , dataDict['fpRankings'][['position', 'Proj. Pts_rand_{}'.format(i)]].values.tolist()
                 ))
             )
     
     
     # Columns for merging
-    fpRankingsCols += ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
+    # fpRankingsCols += ['Proj. Pts_rand_{}'.format(i) for i in range(4)] 
 
 
     
 #%% COMBINE DATASETS
+## ############################################################################
     
+
+# Convert dataDict from dataframes to dictionaries
+dataDict2 = {
+    k: v.set_index('key')[['pts', 'pts_stddev']].to_dict('dict')
+    for k,v in dataDict.items()
+    if type(v) != bool
+    }
+
+
+dataDict['fpProjections'].groupby('key')['pts'].count().sort_values('pts', ascending = False).head()
+
+dataDict['fpProjections']['key'].shape
+
 # # of players required for each position
 positionLimit = {'QB':1
                  , 'TE':1
@@ -1121,14 +1192,42 @@ statusExclude = ['IR'
                  ]
 
 
+
+
+
 # Filter only eligble players
 dataInput = copy.deepcopy(
         data[data['Injury Status'].map(lambda s: s not in statusExclude)]
-        )
+        ).set_index('key')
 
+
+dataInputDict = dataInput.to_dict('index')
+
+# Add porjections to dataInputDict
+
+[dataInputDict.get(player).update({k:pts}) for ]
+
+
+dataInput = pd.concat([
+    dataInput.set_index('key'),
+    *[v.rename(columns = {'pts': '{}'.format(k)}).set_index('key')[k]
+     for k,v in dataDict.items()
+     if type(v) != bool
+     ]
+    ], axis = 1
+    )
+    
+    
+x= pd.concat([pd.DataFrame(
+    (v.rename(columns = {'pts': '{}'.format(k)})
+      .set_index('key')[k])
+    )
+     for k,v in dataDict.items()
+     if type(v) != bool
+    ], axis = 0)
 
 dataInput = dataInput.set_index('key').merge(
-        fpRankings.set_index('key')[['Avg', 'Best', 'Worst', 'Rank'
+        dataDict['fpRankings'].set_index('key')[['Avg', 'Best', 'Worst', 'Rank'
                             ,'player'] + fpRankingsCols]
         , how = 'left'
         , left_index = True
@@ -1146,7 +1245,7 @@ dataInput = dataInput.set_index('key').merge(
 
 
 dataInput = dataInput.merge(
-        fpAllProjections.set_index('key')[fpAllProjectionsCols]
+        dataDict['fpProjections'].set_index('key')[fpAllProjectionsCols]
         , how = 'left'
         , left_index = True
         , right_index = True
@@ -1154,7 +1253,8 @@ dataInput = dataInput.merge(
 
 
 dataInput = dataInput.merge(
-        pd.DataFrame(pffProjections.set_index('key')['fantasyPoints'])
+        pd.DataFrame(dataDict['pffProjections'].set_index('key')[
+                ['fantasyPoints', 'fantasyPoints_std_dev_est']])
         , how = 'left'
         , left_index = True
         , right_index = True
@@ -1175,7 +1275,7 @@ dataInput.fillna(0, inplace = True)
 lpTargets = [
         'Proj. Pts', 
         'FPTS', 
-        'FPPG', 
+#        'FPPG', 
         'fantasyPoints'
         ]
 
@@ -1245,6 +1345,10 @@ optimumTeamDict = {}
 optimumTeamDerivatives = {}
 teamPointIntersections = {}
 
+# If true, remove all players from the first round of optimum team combinations
+# and reprocess the optimum team selection process
+calculate2ndRound = True
+
 for target in ['FPTS', 'Proj. Pts', 'fantasyPoints']:
 
     # Generate all optimum team derivatives from base optimized team
@@ -1307,6 +1411,8 @@ for target in ['FPTS', 'Proj. Pts', 'fantasyPoints']:
                 , data = optimumTeamDerivatives[target])
 
 
+#    if calculate2ndRound == True:
+
 
 #%% TEAM SELECTIONS
 
@@ -1315,24 +1421,28 @@ topTeamsDict = {}
 teamPlayerStats = {}
 clusterModels = {}
 
-for target in ['FPTS', 'Proj. Pts']:
+for target in [
+        # 'FPTS', 
+        # 'Proj. Pts', 
+        'fantasyPoints'
+        ]:
         
     # Cluster teams by their relationship to other teams
     optimumTeamDerivatives[target], clusterModels[target] = (
             clusterTeamsAndPlot(teamPointIntersections[target]
                                 , optimumTeamDerivatives[target]
                                 , target
-                                 , k = 10)
+                                 , k = 15)
             )
     
     
     
     # Get top teams from each cluster
     topTeams[target], topTeamsDict[target] = (
-            selectClusterBestTeams(optimumTeamDerivatives[target]
-                                   , optimumTeamDict[target]
-                                   , target
-                                   , numTeams = 10)
+            selectClusterBestTeams(teams = optimumTeamDerivatives[target]
+                                   , teamsDict = optimumTeamDict[target]
+                                   , target = target
+                                   , numTeams = 15)
             )
     
     
@@ -1343,7 +1453,8 @@ for target in ['FPTS', 'Proj. Pts']:
     print(teamPlayerStats[target])
 
     # Write submissions
-    writeTeamSubmissions(topTeamsDict[target], target, week)
+    writeTeamSubmissions(topTeamsDict = topTeamsDict[target],
+                         target = target, week = week)
 
 
 
